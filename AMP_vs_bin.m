@@ -1,7 +1,7 @@
 clear
 clear global
 close all
-cd '~/MEGAsync/grad/research/AMP/datasets'
+cd '~/MEGAsync/grad/research/AMP/AMP_viz/'
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ... 
     bintype aero_N_str w_spd_str indvar_name
 
@@ -16,11 +16,14 @@ run global_var.m
 
 %% read files
 
+set(0, 'DefaultFigurePosition',[1553 458 1028 527])
+
 for its = 1:length(bintype)
     for iab = 1:length(ampORbin)
         for ia = 1:length(aero_N)
+%             close all
             for iw = 1:length(w_spd)
-                %%
+%                 close all
                 for ici = icase%case_interest
                     
                     [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
@@ -32,8 +35,8 @@ for its = 1:length(bintype)
                 % plot
                 for ivar = vars:vare
                     close all
-                    figure('Position', [1553 458 1028 527])
-                    tl = tiledlayout('flow');
+%                     figure('Position', [1553 458 1028 527]);
+%                     tl = tiledlayout('flow');
 
                     for ici = icase%case_interest
 
@@ -98,14 +101,12 @@ for its = 1:length(bintype)
                         end
                     end
                 end
-                
+                %%
                 for ivar = vars:vare
                     close all
-                    figure('Position', [1553 458 1028 527])
-            %         tl = tiledlayout('flow');
+%                     figure('Position', [1553 458 1028 527]);
                     for ici = icase %case_interest
-            %                     nexttile
-
+                        hold off
                         var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
                         [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
                             ivar,amp_struct(ici),1);
@@ -128,11 +129,10 @@ for its = 1:length(bintype)
                             nanimagesc(time,z,var_diff')
                             set(gca,'YDir','normal')
                             colormap(coolwarm)
-                            caxis([-bound bound])
+                            caxis([-bound bound]);
                             set(gca,'ColorScale','lin')
                             cbar = colorbar;
                             cbar.Label.String = 'diff';
-                            %                 end
                             xlabel('Time [s]')
                             ylabel('Altitude [m]')
                         elseif isequal(size(var_diff),[length(time) 1])
@@ -140,8 +140,6 @@ for its = 1:length(bintype)
                             xlim([min(time) max(time)])
                             xlabel('Time [s]')
                             ylabel(indvar_ename{ivar})
-                            %                 ylim(range)
-                            %                 ylim([1e-1 1e1])
                         end
                         title(['\Delta',bintype{its},'-amp ',...
                             indvar_ename{ivar}, ' ', ...

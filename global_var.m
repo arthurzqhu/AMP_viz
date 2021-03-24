@@ -63,7 +63,10 @@ elseif l_amp==1
 elseif l_amp==2
     ab_arr=[1 2];
 else
-    error('l_amp can only be 0 (bin) 1 (amp) or 2 (both)')
+    if isempty(l_amp)
+    else
+        error('l_amp can only be 0 (bin) 1 (amp) or 2 (both)')
+    end
 end
 
 if l_sbm==0
@@ -71,6 +74,9 @@ if l_sbm==0
 elseif l_sbm==1
     its=2;
 else
-    error('l_sbm can only be 0 (tau) 1 (sbm)')
+    if isempty(l_sbm)
+    else
+        error('l_sbm can only be 0 (tau) 1 (sbm)')
+    end
 end
 
