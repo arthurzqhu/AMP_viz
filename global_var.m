@@ -1,24 +1,34 @@
 global mconfig cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
     l_amp l_sbm
 
+
+% model configs
 ampORbin = {'amp','bin'};
 bintype = {'tau','sbm'};
 
 
+% dir of the model output
 output_dir='/Volumes/ESSD/AMP output/';
 
+
+% KiD cases
 case_list_num = [101 102 103 105 106 107];
 case_interest = 1:length(case_list_num);
 case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num),...
     'UniformOutput', false);
+
+
+% thresholds to be considered as clouds 
 cloud_mr_th = [1e-10 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
 rain_mr_th = [1e-10 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
 rain_n_th = [1e-4 inf];
 meanD_th = [0 inf];
+
+
+% configs of the model
 aero_N = 50*2.^(0:5);
 aero_N_str = cell(length(aero_N),1);
-
 w_spd = .25*2.^(0:3);
 w_spd_str = cell(length(w_spd),1);
 
@@ -30,19 +40,19 @@ for i=1:length(w_spd)
     w_spd_str{i} = ['w' num2str(w_spd(i))];
 end
 
-vars=1;
-vare=4;
 
-
+% set the current date as nikki if unset
 if ~exist('nikki')
     nikki=datestr(date,'YYYY-mm-dd');
 end
 
+% output dir for the figures
 plot_dir=['plots/' nikki '/' mconfig '/'];
 if ~exist(['plots/' nikki '/' mconfig],'dir')
     mkdir(['plots/' nikki '/' mconfig])
 end
 
+% load these python colormap
 Blues = getPyPlot_cMap('Blues');
 coolwarm = getPyPlot_cMap('coolwarm');
 
@@ -59,6 +69,12 @@ indvar_ename = {'cloud mass','rain mass',...
 %     'cloud M1 mphys','rain M1 mphys',...
 };
 
+% indices of vars to compare
+vars=1;
+vare=4;
+
+
+% additional variables generating animation in AMP_vs_bin_dist
 if l_amp==0
     ab_arr=2;
 elseif l_amp==1
