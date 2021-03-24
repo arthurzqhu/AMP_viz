@@ -1,10 +1,10 @@
 clear
 clear global
 close all
-cd '~/MEGAsync/grad/research/AMP/datasets'
+cd '~/MEGAsync/grad/research/AMP/AMP_viz'
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ... 
-    bintype aero_N_str w_spd_str l_amp l_sbm %#ok<NUSED>
+    bintype aero_N_str w_spd_str l_amp l_sbm fn %#ok<*NUSED>
 
 
 
@@ -42,41 +42,46 @@ for ia = 2%;length(aero_N)
     %% plot
     for ici = icase%case_interest
         if l_sbm
-            binmean = load('binmean.txt')*2*.01;
+            binmean = load('sbm_binmean.txt')*2*.01;
         else
             binmean = load('tau_binmean.txt')*2;
         end
         
-        if l_amp
+        if l_amp % set when ==1 or 2
             time = amp_struct(ici).time;
             z = amp_struct(ici).z;
             amp_DSDprof = amp_struct(ici).mass_dist_init;
+            DSDprof = amp_DSDprof;
         end
         
-        if l_amp~=1
+        if l_amp~=1 % set when ==0 or 2
             time = bin_struct(ici).time;
             z = bin_struct(ici).z;
             bin_DSDprof = bin_struct(ici).mass_dist;
-        end
-        %%
-        for i = 1:(l_bin+l_amp)
-            
-            fn = [ampORbin{iab},'-',bintype{its},' ',mconfig,'-',vnum,' '];
-            
-            if l_amp==2
-                fn = ['amp vs bin - ',bintype{its},' ',mconfig,' '];
-                plot_DSDprof(1,:,:,:) = amp_DSDprof(:,1:length(binmean),:);
-                plot_DSDprof(1,2:end,:,:) = plot_DSDprof(1,1:end-1,:,:); % because bin saves DSD after mphys while amp saves before
-                tmp_mtx(1,:,:,:)=bin_DSDprof;
-                plot_DSDprof(1,1,:,:) = amp_DSDprof(1,1:length(binmean),:); % changed the first bin DSD to the initialized distribution
-                plot_DSDprof(2,:,:,:) = tmp_mtx(1,:,1:length(binmean),:); % !!!fix this part
-                
+            DSDprof = bin_DSDprof;
+            if l_sbm
+                DSDprof=DSDprof(:,1:length(binmean),:);
             end
         end
+        %%
+            
+        fn = [ampORbin{ab_arr},'-',bintype{its},' ',mconfig,'-',vnum,' '];
+
+        if l_amp==2
+            fn = ['amp vs bin - ',bintype{its},' ',mconfig,' '];
+            plot_DSDprof(1,:,:,:) = amp_DSDprof(:,1:length(binmean),:);
+            plot_DSDprof(1,2:end,:,:) = plot_DSDprof(1,1:end-1,:,:); % because bin saves DSD after mphys while amp saves before
+            tmp_mtx(1,:,:,:)=bin_DSDprof;
+            plot_DSDprof(1,1,:,:) = amp_DSDprof(1,1:length(binmean),:); % changed the first bin DSD to the initialized distribution
+            plot_DSDprof(2,:,:,:) = tmp_mtx(1,:,1:length(binmean),:); % !!!fix this part
+
+        end
         
-        DSDprof_timeprog(3600, 5, DSDprof(:,1:length(binmean),:),z,...
-            binmean,[fn aero_N_str{ia} ' ' w_spd_str{iw} case_list_str{ici}],...
-            'Blues','log','mass')
+        total_length=length(time);
+        time_step=5;
+        
+        DSDprof_timeprog(total_length, time_step, DSDprof, z,...
+            binmean,'Blues','log','mass')
         
     end
     
