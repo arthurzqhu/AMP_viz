@@ -1,15 +1,15 @@
 clear
 clear global
 close all
+
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ... 
-    bintype aero_N_str w_spd_str indvar_name
+    bintype aero_N_str w_spd_str indvar_name %#ok<*NUSED>
 
 mconfig='noinit';
 nikki='2021-03-19';
 
 icase=2;
 vnum='0001';
-output_dir='/Volumes/ESSD/AMP output/';
 
 run global_var.m
 

@@ -4,6 +4,9 @@ global mconfig cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
 ampORbin = {'amp','bin'};
 bintype = {'tau','sbm'};
 
+
+output_dir='/Volumes/ESSD/AMP output/';
+
 case_list_num = [101 102 103 105 106 107];
 case_interest = 1:length(case_list_num);
 case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num),...

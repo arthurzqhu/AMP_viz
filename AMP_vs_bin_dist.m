@@ -17,8 +17,6 @@ icase=2;
 
 run global_var.m
 
-output_dir='/Volumes/ESSD/AMP output/';
-
 %%
 
 
