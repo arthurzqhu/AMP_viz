@@ -1,5 +1,8 @@
-function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,fn,...
+function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
     Cmap,clr_linORlog,massORnd,var_overlay)
+
+global fn aero_N_str w_spd_str case_list_str ia iw ici
+
 close all
 c_map = getPyPlot_cMap(Cmap);
 
@@ -10,7 +13,7 @@ end
 time_length = floor(time_total/time_step);
 
 for it_idx = 1:time_length+1
-    close all
+%     close all
     
 %     figure('Visible','off')
     itime = (it_idx-1)*time_step+1;
@@ -81,12 +84,16 @@ for it_idx = 1:time_length+1
 %     title(sprintf('t = %.0f s', itime))
     F(it_idx) = getframe(gcf);
     
+    delete(findall(gcf,'type','annotation'))
+    
 %     toc
 %     title('')
 end
 
 % tic
-v = VideoWriter(['time progress in DSD', massORnd, ' ', fn,' profile.mp4'],'MPEG-4');
+v = VideoWriter(['time progress in DSD', massORnd, ' ',...
+    [fn aero_N_str{ia} ' ' w_spd_str{iw} case_list_str{ici}],...
+    ' profile.mp4'],'MPEG-4');
 v.FrameRate=60;
 open(v)
 writeVideo(v,F)
