@@ -1,7 +1,6 @@
 clear
 clear global
 close all
-cd '~/MEGAsync/grad/research/AMP/AMP_viz/'
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ... 
     bintype aero_N_str w_spd_str indvar_name
 
