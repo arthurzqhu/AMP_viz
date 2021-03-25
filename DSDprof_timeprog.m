@@ -92,8 +92,8 @@ end
 
 % tic
 v = VideoWriter(['time progress in DSD', massORnd, ' ',...
-    [fn aero_N_str{ia} ' ' w_spd_str{iw} case_list_str{ici}],...
-    ' profile.mp4'],'MPEG-4');
+    aero_N_str{ia} ' ' w_spd_str{iw} ' ' case_list_str{ici} ' ' fn,...
+    'profile.mp4'],'MPEG-4');
 v.FrameRate=60;
 open(v)
 writeVideo(v,F)

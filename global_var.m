@@ -26,6 +26,11 @@ rain_n_th = [1e-4 inf];
 meanD_th = [0 inf];
 
 
+% set the current date as nikki if unset
+if ~exist('nikki')
+    nikki=datestr(date,'YYYY-mm-dd');
+end
+
 % configs of the model
 aero_N = 50*2.^(0:5);
 aero_N_str = cell(length(aero_N),1);
@@ -38,12 +43,6 @@ end
 
 for i=1:length(w_spd)
     w_spd_str{i} = ['w' num2str(w_spd(i))];
-end
-
-
-% set the current date as nikki if unset
-if ~exist('nikki')
-    nikki=datestr(date,'YYYY-mm-dd');
 end
 
 % output dir for the figures
@@ -99,3 +98,4 @@ else
     end
 end
 
+colororder=colororder;
