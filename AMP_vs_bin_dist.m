@@ -12,7 +12,7 @@ l_sbm=0;
 
 mconfig='noinit';
 vnum='0001';
-nikki='2021-03-19';
+nikki='2021-03-24';
 icase=2;
 
 run global_var.m

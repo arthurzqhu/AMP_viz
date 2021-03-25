@@ -6,7 +6,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
     bintype aero_N_str w_spd_str indvar_name %#ok<*NUSED>
 
 mconfig='noinit';
-nikki='2021-03-24';
+nikki='2021-03-19';
 
 icase=2;
 vnum='0001';
@@ -18,7 +18,7 @@ close all
 set(0, 'DefaultFigurePosition',[1553 458 1028 527])
 
 for its = 1:length(bintype)
-    for ia = 1%:length(aero_N)-1
+    for ia = 1:length(aero_N)-1
         %             close all
         for iw = 4%1:length(w_spd)
             %                 close all
@@ -136,7 +136,7 @@ for its = 1:length(bintype)
                                 aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
                         end
                     end
-                    pause(.5) % to prevent matlab from halting
+                    pause(.5) % (optional) to prevent matlab from halting
                 end
                 
             end
