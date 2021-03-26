@@ -2,7 +2,7 @@
 visualizing AMP with MATLAB
 
 # customization
-configurable in `global_var.m`:
+configurable in `global_var`:
 - directory of model output
 - case number
 - cases interested
