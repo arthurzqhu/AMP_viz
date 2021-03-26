@@ -7,8 +7,8 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
 mconfig='noinit';
 nikki='2021-03-19';
 
-icase=2;
-vnum='0001';
+% last four characters of the model output file.
+vnum='0001'; 
 
 run global_var.m
 
@@ -18,7 +18,7 @@ for its = 1:length(bintype)
     for ia = 1:length(aero_N)
         for iw = 4%1:length(w_spd)
             %%
-            for ici = icase%case_interest
+            for ici = case_interest
                 
                 [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
                     loadnc('amp');

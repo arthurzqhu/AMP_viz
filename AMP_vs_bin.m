@@ -8,7 +8,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
 mconfig='noinit';
 nikki='2021-03-19';
 
-icase=2;
+% last four characters of the model output file.
 vnum='0001';
 
 run global_var.m
@@ -22,7 +22,7 @@ for its = 1:length(bintype)
         %             close all
         for iw = 4%1:length(w_spd)
             %                 close all
-            for ici = icase%case_interest
+            for ici = case_interest
                 
                 [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
                     loadnc('amp');
@@ -41,7 +41,7 @@ for its = 1:length(bintype)
                     lsty=':';
                 end
                 
-                for ici = icase%case_interest
+                for ici = case_interest
                     
                     time = amp_struct(ici).time;
                     z = amp_struct(ici).z;
@@ -149,7 +149,7 @@ for its = 1:length(bintype)
                     lsty=':';
                 end
                 
-                for ici = icase %case_interest
+                for ici = case_interest
                     var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
                     [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
                         ivar,amp_struct(ici),1);

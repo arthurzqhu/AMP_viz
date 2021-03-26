@@ -10,10 +10,12 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
 l_amp=1;
 l_sbm=0;
 
-mconfig='noinit';
-vnum='0001';
 nikki='2021-03-24';
-icase=2;
+mconfig='noinit';
+
+% last four characters of the model output file.
+vnum='0001'; 
+
 
 run global_var.m
 
@@ -23,7 +25,7 @@ run global_var.m
 for ia = 2%;length(aero_N)
     %% read files    
     iw=4;
-    for ici = icase%case_interest
+    for ici = case_interest
         
         if l_amp % load when == 1 or 2
             [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
@@ -37,7 +39,7 @@ for ia = 2%;length(aero_N)
         
     end
     %% plot
-    for ici = icase%case_interest
+    for ici = case_interest
         if l_sbm
             binmean = load('sbm_binmean.txt')*2*.01;
         else

@@ -13,7 +13,7 @@ output_dir='/Volumes/ESSD/AMP output/';
 
 % KiD cases
 case_list_num = [101 102 103 105 106 107];
-case_interest = 1:length(case_list_num);
+case_interest = 2;%1:length(case_list_num);
 case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num),...
     'UniformOutput', false);
 
