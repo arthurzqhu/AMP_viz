@@ -47,12 +47,10 @@ for its = 1:length(bintype)
                     z = amp_struct(ici).z;
                     
                     var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
-                    [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
-                        ivar,amp_struct(ici),1);
+                    [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
                     
                     var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
-                    [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,...
-                        ivar,bin_struct(ici),1);
+                    [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
                     
                     
                     if ~contains(indvar_name{ivar},'path')

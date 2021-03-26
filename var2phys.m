@@ -1,11 +1,14 @@
-function [physquant,note,range] = var2phys(var_raw,ivar,stct,setOOBasNaN)
+function [physquant,note,range] = var2phys(var_raw,ivar,...
+    setOOBasNaN,l_flatten)
 % converts raw variables into physical quantities
 % formula: [physquant,addnote] = var2phys(var_raw,var_name,note)
 % INPUT:
 % var_raw: raw variable directly out of the nc file
-% var_name: the name of the raw variable directly out of the nc file
+% ivar: the index of the raw variable (list specified in global_var.m)
+% l_flatten: (optional) whether to flatten the output for non-plotting
+% purposes. (e.g., analyzing the performance of simulation)
 % OUTPUT:
-% physquant: the physical quantities after conversion. might not be
+% physquant: the physical quantities after conversion. not all are
 % converted. 
 %       units: M0 -> cc^-1;
 %              M3 -> kg/kg;
@@ -15,11 +18,6 @@ global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th
 
 threshold = -inf;
 var_name=indvar_name{ivar};
-
-diagM0_cloud=stct.diagM0_cloud;
-diagM3_cloud=stct.diagM3_cloud;
-diagM0_rain=stct.diagM0_rain;
-diagM3_rain=stct.diagM3_rain;
 
 switch var_name
     case {'diagM0_cloud'}
@@ -67,7 +65,7 @@ switch var_name
         mask = 'self';
     case {'RH_ice','w','temperature','theta','pressure'}
         physquant = var_raw;
-        mask = 'cloudmass'; 
+        mask = 'M3tomass'; 
         note = 'lin';
         range = 0;
     case 'cloud_M1_path'
@@ -75,16 +73,16 @@ switch var_name
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
         range = [-bound bound];
         note = 'log';
-        mask = 'cloudmass'; % use cloud mass as threshold
+        mask = 'M3tomass'; % use cloud mass as threshold
     case 'rain_M1_path'
         physquant = var_raw*pi/6*1000;
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
         range = [-bound bound];
         note = 'log';
-        mask = 'rainmass';
+        mask = 'M3tomass';
     case 'Dm'
         physquant = var_raw;
-        mask = 'cloudmass';
+        mask = 'M3tomass';
         note = 'lin';
         range = [1e-4 1e-2];
     case 'dqv_adv'
@@ -137,15 +135,29 @@ end
 if setOOBasNaN
     if strcmp(mask,'self')
         physquant(physquant<threshold)=nan;
-    elseif strcmp(mask,'cloudmass')
-        physquant(diagM3_cloud*pi/6*1000<threshold)=nan;
-    elseif strcmp(mask,'rainmass')
-        physquant(diagM3_rain*pi/6*1000<threshold)=nan;
-    elseif strcmp(mask,'cloudnum')
-        physquant(diagM0_cloud/1e6<threshold)=nan;
-    elseif strcmp(mask,'rainnum')
-        physquant(diagM0_rain/1e6<threshold)=nan;
+    elseif strcmp(mask,'M3tomass')
+        physquant(physquant*pi/6*1000<threshold)=nan;
+    elseif strcmp(mask,'M1tonum')
+        physquant(physquant/1e6<threshold)=nan;
     end
+end
+
+if ~setOOBasNaN
+    if strcmp(mask,'self')
+        physquant(physquant<threshold)=0;
+    elseif strcmp(mask,'M3tomass')
+        physquant(physquant*pi/6*1000<0)=0;
+    elseif strcmp(mask,'M1tonum')
+        physquant(physquant/1e6<0)=0;
+    end
+end
+
+if ~exist('l_flatten','var') || isempty(l_flatten)
+    l_flatten=0; %#ok<*NASGU>
+end
+
+if l_flatten
+    physquant=physquant(:);
 end
 
 end
