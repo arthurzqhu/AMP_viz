@@ -1,0 +1,5 @@
+# List of untracked files to ignore
+.DS_Store
+*.mp4
+plots/*
+*.asv
