@@ -14,6 +14,14 @@ run global_var.m
 
 %%
 
+close all
+doweight=1;
+
+pfm.tau=zeros(length(aero_N), vare-vars+1);
+pfm.sbm=zeros(length(aero_N), vare-vars+1);
+
+fldnm=fieldnames(pfm);
+
 for its = 1:length(bintype)
     for ia = 1:length(aero_N)
         for iw = 4%1:length(w_spd)
@@ -28,7 +36,7 @@ for its = 1:length(bintype)
             
             for ivar = vars:vare
                 %%
-                ivar=1;
+%                 ivar=4;
                 time = amp_struct(ici).time;
                 z = amp_struct(ici).z;
                 
@@ -38,21 +46,26 @@ for its = 1:length(bintype)
                 var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
                 var_bin_flt = var2phys(var_comp_raw_bin,ivar,0,1);
                 
-                plot(var_bin_flt,var_amp_flt,'.');
-                refline(1,0)
-                
                 % get the non-nan indices for both bin and amp
                 vidx=~isnan(var_amp_flt+var_bin_flt);
                 
                 weight=var_bin_flt(vidx)/sum(var_bin_flt(vidx));
                 weight_log=log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
                 
+                if ~doweight
+                    weight=ones(size(weight));
+                end
+                
                 rss=sum((var_amp_flt(vidx)-var_bin_flt(vidx)).^2.*weight);
                 tss=sum((var_bin_flt(vidx)-wmean(var_bin_flt(vidx),weight)).^2.*weight);
                 
                 
-                pfm=1-rss/tss;
-                disp(pfm)
+                pfm.(fldnm{its})(ia,ivar)=1-rss/tss;
+                if its==2 && ivar==2
+                    figure
+                    plot(var_bin_flt,var_amp_flt,'.');
+                    refline(1,0)
+                end
                 
             end
         end
