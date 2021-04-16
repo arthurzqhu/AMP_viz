@@ -5,9 +5,10 @@ close all
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
     bintype aero_N_str w_spd_str indvar_name %#ok<*NUSED>
 
-vnum='0001'; % last four characters of the model output file.
-nikki='2021-04-09';
-case_interest = 2;%1:length(case_list_num);
+vnum='0002'; % last four characters of the model output file.
+nikki='2021-04-15';
+case_interest = 2; % 1:length(case_list_num);
+
 run global_var.m
 
 % get the list of configs. cant put it into globar_var
@@ -20,7 +21,7 @@ set(0, 'DefaultFigurePosition',[1553 458 1028 527])
 
 %%
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 2%1:length(mconfig_ls)
     mconfig = mconfig_ls{iconf};
     run case_dep_var.m
     %% read files
@@ -43,17 +44,16 @@ for iconf = 1:length(mconfig_ls)
                 end
                 
                 % plot
-                for ivar = vars:vare
+                for ici = case_interest
+                    for ivar = vars:vare
                     
-                    % change linestyle according to cloud/rain
-                    if contains(indvar_ename{ivar},'cloud')
-                        lsty='-';
-                    elseif contains(indvar_ename{ivar},'rain')
-                        lsty=':';
-                    end
+                        % change linestyle according to cloud/rain
+                        if contains(indvar_ename{ivar},'cloud')
+                            lsty='-';
+                        elseif contains(indvar_ename{ivar},'rain')
+                            lsty=':';
+                        end
                     
-                    for ici = case_interest
-                        
                         time = amp_struct(ici).time;
                         z = amp_struct(ici).z;
                         
@@ -88,6 +88,8 @@ for iconf = 1:length(mconfig_ls)
                                 xlabel('Time [s]')
                                 ylabel('Altitude [m]')
                                 hold off
+                                set(gca,'fontsize',16)
+                                
                                 title([ampORbin{iab},'-',...
                                     bintype{its}, ' ', ...
                                     indvar_ename{ivar}, ' ', ...
