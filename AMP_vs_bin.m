@@ -5,8 +5,8 @@ close all
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
     bintype aero_N_str w_spd_str indvar_name %#ok<*NUSED>
 
-vnum='0002'; % last four characters of the model output file.
-nikki='2021-04-15';
+vnum='0001'; % last four characters of the model output file.
+nikki='2021-04-16';
 case_interest = 2; % 1:length(case_list_num);
 
 run global_var.m
@@ -18,10 +18,13 @@ mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 set(0, 'DefaultFigurePosition',[1553 458 1028 527])
-
 %%
+fig_prof=figure('visible','off');
+fig_path=figure('visible','off');
+fig_profdiff=figure('visible','off');
+fig_pathdiff=figure('visible','off');
 
-for iconf = 2%1:length(mconfig_ls)
+for iconf = 1:length(mconfig_ls)
     mconfig = mconfig_ls{iconf};
     run case_dep_var.m
     %% read files
@@ -65,7 +68,7 @@ for iconf = 2%1:length(mconfig_ls)
                         
                         
                         if ~contains(indvar_name{ivar},'path')
-                            fig_prof=figure(1);
+                            set(0,'CurrentFigure',fig_prof)
                             for iab = 1:length(ampORbin)
                                 % plot cloud/rain water profile
                                 if iab==1
@@ -106,7 +109,7 @@ for iconf = 2%1:length(mconfig_ls)
                             end
                         else
                             % plot cloud/rain water path comparison
-                            fig_path=figure(2);
+                            set(0,'CurrentFigure',fig_path)
                             
                             plot(time,var_comp_amp,...
                                 'LineWidth',2,...
@@ -183,7 +186,8 @@ for iconf = 2%1:length(mconfig_ls)
                         
                         if ~contains(indvar_name{ivar},'path')
                             % plot profile difference
-                            fig_profdiff=figure(3);
+                            set(0,'CurrentFigure',fig_profdiff)
+                            
                             nanimagesc(time,z,var_diff')
                             set(gca,'YDir','normal')
                             colormap(coolwarm)
@@ -202,7 +206,8 @@ for iconf = 2%1:length(mconfig_ls)
                             
                         else
                             % plot path difference
-                            fig_pathdiff=figure(4);
+                            set(0,'CurrentFigure',fig_pathdiff)
+                            
                             refline(0,0)
                             plot(time,var_diff,'LineWidth',2,...
                                 'LineStyle',lsty,...
