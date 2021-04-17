@@ -24,8 +24,9 @@ fig_path=figure('visible','off');
 fig_profdiff=figure('visible','off');
 fig_pathdiff=figure('visible','off');
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 1%:length(mconfig_ls)
     mconfig = mconfig_ls{iconf};
+    mconfig = 'adv_coll';
     run case_dep_var.m
     %% read files
 %     close all
