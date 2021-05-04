@@ -18,7 +18,7 @@ w_spd_str = {w_dir(w_dir_flags).name};
 
 
 % output dir for the figures
-plot_dir=['plots/' nikki '/' mconfig '/'];
-if ~exist(['plots/' nikki '/' mconfig '/'],'dir')
-    mkdir(['plots/' nikki '/' mconfig '/'])
+plot_dir=['plots/' nikki '/' mconfig ' '];
+if ~exist(['plots/' nikki '/'],'dir')
+    mkdir(['plots/' nikki '/'])
 end

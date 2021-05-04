@@ -91,7 +91,12 @@ for it_idx = 1:time_length+1
 end
 
 % tic
-v = VideoWriter(['time progress in DSD', massORnd, ' ',...
+
+if ~exist('vids','dir')
+    mkdir('vids')
+end
+
+v = VideoWriter(['vids/time progress in DSD', massORnd, ' ',...
     aero_N_str{ia} ' ' w_spd_str{iw} ' ' case_list_str{ici} ' ' fn,...
     'profile.mp4'],'MPEG-4');
 v.FrameRate=60;

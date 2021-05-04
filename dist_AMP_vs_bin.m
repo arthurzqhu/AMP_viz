@@ -8,15 +8,13 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
 
 
 l_amp=0;
-l_sbm=0;
+l_sbm=1;
 
 case_interest = 2;
 
-ampORbin = {'bin'};
-bintype = {'tau'};
 
-nikki='2021-04-15';
-mconfig='adv_only';
+nikki='2021-04-28';
+mconfig='m0.003n100.e6_c1c0s0a1';
 
 % last four characters of the model output file.
 vnum='0001'; 
@@ -34,12 +32,12 @@ for ia = 1:length(aero_N_str)
 
             if l_amp % load when == 1 or 2
                 [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
-                                loadnc('amp');
+                                loadnc('amp',case_interest);
             end
 
             if l_amp~=1 % load when == 0 or 2
                 [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
-                                loadnc('bin');
+                                loadnc('bin',case_interest);
             end
 
         end
@@ -86,7 +84,7 @@ for ia = 1:length(aero_N_str)
                 total_length=length(time);
                 time_step=5;
 
-                DSDprof_timeprog(600, time_step, DSDprof, z,...
+                DSDprof_timeprog(total_length, time_step, DSDprof, z,...
                     binmean,'Blues','log','mass')
             end
         end
