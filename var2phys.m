@@ -115,6 +115,14 @@ switch var_name
         range = [1e-3 1e3];
         mask = 'self';
         note = 'log';
+    case {'dm_cloud_ce', 'dm_rain_ce', 'dm_cloud_coll', 'dm_rain_coll',...
+            'dm_sed'}
+        physquant = var_raw;
+        bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
+        range = [-bound bound];
+        note = 'lin';
+        mask = 'self';
+        threshold = -998;
 %     case 'cloud_M1_path'
 %         physquant = var_raw;
 %         range = [0 2e-3];
