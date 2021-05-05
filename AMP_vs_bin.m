@@ -19,7 +19,10 @@ mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 set(0, 'DefaultFigurePosition',[1553 458 1028 527])
-%%
+%% 
+% create separate figure widows for profile, path, process rates, and
+% their differences between AMP and BIN
+
 fig_prof=figure('visible','off');
 fig_path=figure('visible','off');
 fig_proc=figure('visible','off');
@@ -55,6 +58,12 @@ for iconf = 1:length(mconfig_ls)
                 for ici = case_interest
                     %%
                     iclr=3; % color idx for proc rate
+                    time = amp_struct(ici).time;
+                    z = amp_struct(ici).z;
+                    % assuming all vertical layers have the same
+                    % thickness
+                    dz = z(2)-z(1); 
+                    
                     for ivar = vars:vare
                         
                         % change linestyle according to cloud/rain
@@ -64,11 +73,7 @@ for iconf = 1:length(mconfig_ls)
                             lsty=':';
                         end
                         
-                        time = amp_struct(ici).time;
-                        z = amp_struct(ici).z;
-                        % assuming all vertical layers have the same
-                        % thickness
-                        dz = z(2)-z(1); 
+                        
                         
                         var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
                         [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
