@@ -3,7 +3,7 @@ clear global
 close all
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ... 
-    bintype aero_N_str w_spd_str l_amp l_sbm fn %#ok<*NUSED>
+    bintype aero_N_str w_spd_str l_amp l_sbm fn cloud_mr_th %#ok<*NUSED>
 
 
 
@@ -13,8 +13,8 @@ l_sbm=1;
 case_interest = 2;
 
 
-nikki='2021-04-28';
-mconfig='m0.003n100.e6_c1c0s0a1';
+nikki='2021-05-04';
+mconfig='noinit';
 
 % last four characters of the model output file.
 vnum='0001'; 
@@ -25,9 +25,9 @@ run global_var.m
 %%
 
 run case_dep_var.m
-for ia = 1:length(aero_N_str)
+for ia = 3%1:length(aero_N_str)
     %% read files    
-    for iw = 1:length(w_spd_str)
+    for iw = length(w_spd_str)
         for ici = case_interest
 
             if l_amp % load when == 1 or 2
@@ -55,6 +55,7 @@ for ia = 1:length(aero_N_str)
                     time = amp_struct(ici).time;
                     z = amp_struct(ici).z;
                     amp_DSDprof = amp_struct(ici).mass_dist_init;
+                    amp_DSDprof(amp_DSDprof<cloud_mr_th(1))=0;
                     DSDprof = amp_DSDprof;
                 end
 
@@ -62,14 +63,15 @@ for ia = 1:length(aero_N_str)
                     time = bin_struct(ici).time;
                     z = bin_struct(ici).z;
                     bin_DSDprof = bin_struct(ici).mass_dist;
+                    bin_DSDprof(2:end,:,:)=bin_DSDprof(1:end-1,:,:);
+                    bin_DSDprof(bin_DSDprof<cloud_mr_th(1))=0;
                     DSDprof = bin_DSDprof;
 
                     if l_sbm
                         DSDprof=DSDprof(:,1:length(binmean),:);
                     end
                 end
-
-                fn = [ampORbin{iab},'-',bintype{its},' ',mconfig,'-',vnum,' '];
+                
 
         %         generate the comparison animation with another figure
         %         if l_amp==2
@@ -81,12 +83,16 @@ for ia = 1:length(aero_N_str)
         %             plot_DSDprof(2,:,:,:) = tmp_mtx(1,:,1:length(binmean),:); % !!!fix this part
         %         end
 
-                total_length=length(time);
-                time_step=5;
+                
 
-                DSDprof_timeprog(total_length, time_step, DSDprof, z,...
-                    binmean,'Blues','log','mass')
             end
+            
+            DSD_rat=amp_DSDprof./bin_DSDprof;
+            fn = [ampORbin{ab_arr},'-',bintype{its},' ',mconfig,'-',vnum,' '];
+            total_length=length(time);
+            time_step=5;
+            DSDprof_timeprog(total_length, time_step, DSD_rat, z,...
+                    binmean,'coolwarm','log','mass')
         end
     end
     
