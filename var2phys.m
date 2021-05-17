@@ -75,14 +75,14 @@ switch var_name
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
         range = [-bound bound];
         note = 'log';
-        mask = 'M3tomass'; % use cloud mass as threshold
+        mask = 'self';
     case 'rain_M1_path'
         physquant = var_raw*pi/6*1000;
         threshold = rwp_th(1);
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
         range = [-bound bound];
         note = 'log';
-        mask = 'M3tomass';
+        mask = 'self';
     case 'Dm'
         physquant = var_raw;
         mask = 'M3tomass';
