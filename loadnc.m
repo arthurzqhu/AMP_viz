@@ -5,19 +5,20 @@ global iw ia its ici nikki mconfig output_dir case_list_str vnum ...
     indvar_ename indvar_ename_set
 
 for ici = case_interest
-    
-    filemeta = dir([output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
-        upper(bintype{its}),'/',aero_N_str{ia},...
-        '/', w_spd_str{iw},'/KiD_m-amp_b-',lower(mp_in),'+',...
-        bintype{its},'_u-Adele_c-0',case_list_str{ici},...
-        '_v-',vnum,'.nc']);
-    filename = [filemeta.folder, '/', filemeta.name];
-    fileinfo = ncinfo(filename);
+  
+  
+   filemeta = dir([output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
+     upper(bintype{its}),'/',aero_N_str{ia},...
+     '/', w_spd_str{iw},'/KiD_m-amp_b-',lower(mp_in),'+',...
+     bintype{its},'_u-Adele_c-0',case_list_str{ici},...
+     '_v-',vnum,'.nc']);
+   filename = [filemeta.folder, '/', filemeta.name];
+   fileinfo = ncinfo(filename);
 
-    for ivar = 1:length(fileinfo.Variables)
-        var_name{ivar,1} = fileinfo.Variables(ivar).Name;
-        stct(ici).(var_name{ivar}) = ncread(filename, var_name{ivar});
-    end
+   for ivar = 1:length(fileinfo.Variables)
+     var_name{ivar,1} = fileinfo.Variables(ivar).Name;
+     stct(ici).(var_name{ivar}) = ncread(filename, var_name{ivar});
+   end
 end
 
 
