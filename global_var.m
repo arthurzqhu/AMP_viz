@@ -33,8 +33,20 @@ if ~exist('nikki')
 end
 
 % load these python colormap
-Blues = getPyPlot_cMap('Blues');
-coolwarm = getPyPlot_cMap('coolwarm');
+Blues = getPyPlot_cMap('Blues',10);
+coolwarm = getPyPlot_cMap('coolwarm',10);
+coolwarm_r = getPyPlot_cMap('coolwarm_r',10);
+BrBG = [84,48,5;
+140,81,10;
+191,129,45;
+223,194,125;
+246,232,195;
+225,225,225;
+199,234,229;
+128,205,193;
+53,151,143;
+1,102,94;
+0,60,48]/255;
 
 % compare these vars
 indvar_name_set = {%'diagM3_cloud','diagM3_rain',...
