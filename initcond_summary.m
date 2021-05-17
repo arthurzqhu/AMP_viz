@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-07';
+nikki='2021-05-14';
 case_interest = 2; % 1:length(case_list_num);
 
 run global_var.m
@@ -21,10 +21,7 @@ mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 set(0, 'DefaultFigurePosition',[1553 458 1028 527])
 
 %%
-coolwarm20 = getPyPlot_cMap('coolwarm_r',20);
-coolwarm10_r = getPyPlot_cMap('coolwarm_r',20);
-coolwarm10 = getPyPlot_cMap('coolwarm',20);
-coolwarm20_div = [coolwarm10_r;coolwarm10];
+
 % fig_prof=figure('visible','off');
 % fig_path=figure('visible','off');
 % fig_proc=figure('visible','off');
@@ -78,7 +75,7 @@ for iconf = 1:length(mconfig_ls)
                   pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ia,iw)=mrsq;
                   pfm(ici).(indvar_name{ivar}).(bintype{its}).mr(ia,iw)=mr;
                   pfm(ici).(indvar_name{ivar}).(bintype{its}).rsq(ia,iw)=rsq;
-                  
+                  pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin(ia,iw)=mean(var_bin_flt);
                   
                end
             end
@@ -89,6 +86,7 @@ end
 
 %% plot
 fldnms=fieldnames(pfm(ici).(indvar_name{ivar}).(bintype{its}));
+fldnms=fldnms(1:end-1);
 
 close all
 for iconf = 1:length(mconfig_ls)
@@ -102,9 +100,8 @@ for iconf = 1:length(mconfig_ls)
             tl=tiledlayout('flow');
             for its = 1:length(bintype)
                nexttile
-               imagesc(pfm(ici).(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))               
+               nanimagesc(pfm(ici).(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                colorbar
-               colormap(coolwarm20)
                title(upper(bintype{its}),'FontWeight','normal')
                xticks(1:length(w_spd_str))
                yticks(1:length(aero_N_str))
@@ -113,17 +110,28 @@ for iconf = 1:length(mconfig_ls)
                set(gca,'FontSize',16)
                
                if strcmp(fldnms{ifn},'mr')
-                  colormap(coolwarm20_div)
+                  colormap(BrBG)
                   set(gca,'ColorScale','log')
                   caxis([1e-1 1e1])
+                  
+                  [XX,YY]=meshgrid(1:length(w_spd_str),1:length(aero_N_str));
+                  mpath_bin_str=sprintfc('%0.2g',...
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin);
+                  for ia = 1:length(aero_N_str)
+                     for iw = 1:length(w_spd_str)
+                        text(iw,ia,mpath_bin_str{ia,iw},'FontSize',16,...
+                           'FontWeight','bold','HorizontalAlignment','center')
+                     end
+                  end
+                  
                elseif strcmp(fldnms{ifn},'rsq')
-                  colormap(coolwarm20)
+                  colormap(coolwarm_r)
                   set(gca,'ColorScale','lin')
                   caxis([0 1])
                elseif strcmp(fldnms{ifn},'mrsq')
-                  colormap(coolwarm20)
+                  colormap(coolwarm_r)
                   set(gca,'ColorScale','lin')
-                  caxis([-1 1])   
+                  caxis([-1 1])
                end
                
             end
