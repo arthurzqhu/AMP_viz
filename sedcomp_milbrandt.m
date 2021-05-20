@@ -42,7 +42,7 @@ for iconf = 1:length(mconfig_ls)
             vars=1;
             vare=length(indvar_name);
             
-            % plot
+            % plot figures
             for ici = case_interest
                %%
                for iab=1:length(ampORbin)
@@ -95,10 +95,71 @@ for iconf = 1:length(mconfig_ls)
                   
                   title(tl,[ampORbin{iab} '-' bintype{its}],...
                      'fontweight','bold','fontsize',16)
-                  saveas(gcf,['plots/sedcomp_milbrandt ' bintype{its} '-' ...
+                  saveas(gcf,[plot_dir, 'sedcomp_milbrandt ' bintype{its} '-' ...
                      ampORbin{iab} '.png'])
                end
             end
+            
+%             % plot animation
+%             for ici = case_interest
+%                %%
+%                for iab=1:length(ampORbin)
+%                   if strcmpi(ampORbin{iab},'amp')
+%                      mphys_struct=amp_struct;
+%                   elseif strcmpi(ampORbin{iab},'bin')
+%                      mphys_struct=bin_struct;
+%                   end
+%                   
+%                   time = mphys_struct(ici).time;
+%                   z = mphys_struct(ici).z;
+%                   % assuming all vertical layers have the same
+%                   % thickness
+%                   dz = z(2)-z(1);
+%                   time_step=1;
+%                   
+%                   N_Tr=mphys_struct(2).diagM0_rain;
+%                   RWC=mphys_struct(2).diagM3_rain*pi/6*1000;
+%                   M6=mphys_struct(2).diagM6_rain;
+%                   Dm=mphys_struct(2).Dm;
+%                   
+%                   time_total=length(time);
+%                   time_length = floor(time_total/time_step);
+%                   figure('Position',[1722 632 859 345])
+%                   
+%                   for it_idx = 1:time_length
+%                      itime=(it_idx-1)*time_step+1;
+%                      if itime>time_total itime=time_total; end
+%                      
+%                      tl=tiledlayout(1,4);
+%                      nexttile
+%                      plot(N_Tr(itime,:),z,'LineWidth',1,'Color','k')
+%                      xlabel('M_0 [kg^{-3}]')
+%                      ylabel('z [m]')
+%                      
+%                      nexttile
+%                      plot(RWC(itime,:),z,'LineWidth',1,'Color','k')
+%                      xlabel('M_3 [kg kg^{-3}]')
+%                      
+%                      nexttile
+%                      plot(M6(itime,:),z,'LineWidth',1,'Color','k')
+%                      xlabel('M_6 [m^6 kg^{-3}]')
+%                      
+%                      nexttile
+%                      plot(Dm(itime,:),z,'LineWidth',1,'Color','k')
+%                      xlabel('Dm [m]')
+%                      
+%                      title(tl,sprintf('t = %.0f s', itime))
+%                      F(it_idx) = getframe(gcf);
+%                   end
+%                   
+%                   v = VideoWriter(['vids/sedcomp_milbrandt ' bintype{its} '-' ...
+%                      ampORbin{iab} '.png'],'MPEG-4');
+%                   v.FrameRate=24;
+%                   open(v)
+%                   writeVideo(v,F)
+%                   close(v)
+%                end
+%             end
          end
       end
    end
