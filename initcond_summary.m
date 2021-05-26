@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-14';
+nikki='2021-05-25';
 case_interest = 2; % 1:length(case_list_num);
 
 run global_var.m
@@ -47,6 +47,8 @@ for iconf = 1:length(mconfig_ls)
                loadnc('amp',case_interest);
             [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
                loadnc('bin',case_interest);
+            
+%             pause
             
             % indices of vars to compare
             vars=1;
