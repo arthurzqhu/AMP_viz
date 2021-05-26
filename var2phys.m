@@ -15,10 +15,29 @@ function [physquant,note,range] = var2phys(var_raw,ivar,...
 % note: a variable-specific note, such as being plotted in 'log' or 'lin'.
 
 global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
-   cwp_th rwp_th
+   cwp_th rwp_th ispath isprof isproc israin iscloud
 
 threshold = -inf;
 var_name=indvar_name{ivar};
+ispath=0;
+isprof=0; 
+isproc=0;
+israin=0;
+iscloud=0;
+
+if contains(var_name,{'diag'})
+   isprof=1;
+elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
+   ispath=1;
+elseif contains(var_name,{'_ce','adv','coll','sed','mphys'})
+   isproc=1;
+end
+
+if contains(var_name,'rain')
+   israin=1;
+elseif contains(var_name,'cloud')
+   iscloud=1;
+end
 
 switch var_name
     case {'diagM0_cloud'}

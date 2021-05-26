@@ -4,10 +4,11 @@ close all
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    bintype aero_N_str w_spd_str indvar_name indvar_name_set ...
-   indvar_ename indvar_ename_set %#ok<*NUSED>
+   indvar_ename indvar_ename_set ispath isproc isprof iscloud ...
+   israin %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-07';
+nikki='2021-05-25';
 case_interest = [2]; % 1:length(case_list_num);
 
 run global_var.m
@@ -49,15 +50,11 @@ for iconf = 1:length(mconfig_ls)
    %     mconfig = 'adv_coll';
    run case_dep_var.m
    %% read files
-   %     close all
-   
-   
    
    for its = 1:length(bintype)
       for ia = 1:length(aero_N_str)
          %             close all
          for iw = 1:length(w_spd_str)
-            %                 close all
             
             [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
                loadnc('amp',case_interest);
@@ -79,24 +76,20 @@ for iconf = 1:length(mconfig_ls)
                
                for ivar = vars:vare
                   
-                  % change linestyle according to cloud/rain
-                  if contains(indvar_ename{ivar},'cloud')
-                     lsty='-';
-                  elseif contains(indvar_ename{ivar},'rain')
-                     lsty=':';
-                  end
-                  
-                  
-                  
                   var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
                   [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
                   
                   var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
                   [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
                   
+                  % change linestyle according to cloud/rain
+                  if israin
+                     lsty=':';
+                  else
+                     lsty='-';
+                  end
                   
-                  
-                  if contains(indvar_name{ivar},'path')
+                  if ispath
                      % plot cloud/rain water path comparison
                      set(0,'CurrentFigure',fig_path)
                      
@@ -112,35 +105,55 @@ for iconf = 1:length(mconfig_ls)
                      
                      xlim([min(time) max(time)])
                      xlabel('Time [s]')
-                     ylabel('liquid water path')
                      
-                     if contains(indvar_name{ivar},'rain')
+                     if israin
                         % only do these when both cloud and rain are plotted
-                        
-                        set(gca,'fontsize',16)
-                        
+                        ylabel('liquid water path')
                         legend(['amp-' bintype{its}, ' cloud'],...
                            ['bin-' bintype{its},' cloud'],...
                            ['amp-' bintype{its}, ' rain'],...
                            ['bin-' bintype{its},' rain'],...
                            'Location','southwest')
+                     else
+                        ylabel(indvar_ename{ivar})
+                        legend(['amp-' bintype{its}],...
+                           ['bin-' bintype{its}],...
+                           'Location','southwest')
+                        if contains(indvar_name{ivar},'albedo')
+                           ylim([0 1])
+                        end
+                     end
+                     
+                     if israin || (~israin && ~iscloud)
+                        % save fig when both cloud and rain are plotted or
+                        % neither is being plotted
+                        set(gca,'fontsize',16)
                         
-                        title([bintype{its}, ...
-                           ' cloud/rain water path ', ...
+                        title([bintype{its},' ', ...
                            aero_N_str{ia},' ' ...
                            w_spd_str{iw}],...
                            'fontsize',20,...
                            'FontWeight','bold')
                         
+                        if israin
+                           % variable name in file name
+                           vnifn='liquid water path'; 
+                        else
+                           vnifn=indvar_ename{ivar};
+                        end
+                        
                         hold off
-                        saveas(fig_path,[plot_dir,...
-                           'liquid water path ',...
-                           'amp vs bin-',bintype{its},' ',...
-                           case_list_str{ici},'-',vnum,' ',...
-                           aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                        
+                        if l_save
+                           saveas(fig_path,[plot_dir,...
+                              vnifn, ' ',...
+                              'amp vs bin-',bintype{its},' ',...
+                              case_list_str{ici},'-',vnum,' ',...
+                              aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                        end
                      end
                      
-                  elseif contains(indvar_name{ivar},'dm')
+                  elseif isproc
                      % plot cloud/rain individual process
                      set(0,'CurrentFigure',fig_proc)
                      
@@ -175,19 +188,22 @@ for iconf = 1:length(mconfig_ls)
                         legend('show','Location','southwest')
                         hold off
                         
-                        saveas(fig_proc,[plot_dir,...
-                           'procrate ',...
-                           'amp vs bin-',bintype{its},' ',...
-                           case_list_str{ici},'-',vnum,' ',...
-                           aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                        if l_save
+                           saveas(fig_proc,[plot_dir,...
+                              'procrate ',...
+                              'amp vs bin-',bintype{its},' ',...
+                              case_list_str{ici},'-',vnum,' ',...
+                              aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                        end
                      end
-                     if contains(indvar_name{ivar},'rain')
+                     
+                     if israin
                         % only change color if after there's a rain
                         % variable
                         iclr=iclr+1;
                      end
                      
-                  else
+                  elseif isprof
                      set(0,'CurrentFigure',fig_prof)
                      for iab = 1:length(ampORbin)
                         % plot cloud/rain water profile
@@ -220,12 +236,15 @@ for iconf = 1:length(mconfig_ls)
                            w_spd_str{iw}],...
                            'fontsize',20,...
                            'FontWeight','bold')
-                        saveas(fig_prof,[plot_dir,...
-                           indvar_ename{ivar},' ', ...
-                           ampORbin{iab},'-',bintype{its},' ',...
-                           case_list_str{ici},'-',...
-                           vnum,' ',...
-                           aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                        
+                        if l_save
+                           saveas(fig_prof,[plot_dir,...
+                              indvar_ename{ivar},' ', ...
+                              ampORbin{iab},'-',bintype{its},' ',...
+                              case_list_str{ici},'-',...
+                              vnum,' ',...
+                              aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                        end
                      end
                   end
                   pause(.5) % (optional) to prevent matlab from halting
@@ -233,21 +252,14 @@ for iconf = 1:length(mconfig_ls)
                
             end
             
-            %% plot difference
+            % plot difference
             for ici = case_interest
                %%
                iclr=3; % color idx for proc rate
                for ivar = vars:vare
                   
-                  
-                  
-                  if contains(indvar_ename{ivar},'cloud')
-                     lsty='-';
-                  elseif contains(indvar_ename{ivar},'rain')
-                     hold on
-                     lsty=':';
-                  end
-                  
+                  time = amp_struct(ici).time;
+                  z = amp_struct(ici).z;
                   var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
                   [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
                      ivar,1);
@@ -256,12 +268,18 @@ for iconf = 1:length(mconfig_ls)
                   [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,...
                      ivar,1);
                   
+                  if israin
+                     lsty=':';
+                  else
+                     lsty='-';
+                  end
+                  
                   var_comp_amp(isnan(var_comp_amp))=0;
                   var_comp_bin(isnan(var_comp_bin))=0;
                   
                   var_diff = var_comp_bin-var_comp_amp;
                   
-                  if contains(indvar_name{ivar},'dm')
+                  if isproc
                      amp_proc_path=col_intg(var_comp_amp,dz,...
                         amp_struct(ici).pressure*100,...
                         amp_struct(ici).temperature);
@@ -277,7 +295,7 @@ for iconf = 1:length(mconfig_ls)
                      bound=10^(ceil(log10(max(abs(var_diff(:))))*2)/2);
                   end
                   
-                  if contains(indvar_name{ivar},'path')
+                  if ispath
                      % plot path difference
                      set(0,'CurrentFigure',fig_pathdiff)
                      
@@ -288,10 +306,8 @@ for iconf = 1:length(mconfig_ls)
                      hold on
                      xlim([min(time) max(time)])
                      xlabel('Time [s]')
-                     ylabel('liquid water path')
                      
-                  elseif contains(indvar_name{ivar},'dm')
-                     
+                  elseif isproc
                      set(0,'CurrentFigure',fig_procdiff)
                      
                      rl=refline(0,0);
@@ -303,12 +319,12 @@ for iconf = 1:length(mconfig_ls)
                      hold on
                      xlim([min(time) max(time)])
                      xlabel('Time [s]')
-                     ylabel('ind proc rate')
+                     ylabel('\Deltaind proc rate')
                      
                      if contains(indvar_name{ivar},'rain')
                         iclr=iclr+1;
                      end
-                  else
+                  elseif isprof
                      % plot profile difference
                      set(0,'CurrentFigure',fig_profdiff)
                      
@@ -330,20 +346,28 @@ for iconf = 1:length(mconfig_ls)
                   end
                   
                   set(gca,'fontsize',16)
-                  if contains(indvar_name{ivar},'path')
-                     if contains(indvar_name{ivar},'rain')
-                        title([bintype{its}, ...
-                           ' cloud/rain water path diff ', ...
+                  if ispath
+                     if israin || (~israin && ~iscloud)
+                        title([bintype{its}, ' ', ...
                            aero_N_str{ia},' ' ...
                            w_spd_str{iw}],...
                            'fontsize',20,...
                            'FontWeight','bold')
-                        legend('bin-amp cloud','','bin-amp rain',...
-                           'Location','southwest')
+                        
+                        if israin
+                           ylabel('\Deltaliquid water path')
+                           legend('bin-amp cloud','','bin-amp rain',...
+                              'Location','southwest')
+                           vnifn='liquid water path';
+                        else
+                           ylabel(['\Delta',indvar_ename{ivar}])
+                           vnifn=indvar_name{ivar};
+                        end
+                        
                         hold off
                         if l_save
                            saveas(fig_pathdiff,[plot_dir,...
-                              'liquid water path ',...
+                              vnifn, ' ',...
                               bintype{its},'-amp diff', ...
                               ' ',case_list_str{ici},'-',vnum,' ',...
                               aero_N_str{ia},' ',...
@@ -351,7 +375,7 @@ for iconf = 1:length(mconfig_ls)
                         end
                      end
                      
-                  elseif contains(indvar_name{ivar},'dm')
+                  elseif isproc
                      if ivar==vare
                         title('column integrated process rate')
                         legend('show','Location','southwest')
@@ -365,8 +389,9 @@ for iconf = 1:length(mconfig_ls)
                               w_spd_str{iw},'.png'])
                         end
                      end
-                  else
+                  elseif isprof
                      %only save the comparison when both are plotted
+                     hold off
                      if l_save
                         saveas(fig_profdiff,[plot_dir,...
                            indvar_ename{ivar},' ',...
