@@ -114,7 +114,7 @@ for iconf = 1:length(mconfig_ls)
                if strcmp(fldnms{ifn},'mr')
                   colormap(BrBG)
                   set(gca,'ColorScale','log')
-                  caxis([1e-1 1e1])
+                  caxis([.5 2])
                   
                   [XX,YY]=meshgrid(1:length(w_spd_str),1:length(aero_N_str));
                   mpath_bin_str=sprintfc('%0.2g',...
