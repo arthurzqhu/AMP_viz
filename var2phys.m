@@ -15,7 +15,7 @@ function [physquant,note,range] = var2phys(var_raw,ivar,...
 % note: a variable-specific note, such as being plotted in 'log' or 'lin'.
 
 global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
-   cwp_th rwp_th ispath isprof isproc israin iscloud
+   cwp_th rwp_th ispath isprof isproc israin iscloud sppt_th
 
 threshold = -inf;
 var_name=indvar_name{ivar};
@@ -98,6 +98,13 @@ switch var_name
     case 'rain_M1_path'
         physquant = var_raw*pi/6*1000;
         threshold = rwp_th(1);
+        bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
+        range = [-bound bound];
+        note = 'log';
+        mask = 'self';
+     case 'mean_surface_ppt'
+        physquant = var_raw*3600;
+        threshold = sppt_th(1);
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
         range = [-bound bound];
         note = 'log';
