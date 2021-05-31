@@ -4,7 +4,7 @@ close all
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    bintype aero_N_str w_spd_str indvar_name indvar_name_set ...
-   indvar_ename indvar_ename_set %#ok<*NUSED>
+   indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
 nikki='2021-05-25';
@@ -140,8 +140,8 @@ for iconf = 1:length(mconfig_ls)
             xlabel(tl,'max vertical velocity [m/s]','fontsize',16)
             ylabel(tl,'aerosol concetration [1/cc]','fontsize',16)
             
-            title(tl,[indvar_ename{ivar} ' - ' (fldnms{ifn})],...
-               'fontsize',20,'fontweight','bold')
+            title(tl,[indvar_ename{ivar} indvar_units{ivar} ' - ' ...
+               (fldnms{ifn})],'fontsize',20,'fontweight','bold')
             saveas(figure(ivar),['plots/summ ' mconfig_ls{iconf} ' ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
                ' ' case_list_str{ici} '.png'])

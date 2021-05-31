@@ -1,5 +1,6 @@
 global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
-    l_amp l_sbm indvar_name_set indvar_ename_set cwp_th rwp_th
+    l_amp l_sbm indvar_name_set indvar_ename_set cwp_th rwp_th sppt_th ...
+    indvar_units_set
 
 
 % model configs
@@ -25,6 +26,7 @@ rain_n_th = [1e-4 inf];
 cwp_th = [1e-3 inf]; % kg/m2 cloud water path threshold
 rwp_th = [1e-3 inf]; % kg/m2 rain water path threshold
 meanD_th = [0 inf];
+sppt_th = [.1 inf]; % mm/hr surface precipitation
 
 
 % set the current date as nikki if unset
@@ -36,17 +38,9 @@ end
 Blues = getPyPlot_cMap('Blues',10);
 coolwarm = getPyPlot_cMap('coolwarm',10);
 coolwarm_r = getPyPlot_cMap('coolwarm_r',10);
-BrBG = [84,48,5;
-140,81,10;
-191,129,45;
-223,194,125;
-246,232,195;
-225,225,225;
-199,234,229;
-128,205,193;
-53,151,143;
-1,102,94;
-0,60,48]/255;
+ngrad=21;
+BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
+BrBG = repelem(BrBG,floor(256/ngrad),1); 
 
 % compare these vars
 indvar_name_set = {%'diagM3_cloud','diagM3_rain',...
@@ -67,6 +61,10 @@ indvar_ename_set = {%'cloud mass','rain mass',...
     %'dtheta mphys','dqv mphys','cloud mass mphys','rain mass mphys',...
 %     'cloud M1 mphys','rain M1 mphys',...
 };
+indvar_units_set = {...
+   ' [kg/m^2]',' [kg/m^2]',...
+   '','',' [mm/hr]',...
+   };
 
 
 % additional variables generating animation in AMP_vs_bin_dist
