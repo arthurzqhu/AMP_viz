@@ -18,7 +18,7 @@ mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
 mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
-set(0, 'DefaultFigurePosition',[1553 458 1028 527])
+set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 
 %%
 
@@ -95,13 +95,13 @@ for iconf = 1:length(mconfig_ls)
    vars=1;
    vare=length(indvar_name);
    for ici = case_interest
-      for ifn = 1:length(fldnms)
+      for ifn = 2%1:length(fldnms)
          for ivar = vars:vare
             %%
-            figure(ivar)
-            tl=tiledlayout('flow');
+            figure(ifn)
+            tl=tiledlayout(4,4);
             for its = 1:length(bintype)
-               nexttile
+               nexttile(its*2+3,[3 2])
                nanimagesc(pfm(ici).(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                colorbar
                title(upper(bintype{its}),'FontWeight','normal')
@@ -117,34 +117,61 @@ for iconf = 1:length(mconfig_ls)
                   caxis([.5 2])
                   
                   [XX,YY]=meshgrid(1:length(w_spd_str),1:length(aero_N_str));
-                  mpath_bin_str=sprintfc('%0.2g',...
+                  mpath_bin_str=sprintfc('%0.3g',...
                      pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin);
                   for ia = 1:length(aero_N_str)
                      for iw = 1:length(w_spd_str)
-                        text(iw,ia,mpath_bin_str{ia,iw},'FontSize',16,...
-                           'FontWeight','bold','HorizontalAlignment','center')
+                        
+                        % ----- get text color -----
+                        ngrads=size(coolwarm_r,1);
+                        clr_idx=roundfrac(pfm(ici).(indvar_name{ivar}).(bintype{its}).rsq(ia,iw),1/ngrads)*ngrads;
+                        clr_idx=round(clr_idx); % in case prev line outputs double
+                        % ----- got text color -----
+                        
+                        if isnan(clr_idx) continue, end
+                        if clr_idx==0 clr_idx=1; end
+                        
+                        text(iw,ia,mpath_bin_str{ia,iw},'FontSize',15,...
+                           'FontWeight','bold',...
+                           'HorizontalAlignment','center',...
+                           'Color',coolwarm_r(clr_idx,:),...
+                           'BackgroundColor',[clr_idx/ngrads clr_idx/ngrads clr_idx/ngrads .7])
                      end
                   end
-                  
-               elseif strcmp(fldnms{ifn},'rsq')
-                  colormap(coolwarm_r)
-                  set(gca,'ColorScale','lin')
-                  caxis([0 1])
-               elseif strcmp(fldnms{ifn},'mrsq')
-                  colormap(coolwarm_r)
-                  set(gca,'ColorScale','lin')
-                  caxis([-1 1])
+%                elseif strcmp(fldnms{ifn},'rsq')
+%                   colormap(coolwarm_r)
+%                   set(gca,'ColorScale','lin')
+%                   caxis([0 1])
+%                elseif strcmp(fldnms{ifn},'mrsq')
+%                   colormap(coolwarm_r)
+%                   set(gca,'ColorScale','lin')
+%                   caxis([-1 1])
                end
                
             end
-            xlabel(tl,'max vertical velocity [m/s]','fontsize',16)
-            ylabel(tl,'aerosol concetration [1/cc]','fontsize',16)
             
-            title(tl,[indvar_ename{ivar} indvar_units{ivar} ' - ' ...
-               (fldnms{ifn})],'fontsize',20,'fontweight','bold')
-            saveas(figure(ivar),['plots/summ ' mconfig_ls{iconf} ' ' ...
+            nexttile(2,[1,2])
+%             imagesc()
+            set(gca,'Color','none')
+            set(gca,'XColor','none')
+            set(gca,'YColor','none')
+%             ax=gca;
+            colormap(gca,coolwarm_r)
+            cb = colorbar('southoutside');
+            cb.Label.String = 'R^2';
+            cb.Label.Position = [0.5000 3.3 0];
+            set(gca,'FontSize',16)
+
+            xlabel(tl,'max vertical velocity [m/s]','fontsize',16)
+            ylabel(tl,['aerosol concetration [1/cc]' repelem(' ',23)],'fontsize',16)
+            
+            title(tl,[indvar_ename{ivar} indvar_units{ivar} ...
+%                ' - ' (fldnms{ifn})...
+               ],'fontsize',20,'fontweight','bold')
+            saveas(figure(ifn),['plots/summ ' mconfig_ls{iconf} ' ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
                ' ' case_list_str{ici} '.png'])
+            pause(.5)
          end
       end
       
