@@ -8,7 +8,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    israin %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-25';
+nikki='2021-05-28';
 case_interest = [2]; % 1:length(case_list_num);
 
 run global_var.m
