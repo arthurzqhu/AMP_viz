@@ -7,8 +7,8 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-31';
-case_interest = [2]; % 1:length(case_list_num);
+nikki='2021-06-07';
+case_interest = [1]; % 1:length(case_list_num);
 
 run global_var.m
 
@@ -18,10 +18,14 @@ mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
 mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
+t1=1;
+t2=300;
+t3=600;
+t4=900;
 %%
 for iconf = 1:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
-   %     mconfig = 'adv_coll';
+   %    mconfig = 'sedonly_c_cr';
    run case_dep_var.m
    %% read files
    %     close all
@@ -32,7 +36,7 @@ for iconf = 1:length(mconfig_ls)
       for ia = 1:length(aero_N_str)
          %             close all
          for iw = 1:length(w_spd_str)
-            %                 close all
+            close all
             
             [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
                loadnc('amp',case_interest);
@@ -42,124 +46,141 @@ for iconf = 1:length(mconfig_ls)
             vars=1;
             vare=length(indvar_name);
             
-            % plot figures
+            %             % plot figures
+            %             for ici = case_interest
+            %                %%
+            %                for iab=1:length(ampORbin)
+            %                   if strcmpi(ampORbin{iab},'amp')
+            %                      mphys_struct=amp_struct;
+            %                   elseif strcmpi(ampORbin{iab},'bin')
+            %                      mphys_struct=bin_struct;
+            %                   end
+            %                   time = mphys_struct(ici).time;
+            %                   z = mphys_struct(ici).z;
+            %                   % assuming all vertical layers have the same
+            %                   % thickness
+            %                   dz = z(2)-z(1);
+            %
+            %                   N_Tr=mphys_struct(ici).diagM0_rain;
+            %                   RWC=(mphys_struct(ici).diagM3_rain)*pi/6*1000;
+            %                   M6=(mphys_struct(ici).diagM6_rain);
+            %                   Dm=mphys_struct(ici).Dm;
+            %
+            %                   figure('Position',[1722 632 859 345])
+            %                   tl=tiledlayout(1,4);
+            %                   nexttile
+            %                   plot(N_Tr(t1,:),z,':','LineWidth',2,'Color','k'); hold on
+            %                   plot(N_Tr(t2,:),z,'--','LineWidth',1,'Color','k')
+            %                   plot(N_Tr(t3,:),z,'LineWidth',1,'Color','k')
+            %                   plot(N_Tr(t4,:),z,'LineWidth',2,'Color','k'); hold off
+            %                   xlabel('rain M_0 [kg^{-3}]')
+            %                   ylabel('z [m]')
+            %
+            %                   nexttile
+            %                   plot(RWC(t1,:),z,':','LineWidth',2,'Color','k'); hold on
+            %                   plot(RWC(t2,:),z,'--','LineWidth',1,'Color','k')
+            %                   plot(RWC(t3,:),z,'LineWidth',1,'Color','k')
+            %                   plot(RWC(t4,:),z,'LineWidth',2,'Color','k'); hold off
+            %                   xlabel('M_3 [kg kg^{-3}]')
+            %
+            %                   nexttile
+            %                   plot(M6(t1,:),z,':','LineWidth',2,'Color','k'); hold on
+            %                   plot(M6(t2,:),z,'--','LineWidth',1,'Color','k')
+            %                   plot(M6(t3,:),z,'LineWidth',1,'Color','k')
+            %                   plot(M6(t4,:),z,'LineWidth',2,'Color','k'); hold off
+            %                   xlabel('M_6 [m^6 kg^{-3}]')
+            %
+            %                   nexttile
+            %                   plot(Dm(t1,:),z,':','LineWidth',2,'Color','k'); hold on
+            %                   plot(Dm(t2,:),z,'--','LineWidth',1,'Color','k')
+            %                   plot(Dm(t3,:),z,'LineWidth',1,'Color','k')
+            %                   plot(Dm(t4,:),z,'LineWidth',2,'Color','k'); hold off
+            %                   xlabel('Dm [m]')
+            %
+            %                   title(tl,[ampORbin{iab} '-' bintype{its}],...
+            %                      'fontweight','bold','fontsize',16)
+            %                   saveas(gcf,[plot_dir, 'sedcomp_milbrandt ' bintype{its} '-' ...
+            %                      ampORbin{iab} '.png'])
+            %                   pause(0.5)
+            %                end
+            %             end
+            
+            % plot animation
             for ici = case_interest
                %%
-               for iab=1:length(ampORbin)
-                  if strcmpi(ampORbin{iab},'amp')
-                     mphys_struct=amp_struct;
-                  elseif strcmpi(ampORbin{iab},'bin')
-                     mphys_struct=bin_struct;
-                  end
-                  time = mphys_struct(ici).time;
-                  z = mphys_struct(ici).z;
-                  % assuming all vertical layers have the same
-                  % thickness
-                  dz = z(2)-z(1);
+               
+               time = amp_struct(ici).time;
+               z = amp_struct(ici).z;
+               % assuming all vertical layers have the same
+               % thickness
+               dz = z(2)-z(1);
+               time_step=5;
+               
+               N_Tr_a=amp_struct(ici).diagM0_rain;
+               RWC_a=amp_struct(ici).diagM3_rain*pi/6*1000;
+               M6_a=amp_struct(ici).diagM6_rain;
+               Dm_a=amp_struct(ici).Dm;
+               
+               N_Tr_b=bin_struct(ici).diagM0_rain;
+               RWC_b=bin_struct(ici).diagM3_rain*pi/6*1000;
+               M6_b=bin_struct(ici).diagM6_rain;
+               Dm_b=bin_struct(ici).Dm;
+               
+               time_total=length(time);
+               time_length = floor(time_total/time_step);
+               figure('Position',[1722 632 859 345])
+               
+               for it_idx = 1:time_length+1
+                  itime=(it_idx-1)*time_step;
+                  if itime>time_total itime=time_total; end
+                  if itime<1 itime=1; end
                   
-                  N_Tr=mphys_struct(2).diagM0_rain;
-                  RWC=mphys_struct(2).diagM3_rain*pi/6*1000;
-                  M6=mphys_struct(2).diagM6_rain;
-                  Dm=mphys_struct(2).Dm;
-                  
-                  figure('Position',[1722 632 859 345])
                   tl=tiledlayout(1,4);
                   nexttile
-                  plot(N_Tr(1,:),z,':','LineWidth',2,'Color','k'); hold on
-                  plot(N_Tr(300,:),z,'--','LineWidth',1,'Color','k')
-                  plot(N_Tr(600,:),z,'LineWidth',1,'Color','k')
-                  plot(N_Tr(900,:),z,'LineWidth',2,'Color','k'); hold off
+                  hold on
+                  plot(N_Tr_a(itime,:),z,'LineWidth',1,'Color',color_order{1})
+                  plot(N_Tr_b(itime,:),z,'LineWidth',1,'Color',color_order{2})
+                  hold off
                   xlabel('M_0 [kg^{-3}]')
                   ylabel('z [m]')
+                  xlim([0 max([N_Tr_a(:);N_Tr_b(:)])])
                   
                   nexttile
-                  plot(RWC(1,:),z,':','LineWidth',2,'Color','k'); hold on
-                  plot(RWC(300,:),z,'--','LineWidth',1,'Color','k')
-                  plot(RWC(600,:),z,'LineWidth',1,'Color','k')
-                  plot(RWC(900,:),z,'LineWidth',2,'Color','k'); hold off
+                  hold on
+                  plot(RWC_a(itime,:),z,'LineWidth',1,'Color',color_order{1})
+                  plot(RWC_b(itime,:),z,'LineWidth',1,'Color',color_order{2})
+                  hold off
                   xlabel('M_3 [kg kg^{-3}]')
+                  xlim([0 max([RWC_a(:);RWC_b(:)])])
                   
                   nexttile
-                  plot(M6(1,:),z,':','LineWidth',2,'Color','k'); hold on
-                  plot(M6(300,:),z,'--','LineWidth',1,'Color','k')
-                  plot(M6(600,:),z,'LineWidth',1,'Color','k')
-                  plot(M6(900,:),z,'LineWidth',2,'Color','k'); hold off
+                  hold on
+                  plot(M6_a(itime,:),z,'LineWidth',1,'Color',color_order{1})
+                  plot(M6_b(itime,:),z,'LineWidth',1,'Color',color_order{2})
+                  hold off
                   xlabel('M_6 [m^6 kg^{-3}]')
+                  xlim([0 max([M6_a(:);M6_b(:)])])
                   
                   nexttile
-                  plot(Dm(1,:),z,':','LineWidth',2,'Color','k'); hold on
-                  plot(Dm(300,:),z,'--','LineWidth',1,'Color','k')
-                  plot(Dm(600,:),z,'LineWidth',1,'Color','k')
-                  plot(Dm(900,:),z,'LineWidth',2,'Color','k'); hold off
+                  hold on
+                  plot(Dm_a(itime,:),z,'LineWidth',1,'Color',color_order{1})
+                  plot(Dm_b(itime,:),z,'LineWidth',1,'Color',color_order{2})
+                  legend('amp','bin')
+                  hold off
                   xlabel('Dm [m]')
+                  xlim([0 max([Dm_a(:);Dm_b(:)])])
                   
-                  title(tl,[ampORbin{iab} '-' bintype{its}],...
-                     'fontweight','bold','fontsize',16)
-                  saveas(gcf,[plot_dir, 'sedcomp_milbrandt ' bintype{its} '-' ...
-                     ampORbin{iab} '.png'])
+                  title(tl,[bintype{its} ', ' sprintf('t = %.0f s', itime)])
+                  F(it_idx) = getframe(gcf);
                end
+               
+               v = VideoWriter(['vids/' mconfig ' sedcomp_milbrandt ' ...
+                  bintype{its}],'MPEG-4');
+               v.FrameRate=24;
+               open(v)
+               writeVideo(v,F)
+               close(v)
             end
-            
-%             % plot animation
-%             for ici = case_interest
-%                %%
-%                for iab=1:length(ampORbin)
-%                   if strcmpi(ampORbin{iab},'amp')
-%                      mphys_struct=amp_struct;
-%                   elseif strcmpi(ampORbin{iab},'bin')
-%                      mphys_struct=bin_struct;
-%                   end
-%                   
-%                   time = mphys_struct(ici).time;
-%                   z = mphys_struct(ici).z;
-%                   % assuming all vertical layers have the same
-%                   % thickness
-%                   dz = z(2)-z(1);
-%                   time_step=1;
-%                   
-%                   N_Tr=mphys_struct(2).diagM0_rain;
-%                   RWC=mphys_struct(2).diagM3_rain*pi/6*1000;
-%                   M6=mphys_struct(2).diagM6_rain;
-%                   Dm=mphys_struct(2).Dm;
-%                   
-%                   time_total=length(time);
-%                   time_length = floor(time_total/time_step);
-%                   figure('Position',[1722 632 859 345])
-%                   
-%                   for it_idx = 1:time_length
-%                      itime=(it_idx-1)*time_step+1;
-%                      if itime>time_total itime=time_total; end
-%                      
-%                      tl=tiledlayout(1,4);
-%                      nexttile
-%                      plot(N_Tr(itime,:),z,'LineWidth',1,'Color','k')
-%                      xlabel('M_0 [kg^{-3}]')
-%                      ylabel('z [m]')
-%                      
-%                      nexttile
-%                      plot(RWC(itime,:),z,'LineWidth',1,'Color','k')
-%                      xlabel('M_3 [kg kg^{-3}]')
-%                      
-%                      nexttile
-%                      plot(M6(itime,:),z,'LineWidth',1,'Color','k')
-%                      xlabel('M_6 [m^6 kg^{-3}]')
-%                      
-%                      nexttile
-%                      plot(Dm(itime,:),z,'LineWidth',1,'Color','k')
-%                      xlabel('Dm [m]')
-%                      
-%                      title(tl,sprintf('t = %.0f s', itime))
-%                      F(it_idx) = getframe(gcf);
-%                   end
-%                   
-%                   v = VideoWriter(['vids/sedcomp_milbrandt ' bintype{its} '-' ...
-%                      ampORbin{iab} '.png'],'MPEG-4');
-%                   v.FrameRate=24;
-%                   open(v)
-%                   writeVideo(v,F)
-%                   close(v)
-%                end
-%             end
          end
       end
    end
