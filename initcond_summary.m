@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-25';
+nikki='2021-06-01';
 case_interest = 2; % 1:length(case_list_num);
 
 run global_var.m
@@ -32,7 +32,7 @@ set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 % creating structures for performance analysis based on Rsq and ratio
 pfm=struct;
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 2%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %     mconfig = 'adv_coll';
    run case_dep_var.m
@@ -91,7 +91,7 @@ fldnms=fieldnames(pfm(ici).(indvar_name{ivar}).(bintype{its}));
 fldnms=fldnms(1:end-1);
 
 close all
-for iconf = 1:length(mconfig_ls)
+for iconf = 1%:length(mconfig_ls)
    vars=1;
    vare=length(indvar_name);
    for ici = case_interest
@@ -168,7 +168,7 @@ for iconf = 1:length(mconfig_ls)
             title(tl,[indvar_ename{ivar} indvar_units{ivar} ...
 %                ' - ' (fldnms{ifn})...
                ],'fontsize',20,'fontweight','bold')
-            saveas(figure(ifn),['plots/summ ' mconfig_ls{iconf} ' ' ...
+            saveas(figure(ifn),[plot_dir 'summ ' mconfig_ls{iconf} ' ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
                ' ' case_list_str{ici} '.png'])
             pause(.5)
