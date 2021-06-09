@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-06-07';
+nikki='2021-06-08';
 case_interest = [1]; % 1:length(case_list_num);
 
 run global_var.m
@@ -119,12 +119,14 @@ for iconf = 1:length(mconfig_ls)
                N_Tr_a=amp_struct(ici).diagM0_rain;
                RWC_a=amp_struct(ici).diagM3_rain*pi/6*1000;
                M6_a=amp_struct(ici).diagM6_rain;
-               Dm_a=amp_struct(ici).Dm;
+%                Dm_a=amp_struct(ici).Dm;
+               Dmr_a=(amp_struct(ici).diagM3_rain./amp_struct(ici).diagM0_rain).^(1/3);
                
                N_Tr_b=bin_struct(ici).diagM0_rain;
                RWC_b=bin_struct(ici).diagM3_rain*pi/6*1000;
                M6_b=bin_struct(ici).diagM6_rain;
-               Dm_b=bin_struct(ici).Dm;
+%                Dm_b=bin_struct(ici).Dm;
+               Dmr_b=(bin_struct(ici).diagM3_rain./bin_struct(ici).diagM0_rain).^(1/3);
                
                time_total=length(time);
                time_length = floor(time_total/time_step);
@@ -163,12 +165,13 @@ for iconf = 1:length(mconfig_ls)
                   
                   nexttile
                   hold on
-                  plot(Dm_a(itime,:),z,'LineWidth',1,'Color',color_order{1})
-                  plot(Dm_b(itime,:),z,'LineWidth',1,'Color',color_order{2})
+                  plot(Dmr_a(itime,:),z,'LineWidth',1,'Color',color_order{1})
+                  plot(Dmr_b(itime,:),z,'LineWidth',1,'Color',color_order{2})
                   legend('amp','bin')
                   hold off
-                  xlabel('Dm [m]')
-                  xlim([0 max([Dm_a(:);Dm_b(:)])])
+                  xlabel('Rain Dm [m]')
+                  ylim([0 max(z)])
+                  xlim([0 max([Dmr_a(:);Dmr_b(:)])])
                   
                   title(tl,[bintype{its} ', ' sprintf('t = %.0f s', itime)])
                   F(it_idx) = getframe(gcf);
