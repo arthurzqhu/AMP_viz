@@ -1,5 +1,5 @@
 function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
-   Cmap,clr_linORlog,massORnd,var_overlay)
+   Cmap,clr_linORlog,pltflag,var_overlay)
 
 global fn aero_N_str w_spd_str case_list_str ia iw ici
 
@@ -21,13 +21,11 @@ for it_idx = 1:time_length+1
    if itime>time_total itime=time_total; end
    if itime<1 itime=1; end
    
-   switch massORnd
-      case 'mass'
+   switch pltflag
+      case {'mass','mass_ratio','mass_adv'}
          DSD_prof_is=reshape(DSDprof_mphys(itime,:,:),[],length(z));
       case 'nd'
          DSD_prof_is=mass2conc(reshape(DSDprof_mphys(itime,:,:),[],length(z)),binmean)/1e6;
-      case 'mass_adv'
-         DSD_prof_is=reshape(DSDprof_mphys(itime,:,:),[],length(z));
    end
    %     tic
    
@@ -46,10 +44,9 @@ for it_idx = 1:time_length+1
    %     cbar.Visible = 'off';
    set(gca,'Position',[0.1198 0.1100 0.7141 0.8150])
    grid
-   switch massORnd
+   switch pltflag
       case 'mass'
          cbar.Label.String = 'DSD [kg/kg/ln(r)]';
-         %             caxis([-1e-3 1e-3])
          caxis([1e-8 1e-2])
          %             cbar.Label.String = 'AMP/TAU mass';
          %             caxis([1e-4 1e4])
@@ -59,6 +56,9 @@ for it_idx = 1:time_length+1
       case 'mass_adv'
          cbar.Label.String = 'DSD_adv [kg/kg/ln(r)/s]';
          caxis([-1e-8 1e-8])
+      case 'mass_ratio'
+         cbar.Label.String = 'AMP-BIN mass';
+         caxis([-max(abs(DSDprof_mphys(:))) max(abs(DSDprof_mphys(:)))])
    end
    %     toc
    %     tic
@@ -97,7 +97,7 @@ if ~exist('vids','dir')
    mkdir('vids')
 end
 
-v = VideoWriter(['vids/time progress in DSD', massORnd, ' ',...
+v = VideoWriter(['vids/time progress in DSD', pltflag, ' ',...
    aero_N_str{ia} ' ' w_spd_str{iw} ' ' case_list_str{ici} ' ' fn,...
    'profile.mp4'],'MPEG-4');
 v.FrameRate=60;

@@ -11,24 +11,31 @@ l_amp=2;
 l_sbm=1;
 
 case_interest = 1;
-
-
-nikki='2021-06-07';
+nikki='2021-06-09';
 % mconfig='noinit';
 
 % last four characters of the model output file.
 vnum='0001';
 
-
 run global_var.m
-
+bintype = {'sbm'};
 mconfig_ls_dir = dir([output_dir,nikki,'/']);
 mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
 mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
+pltflag='mass';
+
+if strcmp(pltflag,'mass')
+   cmap='Blues';
+   linorlog='log';
+elseif strcmp(pltflag,'mass_ratio')
+   cmap='coolwarm';
+   linorlog='lin';
+end
+
 %%
-for iconf = 1:length(mconfig_ls)
+for iconf = length(mconfig_ls):-1:1
    mconfig = mconfig_ls{iconf};
    run case_dep_var.m
    for its = 1:length(bintype)
@@ -90,15 +97,27 @@ for iconf = 1:length(mconfig_ls)
                   %             plot_DSDprof(2,:,:,:) = tmp_mtx(1,:,1:length(binmean),:); % !!!fix this part
                   %         end
                   
-%                   DSD_rat=amp_DSDprof./bin_DSDprof;
+                  if strcmp(pltflag,'mass_ratio')
+                     if iab==1 
+                        continue
+                     elseif iab==2
+                        bin_DSDprof(2:end,:,:)=bin_DSDprof(1:end-1,:,:);
+%                         bin_DSDprof(1,:,:)=amp_DSDprof(1,:,:);
+                        DSD2beplt=amp_DSDprof-bin_DSDprof;
+                     end
+                  elseif strcmp(pltflag,'mass')
+                     DSD2beplt=DSDprof;
+                  end
+                  
+                  
                   fn = [ampORbin{iab},'-',bintype{its},' ',...
                      mconfig,'-',vnum,' '];
                   total_length=length(time);
                   time_step=5;
-                  DSDprof_timeprog(total_length, time_step, DSDprof, z,...
-                     binmean,'Blues','log','mass')
-                  
+                  DSDprof_timeprog(total_length, time_step, DSD2beplt, z,...
+                     binmean,cmap,linorlog,pltflag)
                end
+               
                
                
             end
