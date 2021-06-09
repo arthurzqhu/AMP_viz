@@ -1,6 +1,7 @@
 clear
 close all
 
+%%
 binmean_sbm = load('diamg_sbm.txt');
 binmean_tau = load('diamg_tau.txt');
 termvel_sbm=[0.50E-01 0.78E-01 0.12E+00 0.19E+00 0.31E+00 0.49E+00 ...
@@ -28,5 +29,5 @@ for ibin=1:34
    termvel_tau(ibin)=alpha(ibin)*(AMS(ibin)*1000.)^beta(ibin)/1e2;
 end
 
-plot(binmean_sbm,termvel_sbm); hold on
-plot(binmean_tau,termvel_tau)
+semilogx(binmean_sbm,termvel_sbm); hold on
+semilogx(binmean_tau,termvel_tau)
