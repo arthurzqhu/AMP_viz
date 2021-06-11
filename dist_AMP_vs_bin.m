@@ -15,7 +15,7 @@ nikki='2021-06-09';
 % mconfig='noinit';
 
 % last four characters of the model output file.
-vnum='0001';
+vnum='0002';
 
 run global_var.m
 bintype = {'sbm'};

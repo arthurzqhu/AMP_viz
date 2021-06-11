@@ -4,7 +4,7 @@ function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
 global fn aero_N_str w_spd_str case_list_str ia iw ici
 
 close all
-c_map = getPyPlot_cMap(Cmap);
+c_map = getPyPlot_cMap(Cmap,20);
 
 if nargin<10
    var_overlay=nan;

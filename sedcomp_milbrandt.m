@@ -6,12 +6,12 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    bintype aero_N_str w_spd_str indvar_name indvar_name_set ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
-vnum='0001'; % last four characters of the model output file.
-nikki='2021-06-08';
+vnum='0002'; % last four characters of the model output file.
+nikki='2021-06-09';
 case_interest = [1]; % 1:length(case_list_num);
 
 run global_var.m
-
+bintype = {'sbm'};
 % get the list of configs. cant put it into globar_var
 mconfig_ls_dir = dir([output_dir,nikki,'/']);
 mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
