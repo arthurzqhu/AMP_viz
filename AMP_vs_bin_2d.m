@@ -3,13 +3,13 @@ clear global
 close all
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
-   bintype aero_N_str w_spd_str indvar_name indvar_name_set ...
-   indvar_ename indvar_ename_set %#ok<*NUSED>
+   bintype aero_N_str w_spd_str indvar2D_name indvar2D_units indvar2D_ename ...
+   israin iscloud isprof ispath isproc%#ok<*NUSED>
 
-vnum='0001'; % last four characters of the model output file.
-nikki='2021-05-12';
+vnum='0002'; % last four characters of the model output file.
+nikki='2021-06-15';
 case_interest = [7]; % 1:length(case_list_num);
-
+doanimation=1;
 run global_var.m
 
 % get the list of configs. cant put it into globar_var
@@ -34,44 +34,90 @@ for iconf = 1:length(mconfig_ls)
          for iw = 1:length(w_spd_str)
             %                 close all
             
-            [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
-               loadnc('amp',case_interest);
-            [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
-               loadnc('bin',case_interest);
+            %             [~, ~, ~, amp_var_name, amp_struct]=...
+            %                loadnc('amp',case_interest);
+            mp_in='bin';
+            [~, ~, ~, bin_var_name, bin_struct]=loadnc(mp_in,case_interest);
             % indices of vars to compare
             vars=1;
-            vare=length(indvar_name);
+            vare=length(indvar2D_name);
             
             %%
             % plot
             for ici = case_interest
-               time=amp_struct(ici).time;
-               z=amp_struct(ici).z;
-               x=amp_struct(ici).x;
-               cloudm1=bin_struct(ici).cloud_M1;
-               rainm1=bin_struct(ici).rain_M1;
-               cloudm1(cloudm1==-999)=0;
-               rainm1(rainm1==-999)=0;
+               time=bin_struct(ici).time;
+               z=bin_struct(ici).z;
+               x=bin_struct(ici).x;
                
-               tidx=1;
-               for itime = 1:length(time)
-                  % reshaped cloud m1
-                  cm1_rs = reshape(cloudm1(itime,:,:),length(x),[]);
-                  nanimagesc(x,z,cm1_rs)
-                  colormap(Blues)
-                  colorbar
-                  set(gca,'ColorScale','log')
-                  caxis([1e-9 1e-3])
-                  F(tidx)=getframe(gcf);
+               w=bin_struct(ici).w;
+               cloudm1=bin_struct(ici).cloud_M1*pi/6*1000;
+               rainm1=bin_struct(ici).rain_M1*pi/6*1000;
+               
+               indvar2D=w;
+               indvar2D(indvar2D==-999)=nan;
+               
+               for ivar = vars:vare   
+                  var_comp_raw_bin = bin_struct(ici).(indvar2D_name{ivar});
+                  [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
                   
-                  tidx=tidx+1;
+                  % change linestyle according to cloud/rain
+                  if israin
+                     lsty=':';
+                  else
+                     lsty='-';
+                  end
+                  
+                  hold on
+                  plot(time,var_comp_bin,'LineWidth',2,...
+                        'LineStyle',lsty,'color',color_order{2})
+                  xlim([min(time) max(time)])
+                  xlabel('Time [s]')
+                  if israin
+                     ylabel(['LWP' indvar2D_units{ivar}])
+                     set(gca,'fontsize',16)
+                     hold off
+                  end
+                  
                end
-               v = VideoWriter(['vids/2D cloud viz bin_sbm.mp4'],'MPEG-4');
-               v.FrameRate=30;
-               open(v)
-               writeVideo(v,F)
-               close(v)
-            end
+               %%
+               if doanimation
+                  time_step=1;
+                  time_length = floor(length(time)/time_step);
+                  for it_vididx = 1:time_length+1 %#ok<*UNRCH>
+                     % it_vididx = time index in the video
+                     % it_runidx = time index in the run
+                     % itime = physical time passed since the beginning of the run
+
+                     it_runidx = (it_vididx-1)*time_step;
+                     if it_runidx>length(time) it_runidx=length(time); end
+                     if it_runidx<1 it_runidx=1; end
+
+                     itime = time(it_runidx);
+
+                     % reshaped cloud m1
+                     indvar_rs = reshape(indvar2D(it_runidx,:,:),length(x),[])';
+                     nanimagesc(x,z,indvar_rs)
+                     %                   colormap(Blues)
+                     colormap(BrBG20)
+                     colorbar
+                     %                   set(gca,'ColorScale','log')
+                     wbound=max(indvar2D(:));
+                     caxis([-wbound wbound])
+                     %                   caxis([1e-8 1e-2])
+                     title(['t=' num2str(itime) 's'])
+                     F(it_vididx)=getframe(gcf);
+
+                     it_vididx=it_vididx+1;
+
+                  end
+
+                  v = VideoWriter(['vids/2D wind bin_sbm-' vnum],'MPEG-4');
+                  v.FrameRate=10;
+                  open(v)
+                  writeVideo(v,F)
+                  close(v)
+               end % for
+            end % if animation
          end
       end
    end
