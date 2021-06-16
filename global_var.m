@@ -4,12 +4,13 @@ global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
 
 
 % model configs
-ampORbin = {'amp','bin'};
-bintype = {'tau','sbm'};
+ampORbin = {'amp' 'bin'};
+bintype = {'tau' 'sbm'};
 
 
 % dir of the model output
-output_dir='../outputs/';
+output_dir='/Volumes/ESSD/AMP output/';
+% output_dir='../outputs/';
 
 
 % KiD cases

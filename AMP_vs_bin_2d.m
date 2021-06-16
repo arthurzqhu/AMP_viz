@@ -4,12 +4,12 @@ close all
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    bintype aero_N_str w_spd_str indvar2D_name indvar2D_units indvar2D_ename ...
-   israin iscloud isprof ispath isproc%#ok<*NUSED>
+   israin iscloud isprof ispath isproc %#ok<*NUSED>
 
-vnum='0002'; % last four characters of the model output file.
-nikki='2021-06-15';
+vnum='0001'; % last four characters of the model output file.
+nikki='2021-06-16';
 case_interest = [7]; % 1:length(case_list_num);
-doanimation=1;
+doanimation=0;
 run global_var.m
 
 % get the list of configs. cant put it into globar_var
@@ -19,6 +19,15 @@ mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 %%
+
+l_save=1;
+l_visible=1;
+fig_path=figure('Position',[1722 525 859 452]);
+
+if ~l_visible
+   set(fig_path,'Visible','off')
+end
+
 for iconf = 1:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %     mconfig = 'adv_coll';
@@ -34,8 +43,8 @@ for iconf = 1:length(mconfig_ls)
          for iw = 1:length(w_spd_str)
             %                 close all
             
-            %             [~, ~, ~, amp_var_name, amp_struct]=...
-            %                loadnc('amp',case_interest);
+            mp_in='amp';
+            [~, ~, ~, amp_var_name, amp_struct]=loadnc(mp_in,case_interest);
             mp_in='bin';
             [~, ~, ~, bin_var_name, bin_struct]=loadnc(mp_in,case_interest);
             % indices of vars to compare
@@ -53,10 +62,15 @@ for iconf = 1:length(mconfig_ls)
                cloudm1=bin_struct(ici).cloud_M1*pi/6*1000;
                rainm1=bin_struct(ici).rain_M1*pi/6*1000;
                
-               indvar2D=w;
+               indvar2D=rainm1;
                indvar2D(indvar2D==-999)=nan;
                
-               for ivar = vars:vare   
+               
+               for ivar = vars:vare
+                  
+                  var_comp_raw_amp = amp_struct(ici).(indvar2D_name{ivar});
+                  [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
+                  
                   var_comp_raw_bin = bin_struct(ici).(indvar2D_name{ivar});
                   [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
                   
@@ -67,21 +81,48 @@ for iconf = 1:length(mconfig_ls)
                      lsty='-';
                   end
                   
-                  hold on
-                  plot(time,var_comp_bin,'LineWidth',2,...
-                        'LineStyle',lsty,'color',color_order{2})
-                  xlim([min(time) max(time)])
-                  xlabel('Time [s]')
-                  if israin
-                     ylabel(['LWP' indvar2D_units{ivar}])
-                     set(gca,'fontsize',16)
-                     hold off
-                  end
+                  if ispath
+                     set(0,'CurrentFigure',fig_path)
+
+                     
+                     plot(time,var_comp_amp,'LineWidth',2,...
+                           'LineStyle',lsty,'color',color_order{1},...
+                           'DisplayName',['amp ' indvar2D_ename{ivar}])
+                     hold on
+                     plot(time,var_comp_bin,'LineWidth',2,...
+                           'LineStyle',lsty,'color',color_order{2},...
+                           'DisplayName',['bin ' indvar2D_ename{ivar}])
+                     xlim([min(time) max(time)])
+                     xlabel('Time [s]')
+
+                     if israin
+                        legend('show')
+                        ylabel(['LWP' indvar2D_units{ivar}])
+                        vnifn='liquid water path'; 
+                     end
+                     
+                     if israin || (~israin && ~iscloud)
+                        set(gca,'fontsize',16)
+                        title([mconfig ' ' bintype{its}], ...
+                           'fontsize',20,...
+                           'FontWeight','bold')
+                        
+                        hold off
+                        
+                        if l_save
+                           saveas(fig_path,[plot_dir,...
+                              vnifn, ' ',...
+                              'amp vs bin-',bintype{its},' ',...
+                              case_list_str{ici},'-',vnum,'.png'])
+                        end
+                     end
+                     
+                  end % if path
                   
                end
                %%
                if doanimation
-                  time_step=1;
+                  time_step=2;
                   time_length = floor(length(time)/time_step);
                   for it_vididx = 1:time_length+1 %#ok<*UNRCH>
                      % it_vididx = time index in the video
@@ -97,13 +138,16 @@ for iconf = 1:length(mconfig_ls)
                      % reshaped cloud m1
                      indvar_rs = reshape(indvar2D(it_runidx,:,:),length(x),[])';
                      nanimagesc(x,z,indvar_rs)
-                     %                   colormap(Blues)
-                     colormap(BrBG20)
                      colorbar
-                     %                   set(gca,'ColorScale','log')
-                     wbound=max(indvar2D(:));
-                     caxis([-wbound wbound])
-                     %                   caxis([1e-8 1e-2])
+                     
+%                      colormap(BrBG20)
+%                      wbound=max(indvar2D(:));
+%                      caxis([-wbound wbound])
+                     
+                     colormap(Blues)
+                     set(gca,'ColorScale','log')
+                     caxis([1e-8 1e-2])
+                     
                      title(['t=' num2str(itime) 's'])
                      F(it_vididx)=getframe(gcf);
 
@@ -111,7 +155,7 @@ for iconf = 1:length(mconfig_ls)
 
                   end
 
-                  v = VideoWriter(['vids/2D wind bin_sbm-' vnum],'MPEG-4');
+                  v = VideoWriter(['vids/2D rwc bin_sbm-' vnum],'MPEG-4');
                   v.FrameRate=10;
                   open(v)
                   writeVideo(v,F)

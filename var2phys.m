@@ -15,12 +15,15 @@ function [physquant,note,range] = var2phys(var_raw,ivar,...
 % note: a variable-specific note, such as being plotted in 'log' or 'lin'.
 
 global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
-   cwp_th rwp_th ispath isprof isproc israin iscloud sppt_th
+   cwp_th rwp_th ispath isprof isproc israin iscloud sppt_th ici ...
+   indvar2D_name
 
 threshold = -inf;
 
-try %#ok<*TRYNC>
-var_name=indvar_name{ivar};
+if ici<=6
+   var_name=indvar_name{ivar};
+elseif ici>=7
+   var_name=indvar2D_name{ivar};
 end
 
 ispath=0;
