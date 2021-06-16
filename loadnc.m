@@ -2,7 +2,9 @@ function [filemeta,filename,fileinfo,var_name,stct]=loadnc(mp_in,case_interest)
 
 global iw ia its ici nikki mconfig output_dir case_list_str vnum ...
    bintype aero_N_str w_spd_str indvar_name_set indvar_name ...
-   indvar_units indvar_ename indvar_ename_set indvar_units_set
+   indvar_units indvar_ename indvar_ename_set indvar_units_set ...
+   indvar2D_name indvar2D_units indvar2D_ename indvar2D_name_set ...
+   indvar2D_ename_set indvar2D_units_set
 
 for ici = case_interest
    
@@ -27,5 +29,10 @@ indvar_name=intersect(indvar_name_set,var_name,'stable');
 vidx=ismember(indvar_name_set,indvar_name);
 indvar_ename=indvar_ename_set(vidx);
 indvar_units=indvar_units_set(vidx);
+
+indvar2D_name=intersect(indvar2D_name_set,var_name,'stable');
+vidx=ismember(indvar2D_name_set,indvar2D_name);
+indvar2D_ename=indvar2D_ename_set(vidx);
+indvar2D_units=indvar2D_units_set(vidx);
 
 end

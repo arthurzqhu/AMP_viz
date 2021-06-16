@@ -18,12 +18,18 @@ global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
    cwp_th rwp_th ispath isprof isproc israin iscloud sppt_th
 
 threshold = -inf;
+
+try %#ok<*TRYNC>
 var_name=indvar_name{ivar};
+end
+
 ispath=0;
 isprof=0; 
 isproc=0;
 israin=0;
 iscloud=0;
+
+var_raw(var_raw==-999)=nan;
 
 if contains(var_name,{'diag'})
    isprof=1;
@@ -88,14 +94,14 @@ switch var_name
         mask = 'M3tomass'; 
         note = 'lin';
         range = 0;
-    case 'cloud_M1_path'
+    case {'cloud_M1_path','mean_cloud_M1_path'}
         physquant = var_raw*pi/6*1000;
         threshold = cwp_th(1);
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
         range = [-bound bound];
         note = 'log';
         mask = 'self';
-    case 'rain_M1_path'
+    case {'rain_M1_path','mean_rain_M1_path'}
         physquant = var_raw*pi/6*1000;
         threshold = rwp_th(1);
         bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
