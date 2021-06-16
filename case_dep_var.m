@@ -3,14 +3,24 @@ global mconfig
 % configs of the model
 
 % this is assuming every case has the same set of initial conditions
-aer_dir = dir([output_dir,nikki,'/',mconfig,'/',upper(ampORbin{1}),'_',...
-    upper(bintype{1}),'/']);
+
+aer_dir = dir([output_dir,nikki,'/',mconfig,'/*/']);
+% really stupid way to only look into the first directory
+circuit_breaker=0;
+for iitem = 1:size(aer_dir,1)
+   if strcmp(aer_dir(iitem).name,'.')
+      if circuit_breaker==1
+         aer_dir(iitem:end)=[];
+         break
+      end
+      circuit_breaker=1;
+   end
+end
 aer_dir_flags = [aer_dir.isdir];
 aer_dir_flags(1:2) = 0; % ignore the current and parent dir
 aero_N_str_raw = {aer_dir(aer_dir_flags).name};
 
-w_dir = dir([output_dir,nikki,'/',mconfig,'/',upper(ampORbin{1}),'_',...
-    upper(bintype{1}),'/',aero_N_str_raw{1},'/']);
+w_dir = dir([aer_dir(aer_dir_flags).folder,'/',aero_N_str_raw{1},'/']);
 w_dir_flags = [w_dir.isdir];
 w_dir_flags(1:2) = 0; % ignore the current and parent dir
 w_spd_str_raw = {w_dir(w_dir_flags).name};
