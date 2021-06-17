@@ -1,6 +1,5 @@
 clear
 clear global
-close all
 
 global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    bintype aero_N_str w_spd_str indvar2D_name indvar2D_units indvar2D_ename ...
@@ -19,7 +18,7 @@ mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 %%
-
+close all
 l_save=1;
 l_visible=1;
 fig_path=figure('Position',[1722 525 859 452]);
@@ -47,6 +46,8 @@ for iconf = 1:length(mconfig_ls)
             [~, ~, ~, amp_var_name, amp_struct]=loadnc(mp_in,case_interest);
             mp_in='bin';
             [~, ~, ~, bin_var_name, bin_struct]=loadnc(mp_in,case_interest);
+           
+            
             % indices of vars to compare
             vars=1;
             vare=length(indvar2D_name);
@@ -96,19 +97,22 @@ for iconf = 1:length(mconfig_ls)
                      xlabel('Time [s]')
 
                      if israin
-                        legend('show')
                         ylabel(['LWP' indvar2D_units{ivar}])
-                        vnifn='liquid water path'; 
+                     else
+                        ylabel([indvar2D_ename{ivar} indvar2D_units{ivar}])
                      end
                      
                      if israin || (~israin && ~iscloud)
+                        legend('show')
                         set(gca,'fontsize',16)
                         title([mconfig ' ' bintype{its}], ...
                            'fontsize',20,...
                            'FontWeight','bold')
                         
-                        hold off
+                        vnifn=indvar2D_ename{ivar};
+                        if israin vnifn='liquid water path'; end
                         
+                        hold off
                         if l_save
                            saveas(fig_path,[plot_dir,...
                               vnifn, ' ',...
