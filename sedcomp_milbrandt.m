@@ -177,7 +177,7 @@ for iconf = 1:length(mconfig_ls)
                   F(it_idx) = getframe(gcf);
                end
                
-               v = VideoWriter(['vids/' mconfig ' sedcomp_milbrandt ' ...
+               v=VideoWriter(['vids/' mconfig ' sedcomp_milbrandt ' ...
                   bintype{its}],'MPEG-4');
                v.FrameRate=24;
                open(v)

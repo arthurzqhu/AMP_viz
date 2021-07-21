@@ -9,8 +9,8 @@ bintype = {'tau' 'sbm'};
 
 
 % dir of the model output
-% output_dir='/Volumes/ESSD/AMP output/';
-output_dir='../outputs/';
+output_dir='/Volumes/ESSD/AMP output/';
+% output_dir='../outputs/';
 
 
 % KiD cases
