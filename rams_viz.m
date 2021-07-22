@@ -4,9 +4,9 @@ close all
 
 addpath('rams_viz/')
 
-nikki='2021-07-14';
+nikki='2021-07-21';
 run globvar_rams
-mconfig='bin-sbm';
+mconfig='amp-sbm';
 
 outdir=[output_dir,nikki,'/',mconfig,'/'];
 %%
@@ -19,6 +19,7 @@ rams_hdf5c({'GLAT','GLON'},0,outdir)
 liqpath=squeeze((sum(runs.DMOMC3,3)+sum(runs.DMOMR3,3))*pio6rw);
 
 %%
+set(0, 'DefaultFigurePosition', [233 247 400 400])
 for it=1:size(liqpath,3)
    contourf(runs.GLON,runs.GLAT,squeeze(liqpath(:,:,it)))
    colorbar
@@ -30,7 +31,9 @@ for it=1:size(liqpath,3)
    ylabel('lat')
    title(['time=' fn{it}(end-11:end-6)])
    
-   F(it)=getframe(gcf);
+   cdata = print('-RGBImage','-r144');
+   F(it) = im2frame(cdata);
+   %F(it)=getframe(gcf);
 end
 
 saveVid(F,['liqpath ' mconfig],2)

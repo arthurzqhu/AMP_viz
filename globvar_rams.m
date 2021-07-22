@@ -25,7 +25,7 @@ end
 
 % dir of the model output
 % output_dir='/Volumes/ESSD/AMP output/';
-output_dir='../rams/outputs/';
+output_dir='../rams/output/';
 
 % load these python colormap
 cmap.Blues=getPyPlot_cMap('Blues',10);
