@@ -6,10 +6,12 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    israin iscloud isprof ispath isproc %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-06-16';
+nikki='2021-07-29';
 case_interest = [7]; % 1:length(case_list_num);
-doanimation=0;
+
 run global_var.m
+
+bintype={'sbm'};
 
 % get the list of configs. cant put it into globar_var
 mconfig_ls_dir = dir([output_dir,nikki,'/']);
@@ -19,7 +21,8 @@ mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 %%
 close all
-l_save=1;
+doanimation=1;
+l_save=0;
 l_visible=1;
 fig_path=figure('Position',[1722 525 859 452]);
 
@@ -27,7 +30,7 @@ if ~l_visible
    set(fig_path,'Visible','off')
 end
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 1%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %     mconfig = 'adv_coll';
    run case_dep_var.m
@@ -62,7 +65,8 @@ for iconf = 1:length(mconfig_ls)
                cloudm1=bin_struct(ici).cloud_M1*pi/6*1000;
                rainm1=bin_struct(ici).rain_M1*pi/6*1000;
                
-               indvar2D=rainm1;
+               indvar2D=w;
+%                indvar2D=rainm1;
                indvar2D(indvar2D==-999)=nan;
                
                
@@ -143,13 +147,13 @@ for iconf = 1:length(mconfig_ls)
                      nanimagesc(x,z,indvar_rs)
                      colorbar
                      
-%                      colormap(BrBG20)
-%                      wbound=max(indvar2D(:));
-%                      caxis([-wbound wbound])
+                     colormap(BrBG20)
+                     wbound=max(indvar2D(:));
+                     caxis([-wbound wbound])
                      
-                     colormap(Blues)
-                     set(gca,'ColorScale','log')
-                     caxis([1e-8 1e-2])
+%                      colormap(Blues)
+%                      set(gca,'ColorScale','log')
+%                      caxis([1e-8 1e-2])
                      
                      title(['t=' num2str(itime) 's'])
                      F(it_vididx)=getframe(gcf);
@@ -158,7 +162,8 @@ for iconf = 1:length(mconfig_ls)
 
                   end % for
 
-                  saveVid(F,['2D rwc bin_sbm-' vnum], 10)
+%                   saveVid(F,['2D rwc bin_sbm-' vnum], 10)
+                  saveVid(F,['2D prev wind bin_sbm-' vnum], 10)
                end % if doanimation
             end % case
          end
