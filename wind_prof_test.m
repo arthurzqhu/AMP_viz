@@ -31,13 +31,12 @@ AMP2B=0.5*1.e3;
 tscale1=600;
 tscale2=900;
 
-x0=1.07687398631180;
-x1=5.38572965402801;
+zer0=1.07687398631180;
+zer1=5.38572965402801;
 xt=3.64359716742540;
-mx=0.5*xscale0/(x1-xt);
-xdisp=4500-x1*mx;
-x=0:50:4500;
-x1r=x1*mx;
+mx=0.5*xscale0/(zer1-xt);
+xdisp=4500-zer1*mx;
+x1r=zer1*mx;
 my=x1r^2*cos(x1r/mx);
 
 for t=1%1:3600
@@ -73,7 +72,6 @@ for t=1%1:3600
    
    distc=0.8;
    AMPL=AMPL/pi*xscale;
-   g_wid=0.1;
    ZTOP=zp(nz+1)/zscale1;
    XCEN=.5*xp(nx+1);
    nxmid=nx/2+1;
@@ -91,7 +89,7 @@ for t=1%1:3600
          ZL=2.*zscale1;
          phi(i,k)=0.;
          
-         if xp(i)>=x0*mx+xdisp
+         if xp(i)>=zer0*mx+xdisp
             
             % check if this is the first time the program enters "else"
             % do this for the entire column
@@ -183,10 +181,10 @@ end
 %%
 % close all
 
-
+x=0:50:4500;
 ft=0;
 for ix=length(x):-1:1
-   if x(ix)>=x0*mx+xdisp
+   if x(ix)>=zer0*mx+xdisp
       y(ix)=(x(ix)-xdisp).^2.*cos((x(ix)-xdisp)/mx)/my;
    else
       % check if this is the first time the program enters "else"
