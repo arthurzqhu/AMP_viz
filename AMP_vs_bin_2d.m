@@ -46,7 +46,6 @@ for iconf = 1:length(mconfig_ls)
             [~, ~, ~, amp_var_name, amp_struct]=loadnc(mp_in,case_interest);
             mp_in='bin';
             [~, ~, ~, bin_var_name, bin_struct]=loadnc(mp_in,case_interest);
-           
             
             % indices of vars to compare
             vars=1;
@@ -157,15 +156,11 @@ for iconf = 1:length(mconfig_ls)
 
                      it_vididx=it_vididx+1;
 
-                  end
+                  end % for
 
-                  v = VideoWriter(['vids/2D rwc bin_sbm-' vnum],'MPEG-4');
-                  v.FrameRate=10;
-                  open(v)
-                  writeVideo(v,F)
-                  close(v)
-               end % for
-            end % if animation
+                  saveVid(F,['2D rwc bin_sbm-' vnum], 10)
+               end % if doanimation
+            end % case
          end
       end
    end
