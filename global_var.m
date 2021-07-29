@@ -41,7 +41,7 @@ rainbow = getPyPlot_cMap('rainbow',20);
 coolwarm = getPyPlot_cMap('coolwarm',10);
 coolwarm_r = getPyPlot_cMap('coolwarm_r',10);
 ngrad=21;
-BrBG20 = getPyPlot_cMap('BrBG',20);
+BrBG20 = getPyPlot_cMap('BrBG',21);
 BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
 BrBG = repelem(BrBG,floor(256/ngrad),1); 
 
