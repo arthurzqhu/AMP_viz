@@ -5,3 +5,4 @@ plots/*
 *.asv
 gammamod.m
 vids/*
+*.fig
