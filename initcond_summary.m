@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-06-01';
+nikki='2021-05-25';
 case_interest = 2; % 1:length(case_list_num);
 
 run global_var.m
@@ -32,7 +32,7 @@ set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 % creating structures for performance analysis based on Rsq and ratio
 pfm=struct;
 
-for iconf = 2%:length(mconfig_ls)
+for iconf = 1%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %     mconfig = 'adv_coll';
    run case_dep_var.m
@@ -131,11 +131,14 @@ for iconf = 1%:length(mconfig_ls)
                         if isnan(clr_idx) continue, end
                         if clr_idx==0 clr_idx=1; end
                         
-                        text(iw,ia,mpath_bin_str{ia,iw},'FontSize',15,...
-                           'FontWeight','bold',...
+                        text(iw+0.02,ia-0.02,mpath_bin_str{ia,iw},'FontSize',15,...
                            'HorizontalAlignment','center',...
-                           'Color',coolwarm_r(clr_idx,:),...
-                           'BackgroundColor',[clr_idx/ngrads clr_idx/ngrads clr_idx/ngrads .7])
+                           'Color',coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
+                        text(iw,ia,mpath_bin_str{ia,iw},'FontSize',15,...
+                           'HorizontalAlignment','center',...
+                           'Color',coolwarm_r(clr_idx,:),'FontName','Menlo')
+                        
+                        
                      end
                   end
 %                elseif strcmp(fldnms{ifn},'rsq')
