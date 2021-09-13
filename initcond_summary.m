@@ -8,15 +8,15 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
 
 vnum='0001'; % last four characters of the model output file.
 nikki='2021-05-25';
-case_interest = 2; % 1:length(case_list_num);
+case_interest=2; % 1:length(case_list_num);
 
 run global_var.m
 
 % get the list of configs. cant put it into globar_var
-mconfig_ls_dir = dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
-mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
+mconfig_ls_dir=dir([output_dir,nikki,'/']);
+mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
+mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
+mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 
@@ -32,15 +32,15 @@ set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 % creating structures for performance analysis based on Rsq and ratio
 pfm=struct;
 
-for iconf = 1%:length(mconfig_ls)
-   mconfig = mconfig_ls{iconf};
-   %     mconfig = 'adv_coll';
+for iconf=1%:length(mconfig_ls)
+   mconfig=mconfig_ls{iconf};
+   %     mconfig='adv_coll';
    run case_dep_var.m
    
-   for its = 1:length(bintype)
-      for ia = 1:length(aero_N_str)
+   for its=1:length(bintype)
+      for ia=1:length(aero_N_str)
          %             close all
-         for iw = 1:length(w_spd_str)
+         for iw=1:length(w_spd_str)
             %                 close all
             
             [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
@@ -55,15 +55,18 @@ for iconf = 1%:length(mconfig_ls)
             vare=length(indvar_name);
             
             % plot
-            for ici = case_interest
-               time = amp_struct(ici).time;
-               z = amp_struct(ici).z;
-               for ivar = vars:vare
-                  var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
-                  var_amp_flt = var2phys(var_comp_raw_amp,ivar,0,1);
+            for ici=case_interest
+               time=amp_struct(ici).time;
+               z=amp_struct(ici).z;
+               for ivar=vars:vare
                   
-                  var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
-                  var_bin_flt = var2phys(var_comp_raw_bin,ivar,0,1);
+                  
+                  
+                  var_comp_raw_amp=amp_struct(ici).(indvar_name{ivar});
+                  var_amp_flt=var2phys(var_comp_raw_amp,ivar,0,1);
+                  
+                  var_comp_raw_bin=bin_struct(ici).(indvar_name{ivar});
+                  var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
                   
                   % get the non-nan indices for both bin and amp
                   vidx=~isnan(var_amp_flt+var_bin_flt);
@@ -80,6 +83,7 @@ for iconf = 1%:length(mconfig_ls)
                   pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin(ia,iw)=mean(var_bin_flt);
                   
                end
+
             end
          end
       end
@@ -91,16 +95,16 @@ fldnms=fieldnames(pfm(ici).(indvar_name{ivar}).(bintype{its}));
 fldnms=fldnms(1:end-1);
 
 close all
-for iconf = 1%:length(mconfig_ls)
+for iconf=1%:length(mconfig_ls)
    vars=1;
    vare=length(indvar_name);
-   for ici = case_interest
-      for ifn = 2%1:length(fldnms)
-         for ivar = vars:vare
+   for ici=case_interest
+      for ifn=2%1:length(fldnms)
+         for ivar=vars:vare
             %%
             figure(ifn)
             tl=tiledlayout(4,4);
-            for its = 1:length(bintype)
+            for its=1:length(bintype)
                nexttile(its*2+3,[3 2])
                nanimagesc(pfm(ici).(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                colorbar
@@ -119,8 +123,8 @@ for iconf = 1%:length(mconfig_ls)
                   [XX,YY]=meshgrid(1:length(w_spd_str),1:length(aero_N_str));
                   mpath_bin_str=sprintfc('%0.3g',...
                      pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin);
-                  for ia = 1:length(aero_N_str)
-                     for iw = 1:length(w_spd_str)
+                  for ia=1:length(aero_N_str)
+                     for iw=1:length(w_spd_str)
                         
                         % ----- get text color -----
                         ngrads=size(coolwarm_r,1);
@@ -160,9 +164,9 @@ for iconf = 1%:length(mconfig_ls)
             set(gca,'YColor','none')
 %             ax=gca;
             colormap(gca,coolwarm_r)
-            cb = colorbar('southoutside');
-            cb.Label.String = 'R^2';
-            cb.Label.Position = [0.5000 3.3 0];
+            cb=colorbar('southoutside');
+            cb.Label.String='R^2';
+            cb.Label.Position=[0.5000 3.3 0];
             set(gca,'FontSize',16)
 
             xlabel(tl,'max vertical velocity [m/s]','fontsize',16)

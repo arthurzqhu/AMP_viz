@@ -20,7 +20,7 @@ aer_dir_flags = [aer_dir.isdir];
 aer_dir_flags(1:2) = 0; % ignore the current and parent dir
 aero_N_str_raw = {aer_dir(aer_dir_flags).name};
 
-w_dir = dir([aer_dir(aer_dir_flags).folder,'/',aero_N_str_raw{1},'/']);
+w_dir = dir([aer_dir(find(aer_dir_flags,1,'first')).folder,'/',aero_N_str_raw{1},'/']);
 w_dir_flags = [w_dir.isdir];
 w_dir_flags(1:2) = 0; % ignore the current and parent dir
 w_spd_str_raw = {w_dir(w_dir_flags).name};
