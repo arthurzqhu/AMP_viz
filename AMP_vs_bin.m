@@ -8,7 +8,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-06-06';
+nikki='2021-09-09';
 case_interest = [1]; % 1:length(case_list_num);
 
 run global_var.m
@@ -197,11 +197,11 @@ for iconf = 1:length(mconfig_ls)
                         end
                      end
                      
-                     if israin
+%                      if israin
                         % only change color if after there's a rain
                         % variable
                         iclr=iclr+1;
-                     end
+%                      end
                      
                   elseif isprof
                      set(0,'CurrentFigure',fig_prof)
