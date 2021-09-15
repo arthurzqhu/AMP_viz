@@ -29,5 +29,9 @@ for ibin=1:34
    termvel_tau(ibin)=alpha(ibin)*(AMS(ibin)*1000.)^beta(ibin)/1e2;
 end
 
-semilogx(binmean_sbm,termvel_sbm); hold on
-semilogx(binmean_tau,termvel_tau)
+termvel_tau_new=interp1(binmean_sbm,termvel_sbm,binmean_tau,'spline');
+termvel_tau_new=round(termvel_tau_new,2,'significant');
+termvel_tau_new(end)=termvel_sbm(end);
+
+loglog(binmean_sbm,termvel_sbm); hold on
+loglog(binmean_tau,termvel_tau_new,'--')
