@@ -8,8 +8,8 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-09-09';
-case_interest = [1]; % 1:length(case_list_num);
+nikki='2021-09-21';
+case_interest = [2]; % 1:length(case_list_num);
 
 run global_var.m
 
@@ -45,7 +45,7 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 1:4%length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %     mconfig = 'adv_coll';
    run case_dep_var.m

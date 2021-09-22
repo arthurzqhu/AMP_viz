@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-09-14';
+nikki='2021-09-16';
 case_interest = [1]; % 1:length(case_list_num);
 
 run global_var.m
@@ -22,11 +22,11 @@ t2=300;
 t3=600;
 t4=900;
 
-dofig=0;
-doanim=1;
+dofig=1;
+doanim=0;
 
 %%
-for iconf = 5:8%9:length(mconfig_ls)
+for iconf = 1:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %    mconfig = 'sedonly_c_cr';
    run case_dep_var.m

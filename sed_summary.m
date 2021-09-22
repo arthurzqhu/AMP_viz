@@ -7,7 +7,7 @@ global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-09-14';
+nikki='2021-09-17';
 case_interest = [1]; % 1:length(case_list_num);
 
 run global_var.m
@@ -27,7 +27,7 @@ var_name_mod={'diagM0_rain','diagM3_rain','diagM6_rain'};
 var_name_output={'rainM0','rainM3','rainM6'};
 nvar=length(var_name_mod);
 
-for iconf = 9:length(mconfig_ls)
+for iconf = 1:length(mconfig_ls)
    sedsum=struct;
    mconfig=mconfig_ls{iconf};
    run case_dep_var.m
@@ -54,23 +54,28 @@ for iconf = 9:length(mconfig_ls)
                amp_rain_path{ivar}=sum(amp_struct.(var_name_mod{ivar}),2);
                bin_rain_path{ivar}=sum(bin_struct.(var_name_mod{ivar}),2);
 
-               try sedsum.(var_name_output{ivar})(1,(its-1)*2+1)=...
-                  find(amp_rain_path{ivar}<rain_i(ivar)*.75,1,'first'); end
-               try sedsum.(var_name_output{ivar})(2,(its-1)*2+1)=...
-                  find(amp_rain_path{ivar}<rain_i(ivar)*.50,1,'first'); end
-               try sedsum.(var_name_output{ivar})(3,(its-1)*2+1)=...
-                  find(amp_rain_path{ivar}<rain_i(ivar)*.25,1,'first'); end
-               try sedsum.(var_name_output{ivar})(4,(its-1)*2+1)=...
-                  find(amp_rain_path{ivar}<rain_i(ivar)*.1,1,'first'); end
-
-               try sedsum.(var_name_output{ivar})(1,(its-1)*2+2)=...
-                  find(bin_rain_path{ivar}<rain_i(ivar)*.75,1,'first'); end
-               try sedsum.(var_name_output{ivar})(2,(its-1)*2+2)=...
-                  find(bin_rain_path{ivar}<rain_i(ivar)*.50,1,'first'); end
-               try sedsum.(var_name_output{ivar})(3,(its-1)*2+2)=...
-                  find(bin_rain_path{ivar}<rain_i(ivar)*.25,1,'first'); end
-               try sedsum.(var_name_output{ivar})(4,(its-1)*2+2)=...
-                  find(bin_rain_path{ivar}<rain_i(ivar)*.1,1,'first'); end
+               sedsum.(var_name_output{ivar})((its-1)*2+1,:)=...
+                  amp_rain_path{ivar}/rain_i(ivar);
+               sedsum.(var_name_output{ivar})((its-1)*2+2,:)=...
+                  bin_rain_path{ivar}(1:length(time))/rain_i(ivar);
+               
+%                try sedsum.(var_name_output{ivar})(1,(its-1)*2+1)=...
+%                   find(amp_rain_path{ivar}<rain_i(ivar)*.75,1,'first'); end
+%                try sedsum.(var_name_output{ivar})(2,(its-1)*2+1)=...
+%                   find(amp_rain_path{ivar}<rain_i(ivar)*.50,1,'first'); end
+%                try sedsum.(var_name_output{ivar})(3,(its-1)*2+1)=...
+%                   find(amp_rain_path{ivar}<rain_i(ivar)*.25,1,'first'); end
+%                try sedsum.(var_name_output{ivar})(4,(its-1)*2+1)=...
+%                   find(amp_rain_path{ivar}<rain_i(ivar)*.1,1,'first'); end
+% 
+%                try sedsum.(var_name_output{ivar})(1,(its-1)*2+2)=...
+%                   find(bin_rain_path{ivar}<rain_i(ivar)*.75,1,'first'); end
+%                try sedsum.(var_name_output{ivar})(2,(its-1)*2+2)=...
+%                   find(bin_rain_path{ivar}<rain_i(ivar)*.50,1,'first'); end
+%                try sedsum.(var_name_output{ivar})(3,(its-1)*2+2)=...
+%                   find(bin_rain_path{ivar}<rain_i(ivar)*.25,1,'first'); end
+%                try sedsum.(var_name_output{ivar})(4,(its-1)*2+2)=...
+%                   find(bin_rain_path{ivar}<rain_i(ivar)*.1,1,'first'); end
             end
 
 
@@ -83,33 +88,54 @@ for iconf = 9:length(mconfig_ls)
    close all
    figure('Position',[1291 631 1290 346])
    tl=tiledlayout('flow');
-   nexttile
-   bar(sedsum.rainM0)
-   grid
-   xticklabels({'25%','50%','75%','90%'})
-   set(gca,'FontSize',18)
-   legend('amp-tau','bin-tau','amp-sbm','bin-sbm','Location','best')
-   title('Rain M0')
-   ylim([0 4800])
+   
+   style_order={'-','--','-','--'};
+   
+   for ivar=1:nvar
+      nexttile
+      
+      for iline=1:4
+         hold on
+         plot(time,sedsum.(var_name_output{ivar})(iline,:),...
+            'LineWidth',2,...
+            'LineStyle',style_order{iline},...
+            'color',color_order{ceil(iline/2)})
+         if ivar<3 ylim([0 1]), end
+      end
+      grid
+      hold off
+      legend('amp-tau','bin-tau','amp-sbm','bin-sbm','Location','best')
+      set(gca,'FontSize',18)
+      title(['Rain ' var_name_output{ivar}(end-1:end)])
+   end
+   
+   xlabel(tl,'time [s]','fontsize',24)
+   ylabel(tl,'fraction left in the system','fontsize',24)
+   
+%    
+%    bar(sedsum.rainM0)
+%    grid
+%    xticklabels({'25%','50%','75%','90%'})
+%    set(gca,'FontSize',18)
+%    legend('amp-tau','bin-tau','amp-sbm','bin-sbm','Location','best')
+%    title('Rain M0')
+%    ylim([0 6000])
 
-   nexttile
-   bar(sedsum.rainM3)
-   grid
-   xticklabels({'25%','50%','75%','90%'})
-   set(gca,'FontSize',18)
-   title('Rain M3')
-   ylim([0 4800])
+%    bar(sedsum.rainM3)
+%    grid
+%    xticklabels({'25%','50%','75%','90%'})
+%    set(gca,'FontSize',18)
+%    title('Rain M3')
+%    ylim([0 6000])
 
-   nexttile
-   bar(sedsum.rainM6)
-   grid
-   xticklabels({'25%','50%','75%','90%'})
-   set(gca,'FontSize',18)
-   title('Rain M6')
-   ylim([0 4800])
+%    bar(sedsum.rainM6)
+%    grid
+%    xticklabels({'25%','50%','75%','90%'})
+%    set(gca,'FontSize',18)
+%    title('Rain M6')
+%    ylim([0 6000])
 
-   xlabel(tl,'percentage left the system','fontsize',24)
-   ylabel(tl,'time [s]','fontsize',24)
+
 
    print(gcf,[plot_dir(1:end-1) '.jpg'],'-djpeg','-r300')
    
