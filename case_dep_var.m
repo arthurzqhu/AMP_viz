@@ -4,36 +4,37 @@ global mconfig
 
 % this is assuming every case has the same set of initial conditions
 
-aer_dir = dir([output_dir,nikki,'/',mconfig,'/*/']);
+var1_dir = dir([output_dir,nikki,'/',mconfig,'/*/']);
 % really stupid way to only look into the first directory
 circuit_breaker=0;
-for iitem = 1:size(aer_dir,1)
-   if strcmp(aer_dir(iitem).name,'.')
+for iitem = 1:size(var1_dir,1)
+   if strcmp(var1_dir(iitem).name,'.')
       if circuit_breaker==1
-         aer_dir(iitem:end)=[];
+         var1_dir(iitem:end)=[];
          break
       end
       circuit_breaker=1;
    end
 end
-aer_dir_flags = [aer_dir.isdir];
-aer_dir_flags(1:2) = 0; % ignore the current and parent dir
-aero_N_str_raw = {aer_dir(aer_dir_flags).name};
 
-w_dir = dir([aer_dir(find(aer_dir_flags,1,'first')).folder,'/',aero_N_str_raw{1},'/']);
-w_dir_flags = [w_dir.isdir];
-w_dir_flags(1:2) = 0; % ignore the current and parent dir
-w_spd_str_raw = {w_dir(w_dir_flags).name};
+var1_dir_flags = [var1_dir.isdir];
+var1_dir_flags(1:2) = 0; % ignore the current and parent dir
+var1_str_raw = {var1_dir(var1_dir_flags).name};
+
+var2_dir = dir([var1_dir(find(var1_dir_flags,1,'first')).folder,'/',var1_str_raw{1},'/']);
+var2_dir_flags = [var2_dir.isdir];
+var2_dir_flags(1:2) = 0; % ignore the current and parent dir
+var2_str_raw = {var2_dir(var2_dir_flags).name};
 
 
 % sort aerosol and wind speed from low to high
-aero_N_val_unsorted = cellfun(@str2num,extractAfter(aero_N_str_raw,'a'));
-[aero_N_val,aero_idx] = sort(aero_N_val_unsorted);
-aero_N_str=aero_N_str_raw(aero_idx);
+var1_val_unsorted = cellfun(@str2num,extractAfter(var1_str_raw,1));
+[var1_val,var1_idx] = sort(var1_val_unsorted);
+var1_str=var1_str_raw(var1_idx);
 
-w_spd_val_unsorted = cellfun(@str2num,extractAfter(w_spd_str_raw,'w'));
-[w_spd_val,w_spd_idx] = sort(w_spd_val_unsorted);
-w_spd_str=w_spd_str_raw(w_spd_idx);
+var2_val_unsorted = cellfun(@str2num,extractAfter(var2_str_raw,1));
+[var2_val,var2_idx] = sort(var2_val_unsorted);
+var2_str=var2_str_raw(var2_idx);
 
 % output dir for the figures
 plot_dir=['plots/' nikki '/' mconfig ' '];
@@ -41,4 +42,4 @@ if ~exist(['plots/' nikki '/'],'dir')
     mkdir(['plots/' nikki '/'])
 end
 
-clear aero_N_str_raw w_spd_str_raw
+clear var1_str_raw var2_str_raw
