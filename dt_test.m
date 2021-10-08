@@ -26,7 +26,7 @@ for iconf=1%:length(mconfig_ls)
    mconfig=mconfig_ls{iconf};
    %     mconfig='adv_coll';
    run case_dep_var.m
-   for its=length(bintype)
+   for its=1:length(bintype)
       clear amp_struct bin_struct
       for ivar1=1%:length(var1_str)
          %             close all
@@ -63,18 +63,26 @@ for iconf=1%:length(mconfig_ls)
             hold on
             plot(time,var_amp_flt,'LineWidth',2,...
                'DisplayName',var2_str{ivar2})
+            xlim([0 max(time)])
+            xlabel('Time [s]')
+            ylabel([indvar_ename{ivar} indvar_units{ivar}])
             legend('show')
+            set(gca,'fontsize',16)
 
             figure(2)
             hold on
             plot(time,var_bin_flt,'LineWidth',2,...
                'DisplayName',var2_str{ivar2})
+            xlim([0 max(time)])
+            xlabel('Time [s]')
+            ylabel([indvar_ename{ivar} indvar_units{ivar}])
             legend('show')
+            set(gca,'fontsize',16)
          end
-         
+
          saveas(figure(1),['plots/dt test/' indvar_ename{ivar} ' amp-' bintype{its} '.png'])
          saveas(figure(2),['plots/dt test/' indvar_ename{ivar} ' bin-' bintype{its} '.png'])
-         
+
          pause(.5)
       end
    end
