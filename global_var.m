@@ -9,7 +9,11 @@ bintype = {'tau' 'sbm'};
 
 
 % dir of the model output
-output_dir='/Volumes/ESSD/AMP output/';
+if strcmp(computer('arch'),'maci64')
+   output_dir='/Volumes/ESSD/AMP output/';
+elseif strcmp(computer('arch'),'glnxa64')
+   output_dir='../KiD_repo/KiD_2.3.2654/output/';
+end
 % output_dir='/Volumes/PESSD/AMP output/';
 % output_dir='../output/';
 
