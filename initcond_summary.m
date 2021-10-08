@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-09-21';
+nikki='2021-10-07';
 case_interest=2; % 1:length(case_list_num);
 
 run global_var.m
@@ -32,7 +32,7 @@ set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 % creating structures for performance analysis based on Rsq and ratio
 pfm=struct;
 
-for iconf=3%:length(mconfig_ls)
+for iconf=1%:length(mconfig_ls)
    mconfig=mconfig_ls{iconf};
    %     mconfig='adv_coll';
    run case_dep_var.m
@@ -47,13 +47,10 @@ for iconf=3%:length(mconfig_ls)
             [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
                loadnc('bin',case_interest);
             
-%             pause
-            
             % indices of vars to compare
             vars=1;
             vare=length(indvar_name);
             
-            % plot
             for ici=case_interest
                time=amp_struct(ici).time;
                z=amp_struct(ici).z;

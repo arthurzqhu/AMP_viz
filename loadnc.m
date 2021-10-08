@@ -19,7 +19,7 @@ for ici = case_interest
    
    for ivar = 1:length(fileinfo.Variables)
       var_name{ivar,1} = fileinfo.Variables(ivar).Name;
-      stct(ici).(var_name{ivar}) = ncread(filename, var_name{ivar});
+      stct.(var_name{ivar}) = ncread(filename, var_name{ivar});
    end
 end
 
