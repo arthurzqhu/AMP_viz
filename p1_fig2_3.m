@@ -5,7 +5,7 @@ close all
 run global_var.m
 
 %% fig 2 read files
-oneDcase_meta=dir('./cases for plot/1D case.nc');
+oneDcase_meta=dir('./cases for plot/1D case');
 oneDcasename = [oneDcase_meta.folder, '/', oneDcase_meta.name];
 oneDcaseinfo = ncinfo(oneDcasename);
 
@@ -32,11 +32,11 @@ set(gca,'FontSize',16)
 xlabel('Specific humidity [g/kg]')
 ylabel('Altitude [m]')
 
-exportgraphics(gcf,'../paper in progress/p1/plots/fig2.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/fig2.jpg','Resolution',300)
 
 
 %% fig 3 read files
-twoDcase_meta=dir('./cases for plot/2D case.nc');
+twoDcase_meta=dir('./cases for plot/2D case');
 twoDcasename = [twoDcase_meta.folder, '/', twoDcase_meta.name];
 twoDcaseinfo = ncinfo(twoDcasename);
 
@@ -60,6 +60,7 @@ w(:,135,:)=0;
 qv=twoD_struct.vapor;
 qv(qv==-999)=nan;
 
+figure('position',[1254 587 1307 560])
 tl=tiledlayout(4,2);
 nexttile(1,[3,1])
 nanimagesc(x,z,squeeze(w(90,:,:))')
@@ -72,15 +73,15 @@ ylabel('z [m]')
 set(gca,'fontsize',16)
 
 nexttile(2,[4,1])
-plot(1e3*squeeze(qv(1,2,:)),z)
+plot(1e3*squeeze(qv(1,2,:)),z,'linewidth',2)
 xlabel('Specific humidity [g/kg]')
 ylabel('Altitude [m]')
 set(gca,'fontsize',16)
 
 nexttile
-plot(t,max(w,[],[2,3]))
+plot(t,max(w,[],[2,3]),'linewidth',2)
 xlim([0 3600])
 xlabel('Time [s]')
 ylabel('Max w [m/s]')
 set(gca,'fontsize',16)
-exportgraphics(gcf,'../paper in progress/p1/plots/fig3.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/fig3.jpg','Resolution',300)
