@@ -1,7 +1,7 @@
 function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
-global fn aero_N_str w_spd_str case_list_str ia iw ici
+global fn var1_str var2_str case_list_str ivar1 ivar2 ici
 
 close all
 c_map = getPyPlot_cMap(Cmap,20);
@@ -98,7 +98,7 @@ if ~exist('vids','dir')
 end
 
 v = VideoWriter(['vids/time progress in DSD', pltflag, ' ',...
-   aero_N_str{ia} ' ' w_spd_str{iw} ' ' case_list_str{ici} ' ' fn,...
+   var1_str{ivar1} ' ' var2_str{ivar2} ' ' case_list_str{ici} ' ' fn,...
    'profile.mp4'],'MPEG-4');
 v.FrameRate=60;
 open(v)

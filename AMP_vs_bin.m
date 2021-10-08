@@ -2,8 +2,8 @@ clear
 clear global
 close all
 
-global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
-   bintype aero_N_str w_spd_str indvar_name indvar_name_set ...
+global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
+   bintype var1_str var2_str indvar_name indvar_name_set ...
    indvar_ename indvar_ename_set ispath isproc isprof iscloud ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
@@ -45,16 +45,16 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 1:4%length(mconfig_ls)
+for iconf = 3%length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    %     mconfig = 'adv_coll';
    run case_dep_var.m
    %% read files
    
    for its = 1:length(bintype)
-      for ia = 1:length(aero_N_str)
+      for ivar1 = 1:length(var1_str)
          %             close all
-         for iw = 1:length(w_spd_str)
+         for ivar2 = 1:length(var2_str)
             
             [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
                loadnc('amp',case_interest);
@@ -130,8 +130,8 @@ for iconf = 1:4%length(mconfig_ls)
                         set(gca,'fontsize',16)
                         
                         title([mconfig ' ' bintype{its},' ', ...
-                           aero_N_str{ia},' ' ...
-                           w_spd_str{iw}],...
+                           var1_str{ivar1},' ' ...
+                           var2_str{ivar2}],...
                            'fontsize',20,...
                            'FontWeight','bold')
                         
@@ -149,7 +149,7 @@ for iconf = 1:4%length(mconfig_ls)
                               vnifn, ' ',...
                               'amp vs bin-',bintype{its},' ',...
                               case_list_str{ici},'-',vnum,' ',...
-                              aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                              var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
                         end
                      end
                      
@@ -193,7 +193,7 @@ for iconf = 1:4%length(mconfig_ls)
                               'procrate ',...
                               'amp vs bin-',bintype{its},' ',...
                               case_list_str{ici},'-',vnum,' ',...
-                              aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                              var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
                         end
                      end
                      
@@ -232,8 +232,8 @@ for iconf = 1:4%length(mconfig_ls)
                         title([mconfig ' ' ampORbin{iab},'-',...
                            bintype{its}, ' ', ...
                            indvar_ename{ivar}, ' ', ...
-                           aero_N_str{ia},' ' ...
-                           w_spd_str{iw}],...
+                           var1_str{ivar1},' ' ...
+                           var2_str{ivar2}],...
                            'fontsize',20,...
                            'FontWeight','bold')
                         
@@ -243,7 +243,7 @@ for iconf = 1:4%length(mconfig_ls)
                               ampORbin{iab},'-',bintype{its},' ',...
                               case_list_str{ici},'-',...
                               vnum,' ',...
-                              aero_N_str{ia}, ' ', w_spd_str{iw},'.png'])
+                              var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
                         end
                      end
                   end
@@ -252,159 +252,159 @@ for iconf = 1:4%length(mconfig_ls)
                
             end
             
-            % plot difference
-            for ici = case_interest
-               %%
-               iclr=3; % color idx for proc rate
-               for ivar = vars:vare
-                  
-                  time = amp_struct(ici).time;
-                  z = amp_struct(ici).z;
-                  var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
-                  [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
-                     ivar,1);
-                  
-                  var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
-                  [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,...
-                     ivar,1);
-                  
-                  if israin
-                     lsty=':';
-                  else
-                     lsty='-';
-                  end
-                  
-                  var_comp_amp(isnan(var_comp_amp))=0;
-                  var_comp_bin(isnan(var_comp_bin))=0;
-                  
-                  var_diff = var_comp_bin-var_comp_amp;
-                  
-                  if isproc
-                     amp_proc_path=col_intg(var_comp_amp,dz,...
-                        amp_struct(ici).pressure*100,...
-                        amp_struct(ici).temperature);
-                     bin_proc_path=col_intg(var_comp_bin,dz,...
-                        bin_struct(ici).pressure*100,...
-                        bin_struct(ici).temperature);
-                     var_diff=bin_proc_path-amp_proc_path;
-                  end
-                  
-                  bound=10^(ceil(log10(prctile(abs(var_diff(:)),99))*2)/2);
-                  
-                  if bound==0
-                     bound=10^(ceil(log10(max(abs(var_diff(:))))*2)/2);
-                  end
-                  
-                  if ispath
-                     % plot path difference
-                     set(0,'CurrentFigure',fig_pathdiff)
-                     
-                     refline(0,0)
-                     plot(time,var_diff,'LineWidth',2,...
-                        'LineStyle',lsty,...
-                        'color',color_order{1})
-                     hold on
-                     xlim([min(time) max(time)])
-                     xlabel('Time [s]')
-                     
-                  elseif isproc
-                     set(0,'CurrentFigure',fig_procdiff)
-                     
-                     rl=refline(0,0);
-                     rl.HandleVisibility='off';
-                     plot(time,var_diff,'LineWidth',2,...
-                        'LineStyle',lsty,...
-                        'color',color_order{iclr},...
-                        'DisplayName',['bin-amp ' indvar_ename{ivar}])
-                     hold on
-                     xlim([min(time) max(time)])
-                     xlabel('Time [s]')
-                     ylabel('\Deltaind proc rate')
-                     
-                     if contains(indvar_name{ivar},'rain')
-                        iclr=iclr+1;
-                     end
-                  elseif isprof
-                     % plot profile difference
-                     set(0,'CurrentFigure',fig_profdiff)
-                     
-                     nanimagesc(time,z,var_diff')
-                     set(gca,'YDir','normal')
-                     colormap(coolwarm)
-                     caxis([-bound bound]);
-                     set(gca,'ColorScale','lin')
-                     cbar = colorbar;
-                     cbar.Label.String = 'prof diff';
-                     xlabel('Time [s]')
-                     ylabel('Altitude [m]')
-                     
-                     title([mconfig ' ' '\Delta',bintype{its},'-amp ',...
-                        indvar_ename{ivar}, ' ', ...
-                        aero_N_str{ia},' ',...
-                        w_spd_str{iw}, ' '],...
-                        'fontsize',20,'FontWeight','bold')
-                  end
-                  
-                  set(gca,'fontsize',16)
-                  if ispath
-                     if israin || (~israin && ~iscloud)
-                        title([mconfig ' ' bintype{its}, ' ', ...
-                           aero_N_str{ia},' ' ...
-                           w_spd_str{iw}],...
-                           'fontsize',20,...
-                           'FontWeight','bold')
-                        
-                        if israin
-                           ylabel('\Deltaliquid water path')
-                           legend('bin-amp cloud','','bin-amp rain',...
-                              'Location','southwest')
-                           vnifn='liquid water path';
-                        else
-                           ylabel(['\Delta',indvar_ename{ivar} indvar_units{ivar}])
-                           vnifn=indvar_name{ivar};
-                        end
-                        
-                        hold off
-                        if l_save
-                           saveas(fig_pathdiff,[plot_dir,...
-                              vnifn, ' ',...
-                              bintype{its},'-amp diff', ...
-                              ' ',case_list_str{ici},'-',vnum,' ',...
-                              aero_N_str{ia},' ',...
-                              w_spd_str{iw},'.png'])
-                        end
-                     end
-                     
-                  elseif isproc
-                     if ivar==vare
-                        title([mconfig ' column integrated process rate'])
-                        legend('show','Location','southwest')
-                        hold off
-                        if l_save
-                           saveas(fig_procdiff,[plot_dir,...
-                              'procrate ',...
-                              bintype{its},'-amp diff', ...
-                              ' ',case_list_str{ici},'-',vnum,' ',...
-                              aero_N_str{ia},' ',...
-                              w_spd_str{iw},'.png'])
-                        end
-                     end
-                  elseif isprof
-                     %only save the comparison when both are plotted
-                     hold off
-                     if l_save
-                        saveas(fig_profdiff,[plot_dir,...
-                           indvar_ename{ivar},' ',...
-                           bintype{its},'-amp diff', ...
-                           ' ',case_list_str{ici},'-',vnum,' ',...
-                           aero_N_str{ia},' ',...
-                           w_spd_str{iw},'.png'])
-                     end
-                  end
-                  
-                  pause(.5)
-               end
-            end
+%             % plot difference
+%             for ici = case_interest
+%                %%
+%                iclr=3; % color idx for proc rate
+%                for ivar = vars:vare
+%                   
+%                   time = amp_struct(ici).time;
+%                   z = amp_struct(ici).z;
+%                   var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
+%                   [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
+%                      ivar,1);
+%                   
+%                   var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
+%                   [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,...
+%                      ivar,1);
+%                   
+%                   if israin
+%                      lsty=':';
+%                   else
+%                      lsty='-';
+%                   end
+%                   
+%                   var_comp_amp(isnan(var_comp_amp))=0;
+%                   var_comp_bin(isnan(var_comp_bin))=0;
+%                   
+%                   var_diff = var_comp_bin-var_comp_amp;
+%                   
+%                   if isproc
+%                      amp_proc_path=col_intg(var_comp_amp,dz,...
+%                         amp_struct(ici).pressure*100,...
+%                         amp_struct(ici).temperature);
+%                      bin_proc_path=col_intg(var_comp_bin,dz,...
+%                         bin_struct(ici).pressure*100,...
+%                         bin_struct(ici).temperature);
+%                      var_diff=bin_proc_path-amp_proc_path;
+%                   end
+%                   
+%                   bound=10^(ceil(log10(prctile(abs(var_diff(:)),99))*2)/2);
+%                   
+%                   if bound==0
+%                      bound=10^(ceil(log10(max(abs(var_diff(:))))*2)/2);
+%                   end
+%                   
+%                   if ispath
+%                      % plot path difference
+%                      set(0,'CurrentFigure',fig_pathdiff)
+%                      
+%                      refline(0,0)
+%                      plot(time,var_diff,'LineWidth',2,...
+%                         'LineStyle',lsty,...
+%                         'color',color_order{1})
+%                      hold on
+%                      xlim([min(time) max(time)])
+%                      xlabel('Time [s]')
+%                      
+%                   elseif isproc
+%                      set(0,'CurrentFigure',fig_procdiff)
+%                      
+%                      rl=refline(0,0);
+%                      rl.HandleVisibility='off';
+%                      plot(time,var_diff,'LineWidth',2,...
+%                         'LineStyle',lsty,...
+%                         'color',color_order{iclr},...
+%                         'DisplayName',['bin-amp ' indvar_ename{ivar}])
+%                      hold on
+%                      xlim([min(time) max(time)])
+%                      xlabel('Time [s]')
+%                      ylabel('\Deltaind proc rate')
+%                      
+%                      if contains(indvar_name{ivar},'rain')
+%                         iclr=iclr+1;
+%                      end
+%                   elseif isprof
+%                      % plot profile difference
+%                      set(0,'CurrentFigure',fig_profdiff)
+%                      
+%                      nanimagesc(time,z,var_diff')
+%                      set(gca,'YDir','normal')
+%                      colormap(coolwarm)
+%                      caxis([-bound bound]);
+%                      set(gca,'ColorScale','lin')
+%                      cbar = colorbar;
+%                      cbar.Label.String = 'prof diff';
+%                      xlabel('Time [s]')
+%                      ylabel('Altitude [m]')
+%                      
+%                      title([mconfig ' ' '\Delta',bintype{its},'-amp ',...
+%                         indvar_ename{ivar}, ' ', ...
+%                         var1_str{ivar1},' ',...
+%                         var2_str{ivar2}, ' '],...
+%                         'fontsize',20,'FontWeight','bold')
+%                   end
+%                   
+%                   set(gca,'fontsize',16)
+%                   if ispath
+%                      if israin || (~israin && ~iscloud)
+%                         title([mconfig ' ' bintype{its}, ' ', ...
+%                            var1_str{ivar1},' ' ...
+%                            var2_str{ivar2}],...
+%                            'fontsize',20,...
+%                            'FontWeight','bold')
+%                         
+%                         if israin
+%                            ylabel('\Deltaliquid water path')
+%                            legend('bin-amp cloud','','bin-amp rain',...
+%                               'Location','southwest')
+%                            vnifn='liquid water path';
+%                         else
+%                            ylabel(['\Delta',indvar_ename{ivar} indvar_units{ivar}])
+%                            vnifn=indvar_name{ivar};
+%                         end
+%                         
+%                         hold off
+%                         if l_save
+%                            saveas(fig_pathdiff,[plot_dir,...
+%                               vnifn, ' ',...
+%                               bintype{its},'-amp diff', ...
+%                               ' ',case_list_str{ici},'-',vnum,' ',...
+%                               var1_str{ivar1},' ',...
+%                               var2_str{ivar2},'.png'])
+%                         end
+%                      end
+%                      
+%                   elseif isproc
+%                      if ivar==vare
+%                         title([mconfig ' column integrated process rate'])
+%                         legend('show','Location','southwest')
+%                         hold off
+%                         if l_save
+%                            saveas(fig_procdiff,[plot_dir,...
+%                               'procrate ',...
+%                               bintype{its},'-amp diff', ...
+%                               ' ',case_list_str{ici},'-',vnum,' ',...
+%                               var1_str{ivar1},' ',...
+%                               var2_str{ivar2},'.png'])
+%                         end
+%                      end
+%                   elseif isprof
+%                      %only save the comparison when both are plotted
+%                      hold off
+%                      if l_save
+%                         saveas(fig_profdiff,[plot_dir,...
+%                            indvar_ename{ivar},' ',...
+%                            bintype{its},'-amp diff', ...
+%                            ' ',case_list_str{ici},'-',vnum,' ',...
+%                            var1_str{ivar1},' ',...
+%                            var2_str{ivar2},'.png'])
+%                      end
+%                   end
+%                   
+%                   pause(.5)
+%                end
+%             end
          end
       end
    end

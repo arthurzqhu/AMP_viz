@@ -2,12 +2,12 @@ clear
 clear global
 close all
 
-global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
-   bintype aero_N_str w_spd_str indvar_name indvar_name_set ...
+global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
+   bintype var1_str var2_str indvar_name indvar_name_set ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-09-21';
+nikki='2021-10-07';
 case_interest=2; % 1:length(case_list_num);
 
 run global_var.m
@@ -37,9 +37,9 @@ for iconf=1%:length(mconfig_ls)
    %     mconfig='adv_coll';
    run case_dep_var.m
    
-   for ia=1:length(aero_N_str)
+   for ivar1=1:length(var1_str)
       %             close all
-      for iw=1:length(w_spd_str)
+      for ivar2=1:length(var2_str)
          %                 close all
          
          its=1;
@@ -77,10 +77,10 @@ for iconf=1%:length(mconfig_ls)
                
                [mrsq,mr,rsq]=wrsq(var_tau_flt,var_sbm_flt,weight);
                
-               pfm(ici).(indvar_name{ivar}).mrsq(ia,iw)=mrsq;
-               pfm(ici).(indvar_name{ivar}).mr(ia,iw)=mr;
-               pfm(ici).(indvar_name{ivar}).rsq(ia,iw)=rsq;
-               pfm(ici).(indvar_name{ivar}).mpath_sbm(ia,iw)=mean(var_sbm_flt);
+               pfm(ici).(indvar_name{ivar}).mrsq(ivar1,ivar2)=mrsq;
+               pfm(ici).(indvar_name{ivar}).mr(ivar1,ivar2)=mr;
+               pfm(ici).(indvar_name{ivar}).rsq(ivar1,ivar2)=rsq;
+               pfm(ici).(indvar_name{ivar}).mpath_sbm(ivar1,ivar2)=mean(var_sbm_flt);
                
             end
             
@@ -108,10 +108,10 @@ for iconf=1%:length(mconfig_ls)
             nanimagesc(pfm(ici).(indvar_name{ivar}).(fldnms{ifn}))
             colorbar
             title('TAU dev. from SBM','FontWeight','normal')
-            xticks(1:length(w_spd_str))
-            yticks(1:length(aero_N_str))
-            xticklabels(extractAfter(w_spd_str,'w'))
-            yticklabels(extractAfter(aero_N_str,'a'))
+            xticks(1:length(var2_str))
+            yticks(1:length(var1_str))
+            xticklabels(extractAfter(var2_str,'w'))
+            yticklabels(extractAfter(var1_str,'a'))
             set(gca,'FontSize',16)
             
             if strcmp(fldnms{ifn},'mr')
@@ -119,25 +119,25 @@ for iconf=1%:length(mconfig_ls)
                set(gca,'ColorScale','log')
                caxis([.5 2])
                
-               [XX,YY]=meshgrid(1:length(w_spd_str),1:length(aero_N_str));
+               [XX,YY]=meshgrid(1:length(var2_str),1:length(var1_str));
                mpath_sbm_str=sprintfc('%0.3g',...
                   pfm(ici).(indvar_name{ivar}).mpath_sbm);
-               for ia=1:length(aero_N_str)
-                  for iw=1:length(w_spd_str)
+               for ivar1=1:length(var1_str)
+                  for ivar2=1:length(var2_str)
                      
                      % ----- get text color -----
                      ngrads=size(coolwarm_r,1);
-                     clr_idx=roundfrac(pfm(ici).(indvar_name{ivar}).rsq(ia,iw),1/ngrads)*ngrads;
+                     clr_idx=roundfrac(pfm(ici).(indvar_name{ivar}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
                      clr_idx=round(clr_idx); % in case prev line outputs double
                      % ----- got text color -----
                      
                      if isnan(clr_idx) continue, end
                      if clr_idx==0 clr_idx=1; end
                      
-                     text(iw+0.02,ia-0.02,mpath_sbm_str{ia,iw},'FontSize',15,...
+                     text(ivar2+0.02,ivar1-0.02,mpath_sbm_str{ivar1,ivar2},'FontSize',15,...
                         'HorizontalAlignment','center',...
                         'Color',coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
-                     text(iw,ia,mpath_sbm_str{ia,iw},'FontSize',15,...
+                     text(ivar2,ivar1,mpath_sbm_str{ivar1,ivar2},'FontSize',15,...
                         'HorizontalAlignment','center',...
                         'Color',coolwarm_r(clr_idx,:),'FontName','Menlo')
                      
