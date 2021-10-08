@@ -2,23 +2,23 @@ clear
 clear global
 close all
 
-global mconfig iw ia its ici nikki output_dir case_list_str vnum ...
-   bintype aero_N_str w_spd_str l_amp l_sbm fn cloud_mr_th %#ok<*NUSED>
+global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
+   bintype var1_str var2_str l_amp l_sbm fn cloud_mr_th %#ok<*NUSED>
 
 
 
 l_amp=2;
 l_sbm=1;
 
-case_interest = 1;
-nikki='2021-06-09';
+case_interest = 2;
+nikki='2021-09-21';
 % mconfig='noinit';
 
 % last four characters of the model output file.
-vnum='0002';
+vnum='0001';
 
 run global_var.m
-bintype = {'sbm'};
+% bintype = {'sbm'};
 mconfig_ls_dir = dir([output_dir,nikki,'/']);
 mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
 mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
@@ -35,22 +35,22 @@ elseif strcmp(pltflag,'mass_ratio')
 end
 
 %%
-for iconf = length(mconfig_ls):-1:1
+for iconf = 2%length(mconfig_ls):-1:1
    mconfig = mconfig_ls{iconf};
    run case_dep_var.m
    for its = 1:length(bintype)
-      for ia = 1:length(aero_N_str)
+      for ivar1 = length(var1_str)
          %% read files
-         for iw = length(w_spd_str)
+         for ivar2 = 1%:length(var2_str)
             for ici = case_interest
                
                if l_amp % load when == 1 or 2
-                  [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
+                  [~, ~, ~, ~, amp_struct]=...
                      loadnc('amp',case_interest);
                end
                
                if l_amp~=1 % load when == 0 or 2
-                  [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
+                  [~, ~, ~, ~, bin_struct]=...
                      loadnc('bin',case_interest);
                end
                
@@ -117,8 +117,6 @@ for iconf = length(mconfig_ls):-1:1
                   DSDprof_timeprog(total_length, time_step, DSD2beplt, z,...
                      binmean,cmap,linorlog,pltflag)
                end
-               
-               
                
             end
          end
