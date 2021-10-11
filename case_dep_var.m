@@ -28,11 +28,11 @@ var2_str_raw = {var2_dir(var2_dir_flags).name};
 
 
 % sort aerosol and wind speed from low to high
-var1_val_unsorted = cellfun(@str2num,extractAfter(var1_str_raw,1));
+var1_val_unsorted = cellfun(@str2num,extractAfter(var1_str_raw,lettersPattern));
 [var1_val,var1_idx] = sort(var1_val_unsorted);
 var1_str=var1_str_raw(var1_idx);
 
-var2_val_unsorted = cellfun(@str2num,extractAfter(var2_str_raw,1));
+var2_val_unsorted = cellfun(@str2num,extractAfter(var2_str_raw,lettersPattern));
 [var2_val,var2_idx] = sort(var2_val_unsorted);
 var2_str=var2_str_raw(var2_idx);
 
