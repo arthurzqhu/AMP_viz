@@ -32,7 +32,7 @@ set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 % creating structures for performance analysis based on Rsq and ratio
 pfm=struct;
 
-for iconf=1%:length(mconfig_ls)
+for iconf=2%:length(mconfig_ls)
    mconfig=mconfig_ls{iconf};
    %     mconfig='adv_coll';
    run case_dep_var.m
@@ -42,26 +42,28 @@ for iconf=1%:length(mconfig_ls)
          for ivar2=1:length(var2_str)
             %                 close all
             
-            [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
-               loadnc('amp',case_interest);
-            [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
-               loadnc('bin',case_interest);
-            
-            % indices of vars to compare
-            vars=1;
-            vare=length(indvar_name);
             
             for ici=case_interest
-               time=amp_struct(ici).time;
-               z=amp_struct(ici).z;
+               
+               [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
+                  loadnc('amp',case_interest);
+               [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
+                  loadnc('bin',case_interest);
+
+               % indices of vars to compare
+               vars=1;
+               vare=length(indvar_name);
+
+               time=amp_struct.time;
+               z=amp_struct.z;
                for ivar=vars:vare
                   
                   
                   
-                  var_comp_raw_amp=amp_struct(ici).(indvar_name{ivar});
+                  var_comp_raw_amp=amp_struct.(indvar_name{ivar});
                   var_amp_flt=var2phys(var_comp_raw_amp,ivar,0,1);
                   
-                  var_comp_raw_bin=bin_struct(ici).(indvar_name{ivar});
+                  var_comp_raw_bin=bin_struct.(indvar_name{ivar});
                   var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
                   
                   % get the non-nan indices for both bin and amp
@@ -85,6 +87,8 @@ for iconf=1%:length(mconfig_ls)
       end
    end
 end
+
+save([nikki '_' mconfig '_pfm.mat'],'pfm');
 
 %% plot
 fldnms=fieldnames(pfm(ici).(indvar_name{ivar}).(bintype{its}));
