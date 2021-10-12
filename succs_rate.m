@@ -27,7 +27,7 @@ mconfig=mconfig_ls{iconf};
 
 run case_dep_var.m
 
-for its=1%:length(bintype)
+for its=1:length(bintype)
    for ivar1=1:length(var1_str)
       for ivar2=1:length(var2_str)
 
@@ -43,4 +43,36 @@ for its=1%:length(bintype)
    end
 end
 
-nanimagesc(squeeze(success_rate_c(1,:,:)))
+%%
+close all
+
+figure('Position',[1331 333 1250 644])
+tl=tiledlayout(2,2);
+   
+for its=1:length(bintype)
+   
+   
+   nexttile(its)
+   nanimagesc(squeeze(success_rate_c(its,:,:)))
+   xticklabels(extractAfter(var2_str,1))
+   yticklabels(extractAfter(var1_str,1))
+   set(gca,'FontSize',16)
+   title(['AMP-' upper(bintype{its}) ' cloud success rate'])
+   colorbar
+   colormap(parula(10))
+   caxis([.9 1])
+   
+   nexttile(its+2)
+   nanimagesc(squeeze(success_rate_r(its,:,:)))
+   xticklabels(extractAfter(var2_str,1))
+   yticklabels(extractAfter(var1_str,1))
+   set(gca,'FontSize',16)
+   title(['AMP-' upper(bintype{its}) ' rain success rate'])
+   colorbar
+   colormap(parula(10))
+   caxis([.9 1])
+   
+end
+
+save([nikki '_' mconfig '_success_rate.mat'],'success_rate_c','success_rate_r');
+% saveas(gcf,[plot_dir 'success rate comparison.png'])
