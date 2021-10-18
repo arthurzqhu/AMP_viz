@@ -3,15 +3,14 @@ clear global
 close all
 
 global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
-   bintype var1_str var2_str l_amp l_sbm fn cloud_mr_th %#ok<*NUSED>
+   bintype var1_str var2_str l_amp fn cloud_mr_th %#ok<*NUSED>
 
 
 
 l_amp=2;
-l_sbm=1;
 
 case_interest = 2;
-nikki='2021-09-21';
+nikki='2021-10-16';
 % mconfig='noinit';
 
 % last four characters of the model output file.
@@ -41,7 +40,7 @@ for iconf = 2%length(mconfig_ls):-1:1
    for its = 1:length(bintype)
       for ivar1 = length(var1_str)
          %% read files
-         for ivar2 = 1%:length(var2_str)
+         for ivar2 = [1 length(var2_str)]
             for ici = case_interest
                
                if l_amp % load when == 1 or 2
@@ -57,35 +56,37 @@ for iconf = 2%length(mconfig_ls):-1:1
             end
             %% plot
             for ici = case_interest
-               if l_sbm
+               if its==2
                   binmean = load('diamg_sbm.txt');
-               else
+               elseif its==1
                   binmean = load('diamg_tau.txt');
                end
                
                for iab = ab_arr
                   
                   if iab==1
-                     time = amp_struct(ici).time;
-                     z = amp_struct(ici).z;
-                     amp_DSDprof = amp_struct(ici).mass_dist_init;
+                     time = amp_struct.time;
+                     z = amp_struct.z;
+                     amp_DSDprof = amp_struct.mass_dist_init;
                      amp_DSDprof(amp_DSDprof<cloud_mr_th(1))=0;
                      DSDprof = amp_DSDprof;
+                     RH=amp_struct.RH;
                   end
                   
                   if iab==2 % set when ==0 or 2
-                     time = bin_struct(ici).time;
-                     z = bin_struct(ici).z;
-                     bin_DSDprof = bin_struct(ici).mass_dist;
+                     time = bin_struct.time;
+                     z = bin_struct.z;
+                     bin_DSDprof = bin_struct.mass_dist;
                      bin_DSDprof(2:end,:,:)=bin_DSDprof(1:end-1,:,:);
                      bin_DSDprof(bin_DSDprof<cloud_mr_th(1))=0;
                      DSDprof = bin_DSDprof;
+                     RH=bin_struct.RH;
                      
-                     if l_sbm
-                        DSDprof=DSDprof(:,1:length(binmean),:);
-                     end
                   end
                   
+                  if its==2
+                     DSDprof=DSDprof(:,1:length(binmean),:);
+                  end
                   
                   %         generate the comparison animation with another figure
                   %         if l_amp==2
@@ -109,13 +110,18 @@ for iconf = 2%length(mconfig_ls):-1:1
                      DSD2beplt=DSDprof;
                   end
                   
+                  for itime=1:length(time)
+                     for iz=1:length(z)
+                        mean_diag(itime,iz)=wmean(binmean,DSDprof(itime,:,iz));
+                     end
+                  end
                   
                   fn = [ampORbin{iab},'-',bintype{its},' ',...
                      mconfig,'-',vnum,' '];
-                  total_length=length(time);
-                  time_step=5;
+                  total_length=max(time);
+                  time_step=20;
                   DSDprof_timeprog(total_length, time_step, DSD2beplt, z,...
-                     binmean,cmap,linorlog,pltflag)
+                     binmean,cmap,linorlog,pltflag,RH)
                end
                
             end
