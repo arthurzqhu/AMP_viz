@@ -1,13 +1,12 @@
 function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
-global fn var1_str var2_str case_list_str ivar1 ivar2 ici color_order
+global fn var1_str var2_str case_list_str ivar1 ivar2 ici color_order %#ok<NUSED>
 
 close all
 c_map = getPyPlot_cMap(Cmap,20);
 
 if ~exist('var_overlay','var') || isempty(var_overlay)
-   'nan?'
    var_overlay=nan;
 end
 
@@ -29,9 +28,9 @@ for it_idx = 1:time_length+1
    
    switch pltflag
       case {'mass','mass_ratio','mass_adv'}
-         DSD_prof_is=reshape(DSDprof_mphys(it_idx,:,:),[],length(z));
+         DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:));
       case 'nd'
-         DSD_prof_is=mass2conc(reshape(DSDprof_mphys(it_idx,:,:),[],length(z)),binmean)/1e6;
+         DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(itime,:,:)),binmean)/1e6;
    end
    
    if length(binmean)<size(DSD_prof_is,1)
