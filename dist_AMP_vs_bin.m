@@ -3,14 +3,14 @@ clear global
 close all
 
 global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
-   bintype var1_str var2_str l_amp fn cloud_mr_th %#ok<*NUSED>
+   bintype var1_str var2_str dt l_amp fn cloud_mr_th %#ok<*NUSED>
 
 
 
 l_amp=2;
 
 case_interest = 2;
-nikki='2021-10-16';
+nikki='2021-10-14';
 % mconfig='noinit';
 
 % last four characters of the model output file.
@@ -81,9 +81,10 @@ for iconf = 2%length(mconfig_ls):-1:1
                      bin_DSDprof(bin_DSDprof<cloud_mr_th(1))=0;
                      DSDprof = bin_DSDprof;
                      RH=bin_struct.RH;
-                     
                   end
                   
+                  dt=time(2)-time(1);
+
                   if its==2
                      DSDprof=DSDprof(:,1:length(binmean),:);
                   end

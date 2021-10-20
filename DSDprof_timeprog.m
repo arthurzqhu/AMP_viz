@@ -1,7 +1,7 @@
 function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
-global fn var1_str var2_str case_list_str ivar1 ivar2 ici color_order %#ok<NUSED>
+global dt fn var1_str var2_str case_list_str ivar1 ivar2 ici color_order %#ok<NUSED>
 
 close all
 c_map = getPyPlot_cMap(Cmap,20);
@@ -11,26 +11,29 @@ if ~exist('var_overlay','var') || isempty(var_overlay)
 end
 
 time_length = floor(time_total/time_step);
+ts_indata=time_step/dt;
 
 loops = time_length;
 F(loops) = struct('cdata',[],'colormap',[]);
 
 figure('position',[233 247 800 400])
 tl=tiledlayout(1,2);
+
 for it_idx = 1:time_length+1
-   %     close all
-   
-   %     figure('Visible','off')
+   it_indata = (it_idx-1)*ts_indata;
    itime = (it_idx-1)*time_step;
    
-   if itime>time_total itime=time_total; end
-   if itime<1 itime=1; end
+   if it_indata>time_total/dt 
+      it_indata=time_total/dt; 
+      itime=time_total;
+   end
+   if it_indata<1 it_indata=1; itime=1; end
    
    switch pltflag
       case {'mass','mass_ratio','mass_adv'}
-         DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:));
+         DSD_prof_is=squeeze(DSDprof_mphys(it_indata,:,:));
       case 'nd'
-         DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(itime,:,:)),binmean)/1e6;
+         DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_indata,:,:)),binmean)/1e6;
    end
    
    if length(binmean)<size(DSD_prof_is,1)
