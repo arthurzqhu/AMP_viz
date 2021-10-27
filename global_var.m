@@ -1,6 +1,7 @@
 global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
     l_amp l_sbm indvar_name_set indvar_ename_set cwp_th rwp_th sppt_th ...
-    indvar_units_set indvar2D_name_set indvar2D_ename_set indvar2D_units_set
+    indvar_units_set indvar2D_name_set indvar2D_ename_set indvar2D_units_set ...
+    color_order
 
 
 % model configs
@@ -26,13 +27,13 @@ case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num)
 
 % thresholds to be considered as clouds 
 cloud_mr_th = [1e-10 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
-rain_mr_th = [1e-10 1e-2];
+rain_mr_th = [0 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
 rain_n_th = [1e-4 inf];
 cwp_th = [1e-3 inf]; % kg/m2 cloud water path threshold
-rwp_th = [1e-3 inf]; % kg/m2 rain water path threshold
+rwp_th = [1e-6 inf]; % kg/m2 rain water path threshold
 meanD_th = [0 inf];
-sppt_th = [.1 inf]; % mm/hr surface precipitation
+sppt_th = [0 inf]; % mm/hr surface precipitation
 
 
 % set the current date as nikki if unset
@@ -52,7 +53,7 @@ BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
 BrBG = repelem(BrBG,floor(256/ngrad),1); 
 
 % compare these vars
-var_comp = [3:4 7:9];
+var_comp = [3:9];
 
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
     'cloud_M1_path','rain_M1_path',...
