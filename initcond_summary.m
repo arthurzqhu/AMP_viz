@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-10-07';
+nikki='2021-10-06';
 case_interest=2; % 1:length(case_list_num);
 
 run global_var.m
@@ -31,9 +31,9 @@ set(0, 'DefaultFigurePosition',[1331 587 1250 390])
 
 % creating structures for performance analysis based on Rsq and ratio
 pfm=struct;
-
-for iconf=2%:length(mconfig_ls)
-   mconfig=mconfig_ls{iconf};
+iconf=1;
+%for iconf=1%:length(mconfig_ls)
+   mconfig=mconfig_ls{iconf}
    %     mconfig='adv_coll';
    run case_dep_var.m
    for its=1:length(bintype)
@@ -41,14 +41,15 @@ for iconf=2%:length(mconfig_ls)
          %             close all
          for ivar2=1:length(var2_str)
             %                 close all
+           [its,ivar1,ivar2]
+            [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
+               loadnc('amp',case_interest);
+            [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
+               loadnc('bin',case_interest);
             
-            
-            for ici=case_interest
+            for ici=1:length(case_interest)
+               icase=case_interest(ici);
                
-               [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
-                  loadnc('amp',case_interest);
-               [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
-                  loadnc('bin',case_interest);
 
                % indices of vars to compare
                vars=1;
@@ -86,8 +87,7 @@ for iconf=2%:length(mconfig_ls)
          end
       end
    end
-end
-
+%end
 save([nikki '_' mconfig '_pfm.mat'],'pfm');
 
 %% plot
@@ -95,10 +95,11 @@ fldnms=fieldnames(pfm(ici).(indvar_name{ivar}).(bintype{its}));
 fldnms=fldnms(1:end-1);
 
 close all
-for iconf=1%:length(mconfig_ls)
+%for iconf=1%:length(mconfig_ls)
    vars=1;
    vare=length(indvar_name);
-   for ici=case_interest
+   for ici=1:length(case_interest)
+      icase=case_interest(ici);
       for ifn=2%1:length(fldnms)
          for ivar=vars:vare
             %%
@@ -111,8 +112,8 @@ for iconf=1%:length(mconfig_ls)
                title(upper(bintype{its}),'FontWeight','normal')
                xticks(1:length(var2_str))
                yticks(1:length(var1_str))
-               xticklabels(extractAfter(var2_str,1))
-               yticklabels(extractAfter(var1_str,1))
+               xticklabels(extractAfter(var2_str,lettersPattern))
+               yticklabels(extractAfter(var1_str,lettersPattern))
                set(gca,'FontSize',16)
                
                if strcmp(fldnms{ifn},'mr')
@@ -120,10 +121,16 @@ for iconf=1%:length(mconfig_ls)
                   set(gca,'ColorScale','log')
                   caxis([.5 2])
 %                   cb.Ticks=[.25 .5 1 2 4];
-                  
+                 
+                  mpath=pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin;
                   [XX,YY]=meshgrid(1:length(var2_str),1:length(var1_str));
-                  mpath_bin_str=sprintfc('%0.3g',...
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin);
+                  mpath_bin_str=sprintfc('%0.3g',mpath);
+
+                  if strcmp(indvar_name{ivar}, 'mean_surface_ppt')
+                     idx_ignore=mpath<0.01;
+                     mpath_bin_str(idx_ignore)={' '};
+                  end
+
                   for ivar1=1:length(var1_str)
                      for ivar2=1:length(var2_str)
                         
@@ -170,18 +177,18 @@ for iconf=1%:length(mconfig_ls)
             cb.Label.Position=[0.5000 3.3 0];
             set(gca,'FontSize',16)
 
-            xlabel(tl,'max vertical velocity [m/s]','fontsize',16)
-            ylabel(tl,['cloud water content [kg/kg]' repelem(' ',23)],'fontsize',16)
+            xlabel(tl,'Max vertical velocity [m/s]','fontsize',16)
+            ylabel(tl,['Aerosol concentration [1/cc]' repelem(' ',23)],'fontsize',16)
             
             title(tl,[indvar_ename{ivar} indvar_units{ivar} ...
 %                ' - ' (fldnms{ifn})...
                ],'fontsize',20,'fontweight','bold')
             saveas(figure(ifn),[plot_dir 'summ ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
-               ' ' case_list_str{ici} '.png'])
+               ' ' case_list_str{icase} '.png'])
             pause(.5)
          end
       end
       
    end
-end
+%end
