@@ -1,0 +1,14 @@
+#!/bin/bash -l
+#SBATCH -J matlab
+#SBATCH -o matlab-%j.out
+#SBATCH -e matlab-%j.out
+#SBATCH -t 24:00:00
+#SBATCH -p high2
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mail-type=END
+#SBATCH --mail-user=azqhu@ucdavis.edu
+
+module load matlab
+cd ~/github/AMP_viz
+matlab -r initcond_summary

@@ -37,9 +37,9 @@ var2_val_unsorted = cellfun(@str2num,extractAfter(var2_str_raw,lettersPattern));
 var2_str=var2_str_raw(var2_idx);
 
 % output dir for the figures
-plot_dir=['plots/' nikki '/' mconfig ' '];
-if ~exist(['plots/' nikki '/'],'dir')
-    mkdir(['plots/' nikki '/'])
+plot_dir=['plots/' nikki '/' mconfig];
+if ~exist(['plots/' nikki '/' mconfig],'dir')
+    mkdir(['plots/' nikki '/' mconfig])
 end
 
 clear var1_str_raw var2_str_raw

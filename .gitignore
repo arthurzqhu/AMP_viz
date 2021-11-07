@@ -7,3 +7,4 @@ gammamod.m
 vids/*
 *.fig
 cases for plot/*
+*.out
