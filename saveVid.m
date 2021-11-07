@@ -3,7 +3,7 @@ function saveVid(F,filename,framerate)
 if strcmp(computer('arch'),'maci64')
    v=VideoWriter(['vids/' filename],'MPEG-4');
 elseif strcmp(computer('arch'),'glnxa64')
-   v=VideoWriter(['vids/' filename],'Archival');
+   v=VideoWriter(['vids/' filename]);
 end
 
 v.FrameRate=framerate;
