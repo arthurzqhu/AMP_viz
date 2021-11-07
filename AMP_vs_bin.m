@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-09-21';
+nikki='2021-10-29';
 case_interest = [2]; % 1:length(case_list_num);
 
 run global_var.m
@@ -45,8 +45,8 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 3%length(mconfig_ls)
-   mconfig = mconfig_ls{iconf};
+for iconf = [1]%length(mconfig_ls)
+   mconfig = mconfig_ls{iconf}
    %     mconfig = 'adv_coll';
    run case_dep_var.m
    %% read files
@@ -68,18 +68,18 @@ for iconf = 3%length(mconfig_ls)
             for ici = case_interest
                %%
                iclr=3; % color idx for proc rate
-               time = amp_struct(ici).time;
-               z = amp_struct(ici).z;
+               time = amp_struct.time;
+               z = amp_struct.z;
                % assuming all vertical layers have the same
                % thickness
                dz = z(2)-z(1);
                
                for ivar = vars:vare
                   
-                  var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
+                  var_comp_raw_amp = amp_struct.(indvar_name{ivar});
                   [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
                   
-                  var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
+                  var_comp_raw_bin = bin_struct.(indvar_name{ivar});
                   [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
                   
                   % change linestyle according to cloud/rain
@@ -113,12 +113,12 @@ for iconf = 3%length(mconfig_ls)
                            ['bin-' bintype{its},' cloud'],...
                            ['amp-' bintype{its}, ' rain'],...
                            ['bin-' bintype{its},' rain'],...
-                           'Location','southwest')
+                           'Location','northwest')
                      else
                         ylabel([indvar_ename{ivar} indvar_units{ivar}])
                         legend(['amp-' bintype{its}],...
                            ['bin-' bintype{its}],...
-                           'Location','southwest')
+                           'Location','northwest')
                         if contains(indvar_name{ivar},'albedo')
                            ylim([0 1])
                         end
@@ -145,7 +145,7 @@ for iconf = 3%length(mconfig_ls)
                         hold off
                         
                         if l_save
-                           saveas(fig_path,[plot_dir,...
+                           saveas(fig_path,[plot_dir,'/',...
                               vnifn, ' ',...
                               'amp vs bin-',bintype{its},' ',...
                               case_list_str{ici},'-',vnum,' ',...
@@ -158,11 +158,11 @@ for iconf = 3%length(mconfig_ls)
                      set(0,'CurrentFigure',fig_proc)
                      
                      amp_proc_path=col_intg(var_comp_amp,dz,...
-                        amp_struct(ici).pressure*100,...
-                        amp_struct(ici).temperature);
+                        amp_struct.pressure*100,...
+                        amp_struct.temperature);
                      bin_proc_path=col_intg(var_comp_bin,dz,...
-                        bin_struct(ici).pressure*100,...
-                        bin_struct(ici).temperature);
+                        bin_struct.pressure*100,...
+                        bin_struct.temperature);
                      
                      plot(time,amp_proc_path,...
                         'LineWidth',2,...
@@ -185,11 +185,11 @@ for iconf = 3%length(mconfig_ls)
                      if ivar==vare
                         set(gca,'fontsize',16)
                         
-                        legend('show','Location','southwest')
+                        legend('show','Location','northwest')
                         hold off
                         
                         if l_save
-                           saveas(fig_proc,[plot_dir,...
+                           saveas(fig_proc,[plot_dir,'/',...
                               'procrate ',...
                               'amp vs bin-',bintype{its},' ',...
                               case_list_str{ici},'-',vnum,' ',...
@@ -238,7 +238,7 @@ for iconf = 3%length(mconfig_ls)
                            'FontWeight','bold')
                         
                         if l_save
-                           saveas(fig_prof,[plot_dir,...
+                           saveas(fig_prof,[plot_dir,'/'...
                               indvar_ename{ivar},' ', ...
                               ampORbin{iab},'-',bintype{its},' ',...
                               case_list_str{ici},'-',...
@@ -258,13 +258,13 @@ for iconf = 3%length(mconfig_ls)
 %                iclr=3; % color idx for proc rate
 %                for ivar = vars:vare
 %                   
-%                   time = amp_struct(ici).time;
-%                   z = amp_struct(ici).z;
-%                   var_comp_raw_amp = amp_struct(ici).(indvar_name{ivar});
+%                   time = amp_struct.time;
+%                   z = amp_struct.z;
+%                   var_comp_raw_amp = amp_struct.(indvar_name{ivar});
 %                   [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,...
 %                      ivar,1);
 %                   
-%                   var_comp_raw_bin = bin_struct(ici).(indvar_name{ivar});
+%                   var_comp_raw_bin = bin_struct.(indvar_name{ivar});
 %                   [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,...
 %                      ivar,1);
 %                   
@@ -281,11 +281,11 @@ for iconf = 3%length(mconfig_ls)
 %                   
 %                   if isproc
 %                      amp_proc_path=col_intg(var_comp_amp,dz,...
-%                         amp_struct(ici).pressure*100,...
-%                         amp_struct(ici).temperature);
+%                         amp_struct.pressure*100,...
+%                         amp_struct.temperature);
 %                      bin_proc_path=col_intg(var_comp_bin,dz,...
-%                         bin_struct(ici).pressure*100,...
-%                         bin_struct(ici).temperature);
+%                         bin_struct.pressure*100,...
+%                         bin_struct.temperature);
 %                      var_diff=bin_proc_path-amp_proc_path;
 %                   end
 %                   
@@ -415,7 +415,7 @@ end
 % blk_info=ncinfo('/Volumes/ESSD/AMP output/2021-05-05/KiD_m-thompson09_b-+_u-Adele_c-0102_v-0001.nc');
 % for ivar = 1:length(blk_info.Variables)
 %    var_name{ivar,1} = blk_info.Variables(ivar).Name;
-%    blk_struct(ici).(var_name{ivar}) = ncread('/Volumes/ESSD/AMP output/2021-05-05/KiD_m-thompson09_b-+_u-Adele_c-0102_v-0001.nc', var_name{ivar});
+%    blk_struct.(var_name{ivar}) = ncread('/Volumes/ESSD/AMP output/2021-05-05/KiD_m-thompson09_b-+_u-Adele_c-0102_v-0001.nc', var_name{ivar});
 % end
 % 
 % hold on

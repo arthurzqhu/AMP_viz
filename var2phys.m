@@ -34,7 +34,7 @@ iscloud=0;
 
 var_raw(var_raw==-999)=nan;
 
-if contains(var_name,{'diag'})
+if contains(var_name,{'diag', 'Dm','RH'})
    isprof=1;
 elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
    ispath=1;
@@ -49,6 +49,12 @@ elseif contains(var_name,'cloud')
 end
 
 switch var_name
+   case {'Dm_c', 'Dm_r', 'Dm_w'}
+      physquant = var_raw*1e6; % meter -> micron
+      threshold = 1;
+      note = 'log';
+      mask = 'self';
+      range = [1 3e3];
    case {'diagM0_cloud'}
       physquant = var_raw/1e6;
       threshold = cloud_n_th(1);
@@ -145,7 +151,7 @@ switch var_name
       note = 'lin';
    case 'RH'
       physquant = var_raw;
-      range = [80 110];
+      range = [30 100];
       mask = 'self';
       note = 'lin';
    case {'flagoobc', 'flagoobr'}
