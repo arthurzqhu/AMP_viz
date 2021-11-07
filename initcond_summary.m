@@ -94,7 +94,7 @@ for ink=1:length(nikkis)
             end
          end
       end
-      save([nikki '_' mconfig '_pfm.mat'],'pfm');
+      save(['pfm_summary/' nikki '_' mconfig '_pfm.mat'],'pfm');
    end
 end
 %return
