@@ -51,8 +51,6 @@ for ink=1:length(nikkis)
                   loadnc('amp',case_interest);
                [~, ~, ~, ~, bin_struct]=...
                   loadnc('bin',case_interest);
-                  'done'
-                  pause
                for ici=1:length(case_interest)
                   icase=case_interest(ici);
                   
