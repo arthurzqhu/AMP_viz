@@ -7,91 +7,102 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-10-06';
+%nikkis={'2021-09-22','2021-10-07','2021-10-11','2021-10-12',...
+%         '2021-10-14','2021-10-16','2021-10-27','2021-10-28','2021-10-29'};
+nikkis={'2021-10-28'};
 case_interest=2; % 1:length(case_list_num);
 
-run global_var.m
-
-% get the list of configs. cant put it into globar_var
-mconfig_ls_dir=dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
-mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
-
-set(0, 'DefaultFigurePosition',[1331 587 1250 390])
-
-%%
-
-% fig_prof=figure('visible','off');
-% fig_path=figure('visible','off');
-% fig_proc=figure('visible','off');
-% fig_profdiff=figure('visible','off');
-% fig_pathdiff=figure('visible','off');
-% fig_procdiff=figure('visible','off');
-
-% creating structures for performance analysis based on Rsq and ratio
-pfm=struct;
-iconf=1;
-%for iconf=1%:length(mconfig_ls)
-   mconfig=mconfig_ls{iconf}
-   %     mconfig='adv_coll';
-   run case_dep_var.m
-   for its=1:length(bintype)
-      for ivar1=1:length(var1_str)
-         %             close all
-         for ivar2=1:length(var2_str)
-            %                 close all
-           [its,ivar1,ivar2]
-            [amp_fi, amp_fn, amp_info, amp_var_name, amp_struct]=...
-               loadnc('amp',case_interest);
-            [bin_fi, bin_fn, bin_info, bin_var_name, bin_struct]=...
-               loadnc('bin',case_interest);
-            
-            for ici=1:length(case_interest)
-               icase=case_interest(ici);
-               
-
-               % indices of vars to compare
-               vars=1;
-               vare=length(indvar_name);
-
-               time=amp_struct.time;
-               z=amp_struct.z;
-               for ivar=vars:vare
+for ink=1:length(nikkis)
+   nikki=nikkis{ink}
+   
+   run global_var.m
+   
+   % get the list of configs. cant put it into globar_var
+   mconfig_ls_dir=dir([output_dir,nikki,'/']);
+   mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
+   mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
+   mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
+   
+   set(0, 'DefaultFigurePosition',[1331 587 1250 390])
+   
+   %%
+   
+   % fig_prof=figure('visible','off');
+   % fig_path=figure('visible','off');
+   % fig_proc=figure('visible','off');
+   % fig_profdiff=figure('visible','off');
+   % fig_pathdiff=figure('visible','off');
+   % fig_procdiff=figure('visible','off');
+   
+   % creating structures for performance analysis based on Rsq and ratio
+   pfm=struct;
+   iconf=1;
+   for iconf=2%:length(mconfig_ls)
+      mconfig=mconfig_ls{iconf}
+      %     mconfig='adv_coll';
+      run case_dep_var.m
+      for its=1:length(bintype)
+         for ivar1=1:length(var1_str)
+            %             close all
+            for ivar2=1:length(var2_str)
+               %                 close all
+              [its,ivar1,ivar2]
+               [~, ~, ~, ~, amp_struct]=...
+                  loadnc('amp',case_interest);
+               [~, ~, ~, ~, bin_struct]=...
+                  loadnc('bin',case_interest);
+                  'done'
+                  pause
+               for ici=1:length(case_interest)
+                  icase=case_interest(ici);
                   
-                  
-                  
-                  var_comp_raw_amp=amp_struct.(indvar_name{ivar});
-                  var_amp_flt=var2phys(var_comp_raw_amp,ivar,0,1);
-                  
-                  var_comp_raw_bin=bin_struct.(indvar_name{ivar});
-                  var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
-                  
-                  % get the non-nan indices for both bin and amp
-                  vidx=~isnan(var_amp_flt+var_bin_flt);
-                  nzidx=var_amp_flt.*var_bin_flt>0;
-                  
-                  weight=var_bin_flt(vidx)/sum(var_bin_flt(vidx));
-                  weight_log=log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
-                  
-                  [mrsq,mr,rsq]=wrsq(var_amp_flt,var_bin_flt,weight);
-                  
-                  pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ivar1,ivar2)=mrsq;
-                  pfm(ici).(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
-                  pfm(ici).(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
-                  pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=mean(var_bin_flt);
-                  
+   
+                  % indices of vars to compare
+                  vars=1;
+                  vare=length(indvar_name);
+   
+                  time=amp_struct.time;
+                  z=amp_struct.z;
+                  for ivar=vars:vare
+                     if strcmp(indvar_name{ivar},'mean_surface_ppt') && ~contains(mconfig,{'fullmic','sed'})
+                        continue
+                     end
+   
+                     var_comp_raw_amp=amp_struct.(indvar_name{ivar});
+                     var_amp_flt=var2phys(var_comp_raw_amp,ivar,0,1);
+                     
+                     var_comp_raw_bin=bin_struct.(indvar_name{ivar});
+                     var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
+                     
+                     % get the non-nan indices for both bin and amp
+                     vidx=~isnan(var_amp_flt+var_bin_flt);
+                     nzidx=var_amp_flt.*var_bin_flt>0;
+                     
+                     weight=var_bin_flt(vidx)/sum(var_bin_flt(vidx));
+                     weight_log=log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
+                     
+                     [mrsq,mr,rsq,er]=wrsq(var_amp_flt,var_bin_flt,weight);
+                     
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ivar1,ivar2)=mrsq;
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=mean(var_bin_flt);
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2)=mean(var_amp_flt);
+                     pfm(ici).(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2)=er;
+                     
+                  end
+   
                end
-
             end
          end
       end
+      save([nikki '_' mconfig '_pfm.mat'],'pfm');
    end
-%end
-save([nikki '_' mconfig '_pfm.mat'],'pfm');
+end
+%return
 
 %% plot
-fldnms=fieldnames(pfm(ici).(indvar_name{ivar}).(bintype{its}));
+fldnms=fieldnames(pfm(1).(indvar_name{1}).(bintype{1}));
 fldnms=fldnms(1:end-1);
 
 close all
@@ -102,6 +113,9 @@ close all
       icase=case_interest(ici);
       for ifn=2%1:length(fldnms)
          for ivar=vars:vare
+            if strcmp(indvar_name{ivar},'mean_surface_ppt') && ~contains(mconfig,{'fullmic','sed'})
+               continue
+            end
             %%
             figure(ifn)
             tl=tiledlayout(4,4);
@@ -183,7 +197,7 @@ close all
             title(tl,[indvar_ename{ivar} indvar_units{ivar} ...
 %                ' - ' (fldnms{ifn})...
                ],'fontsize',20,'fontweight','bold')
-            saveas(figure(ifn),[plot_dir 'summ ' ...
+            saveas(figure(ifn),[plot_dir ' summ ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
                ' ' case_list_str{icase} '.png'])
             pause(.5)
