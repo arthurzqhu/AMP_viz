@@ -14,25 +14,68 @@ for ivar = 1:length(oneDcaseinfo.Variables)
    oneD_struct.(var_name{ivar}) = ncread(oneDcasename, var_name{ivar});
 end
 
+oneDcase_meta=dir('./cases for plot/1D case condonly');
+oneDcasename = [oneDcase_meta.folder, '/', oneDcase_meta.name];
+oneDcaseinfo = ncinfo(oneDcasename);
+
+for ivar = 1:length(oneDcaseinfo.Variables)
+   var_name{ivar,1} = oneDcaseinfo.Variables(ivar).Name;
+   oneD_struct_condonly.(var_name{ivar}) = ncread(oneDcasename, var_name{ivar});
+end
+
+oneDcase_meta=dir('./cases for plot/1D case evaponly');
+oneDcasename = [oneDcase_meta.folder, '/', oneDcase_meta.name];
+oneDcaseinfo = ncinfo(oneDcasename);
+
+for ivar = 1:length(oneDcaseinfo.Variables)
+   var_name{ivar,1} = oneDcaseinfo.Variables(ivar).Name;
+   oneD_struct_evaponly.(var_name{ivar}) = ncread(oneDcasename, var_name{ivar});
+end
+
 %% fig 2 plot
-tl=tiledlayout(1,4);
-nexttile(1,[1,3])
-plot(oneD_struct.time,oneD_struct.w(:,1),'LineWidth',2)
+close all
+figure('Position',[1797 477 801 284])
+tl=tiledlayout(1,3);
+nexttile(1,[1,2])
+hold on
+wmax=max(oneD_struct.w(:));
+plot(oneD_struct.time,oneD_struct.w(:,1)/wmax,'LineWidth',2,...
+   'DisplayName','Full MP')
+wmax=max(oneD_struct_condonly.w(:));
+plot(oneD_struct_condonly.time,oneD_struct_condonly.w(:,1)/wmax,...
+   'LineWidth',2,'LineStyle',':','DisplayName','Cond.')
+wmax=max(abs(oneD_struct_evaponly.w(:)));
+plot(oneD_struct_evaponly.time,oneD_struct_evaponly.w(:,1)/wmax,...
+   'LineWidth',2,'LineStyle','--','DisplayName','Evap.')
+title('(a)')
+hold off
+legend('show')
 set(gca,'FontSize',16)
-xlim([0 3600])
+xlim([0 1800])
 xlabel('Time [s]')
 ylabel('Vertical velocity [m/s]')
+yticks([-1 0 1])
+yticklabels({'-w_{max}','0','w_{max}'})
 
 nexttile
 yyaxis left
 set(gca,'YColor','none')
 yyaxis right
-plot(oneD_struct.vapour(1,:)*1e3,oneD_struct.z,'LineWidth',2)
+hold on
+plot(oneD_struct.RH(1,:),oneD_struct.z,'LineWidth',2,...
+   'DisplayName','max 100%')
+plot(oneD_struct_evaponly.RH(1,:),oneD_struct_evaponly.z,...
+   'DisplayName','max 40%','LineWidth',2)
+title('(b)')
+hold off
+legend('show')
 set(gca,'FontSize',16)
-xlabel('Specific humidity [g/kg]')
+% xlabel('Specific humidity [g/kg]')
+xlabel('RH [%]')
 ylabel('Altitude [m]')
 
 exportgraphics(gcf,'plots/p1/fig2.jpg','Resolution',300)
+% print(gcf,'plots/p1/fig2','-dpng','-r300')
 
 
 %% fig 3 read files
