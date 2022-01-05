@@ -2,7 +2,7 @@ clear
 close all
 clear global
 
-load('2021-11-05_evaponly_moredrop_inhom_pfm.mat')
+load('pfm_summary/2021-11-29_evaponly_pfm.mat')
 
 
 fldnm=fieldnames(pfm);
