@@ -8,9 +8,11 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
 
 vnum='0001'; % last four characters of the model output file.
 %nikkis={'2021-09-22','2021-10-07','2021-10-11','2021-10-12',...
-%         '2021-10-14','2021-10-16','2021-10-27','2021-10-28','2021-10-29'};
-nikkis={'2021-10-28'};
-case_interest=2; % 1:length(case_list_num);
+%         '2021-10-14','2021-10-16','2021-10-27','2021-10-28','2021-10-29',...
+%         '2021-11-04','2021-11-05','2021-11-06','2021-11-08','2021-11-09',...
+%         '2021-11-10','2021-11-12','2021-11-15'};
+nikkis={'2021-11-30'};
+%case_interest=1; % 1:length(case_list_num);
 
 for ink=1:length(nikkis)
    nikki=nikkis{ink}
@@ -35,9 +37,8 @@ for ink=1:length(nikkis)
    % fig_procdiff=figure('visible','off');
    
    % creating structures for performance analysis based on Rsq and ratio
-   pfm=struct;
-   iconf=1;
-   for iconf=2%:length(mconfig_ls)
+   for iconf=1%length(mconfig_ls)
+      pfm=struct;
       mconfig=mconfig_ls{iconf}
       %     mconfig='adv_coll';
       run case_dep_var.m
@@ -46,72 +47,81 @@ for ink=1:length(nikkis)
             %             close all
             for ivar2=1:length(var2_str)
                %                 close all
-              [its,ivar1,ivar2]
+               [its,ivar1,ivar2]
                [~, ~, ~, ~, amp_struct]=...
-                  loadnc('amp',case_interest);
+                  loadnc('amp');
                [~, ~, ~, ~, bin_struct]=...
-                  loadnc('bin',case_interest);
-               for ici=1:length(case_interest)
-                  icase=case_interest(ici);
+                  loadnc('bin');
+             %     'pause'
+             %     pause
+%               for ici=1:length(case_interest)
+%                  icase=case_interest(ici);
                   
    
                   % indices of vars to compare
-                  vars=1;
-                  vare=length(indvar_name);
+               vars=1;
+               vare=length(indvar_name);
    
-                  time=amp_struct.time;
-                  z=amp_struct.z;
-                  for ivar=vars:vare
-                     if strcmp(indvar_name{ivar},'mean_surface_ppt') && ~contains(mconfig,{'fullmic','sed'})
-                        continue
-                     end
-   
-                     var_comp_raw_amp=amp_struct.(indvar_name{ivar});
-                     var_amp_flt=var2phys(var_comp_raw_amp,ivar,0,1);
-                     
-                     var_comp_raw_bin=bin_struct.(indvar_name{ivar});
-                     var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
-                     
-                     % get the non-nan indices for both bin and amp
-                     vidx=~isnan(var_amp_flt+var_bin_flt);
-                     nzidx=var_amp_flt.*var_bin_flt>0;
-                     
-                     weight=var_bin_flt(vidx)/sum(var_bin_flt(vidx));
-                     weight_log=log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
-                     
-                     [mrsq,mr,rsq,er]=wrsq(var_amp_flt,var_bin_flt,weight);
-                     
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ivar1,ivar2)=mrsq;
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=mean(var_bin_flt);
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2)=mean(var_amp_flt);
-                     pfm(ici).(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2)=er;
-                     
+               time=amp_struct.time;
+               z=amp_struct.z;
+               for ivar=vars:vare
+                  if strcmp(indvar_name{ivar},'mean_surface_ppt') && ~contains(mconfig,{'fullmic','sed'})
+                     continue
+                  elseif strcmp(indvar_name{ivar},'albedo') && ~contains(mconfig,{'fullmic'})
+                     continue
+                  elseif contains(indvar_name{ivar},'rain') && contains(mconfig,{'condnuc_noinit'})
+                     continue
+                  elseif contains(indvar_name{ivar},'cloud') && contains(mconfig,{'sedonly'})
+                     continue
                   end
    
-               end
+                  var_comp_raw_amp=amp_struct.(indvar_name{ivar});
+                  var_amp_flt=var2phys(var_comp_raw_amp,ivar,0,1);
+                  
+                  var_comp_raw_bin=bin_struct.(indvar_name{ivar});
+                  var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
+                  
+                  % get the non-nan indices for both bin and amp
+                  vidx=~isnan(var_amp_flt+var_bin_flt);
+                  nzidx=var_amp_flt.*var_bin_flt>0;
+                  
+                  weight=var_bin_flt(vidx)/sum(var_bin_flt(vidx));
+                  weight_log=log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
+                  
+                  [mr,rsq,er]=wrsq(var_amp_flt,var_bin_flt,weight);
+                  
+                  %pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ivar1,ivar2)=mrsq;
+                  pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
+                  pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
+                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=mean(var_bin_flt);
+                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2)=mean(var_amp_flt);
+                  pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2)=er;
+                  
+               end % ivar
+
             end
          end
       end
       save(['pfm_summary/' nikki '_' mconfig '_pfm.mat'],'pfm');
-   end
-end
-%return
+
 
 %% plot
-fldnms=fieldnames(pfm(1).(indvar_name{1}).(bintype{1}));
-fldnms=fldnms(1:end-1);
-
-close all
-%for iconf=1%:length(mconfig_ls)
-   vars=1;
-   vare=length(indvar_name);
-   for ici=1:length(case_interest)
-      icase=case_interest(ici);
-      for ifn=2%1:length(fldnms)
+      tmpvarname=fieldnames(pfm(1));
+      fldnms=fieldnames(pfm(1).(tmpvarname{1}).(bintype{1}));
+      fldnms=fldnms(1:end-1);
+      
+      close all
+      vars=1;
+      vare=length(indvar_name);
+      for ifn=1%1:length(fldnms)
          for ivar=vars:vare
             if strcmp(indvar_name{ivar},'mean_surface_ppt') && ~contains(mconfig,{'fullmic','sed'})
+               continue
+            elseif strcmp(indvar_name{ivar},'albedo') && ~contains(mconfig,{'fullmic'})
+               continue
+            elseif contains(indvar_name{ivar},'rain') && contains(mconfig,{'condnuc_noinit'})
+               continue
+            elseif contains(indvar_name{ivar},'cloud') && contains(mconfig,{'sedonly'})
                continue
             end
             %%
@@ -119,7 +129,7 @@ close all
             tl=tiledlayout(4,4);
             for its=1:length(bintype)
                nexttile(its*2+3,[3 2])
-               nanimagesc(pfm(ici).(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
+               nanimagesc(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                cb=colorbar;
                title(upper(bintype{its}),'FontWeight','normal')
                xticks(1:length(var2_str))
@@ -132,23 +142,23 @@ close all
                   colormap(BrBG)
                   set(gca,'ColorScale','log')
                   caxis([.5 2])
-%                   cb.Ticks=[.25 .5 1 2 4];
+   %                cb.Ticks=[.25 .5 1 2 4];
                  
-                  mpath=pfm(ici).(indvar_name{ivar}).(bintype{its}).mpath_bin;
+                  mpath=pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin;
                   [XX,YY]=meshgrid(1:length(var2_str),1:length(var1_str));
                   mpath_bin_str=sprintfc('%0.3g',mpath);
-
+   
                   if strcmp(indvar_name{ivar}, 'mean_surface_ppt')
                      idx_ignore=mpath<0.01;
                      mpath_bin_str(idx_ignore)={' '};
                   end
-
+   
                   for ivar1=1:length(var1_str)
                      for ivar2=1:length(var2_str)
                         
                         % ----- get text color -----
                         ngrads=size(coolwarm_r,1);
-                        clr_idx=roundfrac(pfm(ici).(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
+                        clr_idx=roundfrac(pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
                         clr_idx=round(clr_idx); % in case prev line outputs double
                         % ----- got text color -----
                         
@@ -165,42 +175,52 @@ close all
                         
                      end
                   end
-%                elseif strcmp(fldnms{ifn},'rsq')
-%                   colormap(coolwarm_r)
-%                   set(gca,'ColorScale','lin')
-%                   caxis([0 1])
-%                elseif strcmp(fldnms{ifn},'mrsq')
-%                   colormap(coolwarm_r)
-%                   set(gca,'ColorScale','lin')
-%                   caxis([-1 1])
+   %             elseif strcmp(fldnms{ifn},'rsq')
+   %                colormap(coolwarm_r)
+   %                set(gca,'ColorScale','lin')
+   %                caxis([0 1])
+   %             elseif strcmp(fldnms{ifn},'mrsq')
+   %                colormap(coolwarm_r)
+   %                set(gca,'ColorScale','lin')
+   %                caxis([-1 1])
                end
                
             end
             
             nexttile(2,[1,2])
-%             imagesc()
+   %          imagesc()
             set(gca,'Color','none')
             set(gca,'XColor','none')
             set(gca,'YColor','none')
-%             ax=gca;
+   %          ax=gca;
             colormap(gca,coolwarm_r)
             cb=colorbar('southoutside');
             cb.Label.String='R^2';
             cb.Label.Position=[0.5000 3.3 0];
             set(gca,'FontSize',16)
-
-            xlabel(tl,'Max vertical velocity [m/s]','fontsize',16)
-            ylabel(tl,['Aerosol concentration [1/cc]' repelem(' ',23)],'fontsize',16)
+   
+            xlab=extractBefore(var2_str,digitsPattern);
+            ylab=extractBefore(var1_str,digitsPattern);
+            xlabel(tl,xlab{1},'fontsize',16)
+            ylabel(tl,[ylab{1} repelem(' ',23)],'fontsize',16)
             
             title(tl,[indvar_ename{ivar} indvar_units{ivar} ...
-%                ' - ' (fldnms{ifn})...
+   %             ' - ' (fldnms{ifn})...
                ],'fontsize',20,'fontweight','bold')
             saveas(figure(ifn),[plot_dir ' summ ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
-               ' ' case_list_str{icase} '.png'])
+               '.png'])
             pause(.5)
          end
       end
-      
+
+
    end
+
+end
+%end
+%return
+
+      
+%   end
 %end
