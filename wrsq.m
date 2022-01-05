@@ -1,4 +1,4 @@
-function [MRSQ, MR, RSQ, ER] = wrsq(ya,yb,wgt)
+function [MR, RSQ, ER] = wrsq(ya,yb,wgt)
 % calculate MRSQ modified rsq (mass weighted, bin as standard)
 % MD ratio of mean amp vs mean bin (accuracy of magnitude estimation)
 % RSQ regular rsq except mass weighted (accuracy of trend capturing)
@@ -17,10 +17,10 @@ end
 
 vidxn=find(~isnan(ya+yb));
 
-rss_m=sum((ya(vidxn)-yb(vidxn)).^2.*wgt);
-tss_m=sum((yb(vidxn)-wmean(yb(vidxn),wgt)).^2.*wgt);
+%rss_m=sum((ya(vidxn)-yb(vidxn)).^2.*wgt);
+%tss_m=sum((yb(vidxn)-wmean(yb(vidxn),wgt)).^2.*wgt);
 
-MRSQ=1-rss_m/tss_m;
+%MRSQ=1-rss_m/tss_m;
 
 % --------------
 
