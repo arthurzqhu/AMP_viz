@@ -20,6 +20,19 @@ for ivar = 1:length(fileinfo.Variables)
    stct.(var_name{ivar}) = ncread(filename, var_name{ivar});
 end
 
+% combine cloud and rain type
+var_wcloud=var_name(contains(var_name,'cloud'));
+var_wrain=replace(var_wcloud,'cloud','rain');
+var_wliq=replace(var_wcloud,'cloud','liq');
+var_name=[var_name;var_wliq];
+
+liq_count=length(var_wliq);
+
+ivar=1;
+for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
+   stct.(var_name{ivaradd})=stct.(var_wcloud{ivar})+stct.(var_wrain{ivar});
+   ivar=ivar+1;
+end
 
 % only select the available vars as indvars
 indvar_name=intersect(indvar_name_set,var_name,'stable');
