@@ -11,7 +11,7 @@ vnum='0001'; % last four characters of the model output file.
 %         '2021-10-14','2021-10-16','2021-10-27','2021-10-28','2021-10-29',...
 %         '2021-11-04','2021-11-05','2021-11-06','2021-11-08','2021-11-09',...
 %         '2021-11-10','2021-11-12','2021-11-15'};
-nikkis={'2021-11-30'};
+nikkis={'2021-11-27'};
 %case_interest=1; % 1:length(case_list_num);
 
 for ink=1:length(nikkis)
@@ -37,7 +37,7 @@ for ink=1:length(nikkis)
    % fig_procdiff=figure('visible','off');
    
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf=1%length(mconfig_ls)
+   for iconf=length(mconfig_ls)-1
       pfm=struct;
       mconfig=mconfig_ls{iconf}
       %     mconfig='adv_coll';
@@ -131,6 +131,7 @@ for ink=1:length(nikkis)
                nexttile(its*2+3,[3 2])
                nanimagesc(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                cb=colorbar;
+               if its==length(bintype), cb.Label.String='AMP/bin'; end
                title(upper(bintype{its}),'FontWeight','normal')
                xticks(1:length(var2_str))
                yticks(1:length(var1_str))
@@ -199,10 +200,13 @@ for ink=1:length(nikkis)
             cb.Label.Position=[0.5000 3.3 0];
             set(gca,'FontSize',16)
    
-            xlab=extractBefore(var2_str,digitsPattern);
-            ylab=extractBefore(var1_str,digitsPattern);
-            xlabel(tl,xlab{1},'fontsize',16)
-            ylabel(tl,[ylab{1} repelem(' ',23)],'fontsize',16)
+            xlab_key=extractBefore(var2_str,digitsPattern);
+            ylab_key=extractBefore(var1_str,digitsPattern);
+            xlab=[initVarName_dict(xlab_key{1}) ' [' initVarUnit_dict(xlab_key{1}) ']'];
+            ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
+            xlabel(tl,xlab,'fontsize',16)
+            ylabel(tl,ylab,'fontsize',16)
+            %ylabel(tl,[ylab repelem(' ',23)],'fontsize',16)
             
             title(tl,[indvar_ename{ivar} indvar_units{ivar} ...
    %             ' - ' (fldnms{ifn})...

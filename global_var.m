@@ -52,8 +52,16 @@ BrBG20 = getPyPlot_cMap('BrBG',21);
 BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
 BrBG = repelem(BrBG,floor(256/ngrad),1); 
 
+% initial variables key-values
+initvarSet={'a','w','dm','rh','sp'};
+fullnameSet={'Aerosol concentration', 'Maximum vertical velocity',...
+            'Mean mass diameter', 'Relative humidity', 'Shape parameter'};
+unitSet={'1/cc', 'm/s', '\mum', '%', ''};
+initVarName_dict = containers.Map(initvarSet, fullnameSet);
+initVarUnit_dict = containers.Map(initvarSet, unitSet);
+
 % compare these vars
-var_comp = [3:6];
+var_comp = [3:9];
 
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
     'cloud_M1_path','rain_M1_path',...
