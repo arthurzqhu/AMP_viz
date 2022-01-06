@@ -11,7 +11,7 @@ vnum='0001'; % last four characters of the model output file.
 %         '2021-10-14','2021-10-16','2021-10-27','2021-10-28','2021-10-29',...
 %         '2021-11-04','2021-11-05','2021-11-06','2021-11-08','2021-11-09',...
 %         '2021-11-10','2021-11-12','2021-11-15'};
-nikkis={'2021-11-27'};
+nikkis={'2022-01-05'};
 %case_interest=1; % 1:length(case_list_num);
 
 for ink=1:length(nikkis)
@@ -37,7 +37,7 @@ for ink=1:length(nikkis)
    % fig_procdiff=figure('visible','off');
    
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf=length(mconfig_ls)-1
+   for iconf=1%length(mconfig_ls)
       pfm=struct;
       mconfig=mconfig_ls{iconf}
       %     mconfig='adv_coll';

@@ -8,3 +8,4 @@ vids/*
 *.fig
 cases for plot/*
 *.out
+*.swp
