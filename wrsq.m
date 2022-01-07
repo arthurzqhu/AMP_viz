@@ -15,7 +15,7 @@ if all(ya==0) || all(yb==0)
    return
 end
 
-vidxn=find(~isnan(ya+yb));
+vidxn=find(~isnan(ya+yb) & (ya~=-999) & (yb~=-999));
 
 %rss_m=sum((ya(vidxn)-yb(vidxn)).^2.*wgt);
 %tss_m=sum((yb(vidxn)-wmean(yb(vidxn),wgt)).^2.*wgt);
@@ -24,7 +24,7 @@ vidxn=find(~isnan(ya+yb));
 
 % --------------
 
-MR=mean(ya)/mean(yb);
+MR=mean(ya(vidxn))/mean(yb(vidxn));
 
 % --------------
 

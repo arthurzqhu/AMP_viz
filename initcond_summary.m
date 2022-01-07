@@ -93,8 +93,8 @@ for ink=1:length(nikkis)
                   %pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ivar1,ivar2)=mrsq;
                   pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
                   pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
-                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=mean(var_bin_flt);
-                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2)=mean(var_amp_flt);
+                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=nanmean(var_bin_flt);
+                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2)=nanmean(var_amp_flt);
                   pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2)=er;
                   
                end % ivar
