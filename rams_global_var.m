@@ -12,10 +12,10 @@ thhd.cloud_mr_th=[1e-10 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
 thhd.rain_mr_th=[1e-10 1e-2];
 thhd.cloud_n_th=[1e-1 inf]; % #/cc, threshold for droplet number concentration
 thhd.rain_n_th=[1e-4 inf];
-thhd.cwp_th=[1e-3 inf]; % kg/m2 cloud water path threshold
-thhd.rwp_th=[1e-3 inf]; % kg/m2 rain water path threshold
+thhd.cwp_th=[1e-5 inf]; % kg/m2 cloud water path threshold
+thhd.rwp_th=[1e-6 inf]; % kg/m2 rain water path threshold
 thhd.meanD_th=[0 inf];
-thhd.sppt_th=[.1 inf]; % mm/hr surface precipitation
+thhd.sppt_th=[0 inf]; % mm/hr surface precipitation
 
 
 % set the current date as nikki if unset
