@@ -1,10 +1,10 @@
-function [physquant,note,range] = var2phys(var_raw,ivar,...
+function [physquant,note,range] = var2phys(var_raw,var_name,...
    setOOBasNaN,l_flatten)
 % converts raw variables into physical quantities
 % formula: [physquant,addnote] = var2phys(var_raw,var_name,note)
 % INPUT:
 % var_raw: raw variable directly out of the nc file
-% ivar: the index of the raw variable (list specified in global_var.m)
+% var_name: name of the variable
 % l_flatten: (optional) whether to flatten the output for non-plotting
 % purposes. (e.g., analyzing the performance of simulation)
 % OUTPUT:
@@ -19,12 +19,6 @@ global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
    indvar2D_name
 
 threshold = -inf;
-
-%if ici<=6
-var_name=indvar_name{ivar};
-%elseif ici>=7
-%   var_name=indvar2D_name{ivar};
-%end
 
 ispath=0;
 isprof=0;
