@@ -2,8 +2,8 @@ clear
 clear global
 
 global mconfig ivar1 ivar2 its nikki output_dir vnum ...
-   bintype var1_str var2_str indvar_name indvar_name_set ...
-   indvar_ename indvar_ename_set indvar_units_set indvar_units ...
+   bintype var1_str var2_str indvar2D_name indvar2D_name_set ...
+   indvar2D_ename indvar2D_ename_set indvar2D_units_set indvar2D_units ...
    israin iscloud isprof ispath isproc %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
@@ -19,10 +19,10 @@ mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
 %%
 close all
-l_anim=1;
-l_save=0;
-l_fig=0;
-l_visible=1;
+l_anim=0;
+l_save=1;
+l_fig=1;
+l_visible=0;
 
 
 if l_fig, fig_path=figure('Position',[1722 525 859 452]); end
@@ -48,7 +48,7 @@ for iconf = 1%:length(mconfig_ls)
             
             % indices of vars to compare
             vars=1;
-            vare=length(indvar_name);
+            vare=length(indvar2D_name);
             
             %%
             % plot
@@ -60,17 +60,17 @@ for iconf = 1%:length(mconfig_ls)
             cloudm1=bin_struct.cloud_M1*pi/6*1000;
             rainm1=bin_struct.rain_M1*pi/6*1000;
             
-            indvar=rainm1;
-            indvar(indvar==-999)=nan;
+            indvar2D=rainm1;
+            indvar2D(indvar2D==-999)=nan;
             if l_fig
                
                for ivar = vars:vare
                   
-                  var_comp_raw_amp = amp_struct.(indvar_name{ivar});
-                  [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
+                  var_comp_raw_amp = amp_struct.(indvar2D_name{ivar});
+                  [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,indvar2D_name{ivar},1);
                   
-                  var_comp_raw_bin = bin_struct.(indvar_name{ivar});
-                  [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
+                  var_comp_raw_bin = bin_struct.(indvar2D_name{ivar});
+                  [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,indvar2D_name{ivar},1);
                   
                   % change linestyle according to cloud/rain
                   if israin
@@ -85,18 +85,18 @@ for iconf = 1%:length(mconfig_ls)
                      
                      plot(time,var_comp_amp,'LineWidth',2,...
                         'LineStyle',lsty,'color',color_order{1},...
-                        'DisplayName',['amp ' indvar_ename{ivar}])
+                        'DisplayName',['amp ' indvar2D_ename{ivar}])
                      hold on
                      plot(time,var_comp_bin,'LineWidth',2,...
                         'LineStyle',lsty,'color',color_order{2},...
-                        'DisplayName',['bin ' indvar_ename{ivar}])
+                        'DisplayName',['bin ' indvar2D_ename{ivar}])
                      xlim([min(time) max(time)])
                      xlabel('Time [s]')
                      
                      if israin
-                        ylabel(['LWP' indvar_units{ivar}])
+                        ylabel(['LWP' indvar2D_units{ivar}])
                      else
-                        ylabel([indvar_ename{ivar} indvar_units{ivar}])
+                        ylabel([indvar2D_ename{ivar} indvar2D_units{ivar}])
                      end
                      
                      if israin || (~israin && ~iscloud)
@@ -106,15 +106,15 @@ for iconf = 1%:length(mconfig_ls)
                            'fontsize',20,...
                            'FontWeight','bold')
                         
-                        vnifn=indvar_ename{ivar};
+                        vnifn=indvar2D_ename{ivar};
                         if israin vnifn='liquid water path'; end
                         
                         hold off
                         if l_save
-                           saveas(fig_path,[plot_dir,...
+                           saveas(fig_path,[plot_dir,'/',...
                               vnifn, ' ',...
-                              'amp vs bin-',bintype{its},' ',...
-                              vnum,'.png'])
+                              'amp vs bin-',bintype{its},' ',vnum,' ',...
+                              var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
                         end
                      end
                      
@@ -137,12 +137,12 @@ for iconf = 1%:length(mconfig_ls)
                   itime = time(it_runidx);
                   
                   % reshaped cloud m1
-                  indvar_rs = reshape(indvar(it_runidx,:,:),length(x),[])';
-                  nanimagesc(x,z,indvar_rs)
+                  indvar2D_rs = reshape(indvar2D(it_runidx,:,:),length(x),[])';
+                  nanimagesc(x,z,indvar2D_rs)
                   colorbar
                   
                   %                      colormap(BrBG20)
-                  %                      wbound=max(indvar(:));
+                  %                      wbound=max(indvar2D(:));
                   %                      caxis([-wbound wbound])
                   
                   colormap(Blues)
