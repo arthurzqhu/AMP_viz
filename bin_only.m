@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its nikki output_dir vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-02-02';
+nikki='2022-02-03';
 
 run global_var.m
 
@@ -44,7 +44,7 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 3%1:length(mconfig_ls)
    iconf
    mconfig = mconfig_ls{iconf}
    %     mconfig = 'adv_coll';
@@ -56,8 +56,6 @@ for iconf = 1:length(mconfig_ls)
          %             close all
          for ivar2 = 1:length(var2_str)
             [its ivar1 ivar2]    
-            [~, ~, ~, ~, amp_struct]=...
-               loadnc('amp');
             [~, ~, ~, ~, bin_struct]=...
                loadnc('bin');
             % indices of vars to compare
@@ -67,16 +65,13 @@ for iconf = 1:length(mconfig_ls)
             % plot
             %%
             iclr=3; % color idx for proc rate
-            time = amp_struct.time;
-            z = amp_struct.z;
+            time = bin_struct.time;
+            z = bin_struct.z;
             % assuming all vertical layers have the same
             % thickness
             dz = z(2)-z(1);
             
             for ivar = vars:vare
-               
-               var_comp_raw_amp = amp_struct.(indvar_name{ivar});
-               [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
                
                var_comp_raw_bin = bin_struct.(indvar_name{ivar});
                [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
@@ -92,11 +87,6 @@ for iconf = 1:length(mconfig_ls)
                   % plot cloud/rain water path comparison
                   set(0,'CurrentFigure',fig_path)
                   
-                  plot(time,var_comp_amp,...
-                     'LineWidth',2,...
-                     'LineStyle',lsty,...
-                     'color',color_order{1})
-                  hold on
                   plot(time,var_comp_bin,...
                      'LineWidth',2,...
                      'LineStyle',lsty,...
@@ -108,15 +98,12 @@ for iconf = 1:length(mconfig_ls)
                   if israin
                      % only do these when both cloud and rain are plotted
                      ylabel(['liquid water path' indvar_units{ivar}])
-                     legend(['amp-' bintype{its}, ' cloud'],...
-                        ['bin-' bintype{its},' cloud'],...
-                        ['amp-' bintype{its}, ' rain'],...
+                     legend(['bin-' bintype{its},' cloud'],...
                         ['bin-' bintype{its},' rain'],...
                         'Location','northwest')
                   else
                      ylabel([indvar_ename{ivar} indvar_units{ivar}])
-                     legend(['amp-' bintype{its}],...
-                        ['bin-' bintype{its}],...
+                     legend(['bin-' bintype{its}],...
                         'Location','northwest')
                      if contains(indvar_name{ivar},'albedo')
                         ylim([0 1])
@@ -155,18 +142,10 @@ for iconf = 1:length(mconfig_ls)
                   % plot cloud/rain individual process
                   set(0,'CurrentFigure',fig_proc)
                   
-                  amp_proc_path=col_intg(var_comp_amp,dz,...
-                     amp_struct.pressure*100,...
-                     amp_struct.temperature);
                   bin_proc_path=col_intg(var_comp_bin,dz,...
                      bin_struct.pressure*100,...
                      bin_struct.temperature);
                   
-                  plot(time,amp_proc_path,...
-                     'LineWidth',2,...
-                     'LineStyle',':',...
-                     'color',color_order{iclr},...
-                     'DisplayName',['amp ' indvar_ename{ivar}])
                   hold on
                   plot(time,bin_proc_path,...
                      'LineWidth',1,...
@@ -202,45 +181,39 @@ for iconf = 1:length(mconfig_ls)
                   
                elseif isprof
                   set(0,'CurrentFigure',fig_prof)
-                  for iab = 1:length(ampORbin)
-                     % plot cloud/rain water profile
-                     if iab==1
-                        var_plt = var_comp_amp;
-                     else
-                        var_plt = var_comp_bin;
-                     end
-                     
-                     nanimagesc(time,z,var_plt')
-                     set(gca,'YDir','normal')
-                     if ~contains(indvar_name{ivar},{'flag','adv','mphys'})
-                        colormap(Blues)
-                     else
-                        colormap(coolwarm)
-                     end
-                     set(gca,'ColorScale',linORlog)
-                     caxis(range)
-                     cbar = colorbar;
-                     cbar.Label.String = [indvar_ename{ivar} indvar_units{ivar}];
-                     xlabel('Time [s]')
-                     ylabel('Altitude [m]')
-                     hold off
-                     set(gca,'fontsize',16)
-                     
-                     title([mconfig ' ' ampORbin{iab},'-',...
-                        bintype{its}, ' ', ...
-                        indvar_ename{ivar}, ' ', ...
-                        var1_str{ivar1},' ' ...
-                        var2_str{ivar2}],...
-                        'fontsize',20,...
-                        'FontWeight','bold')
-                     
-                     if l_save
-                        saveas(fig_prof,[plot_dir,'/'...
-                           indvar_ename{ivar},' ', ...
-                           ampORbin{iab},'-',bintype{its},' ',...
-                           vnum,' ',...
-                           var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
-                     end
+                  % plot cloud/rain water profile
+                     var_plt = var_comp_bin;
+                  
+                  nanimagesc(time,z,var_plt')
+                  set(gca,'YDir','normal')
+                  if ~contains(indvar_name{ivar},{'flag','adv','mphys','gs_'})
+                     colormap(Blues)
+                  else
+                     colormap(coolwarm_s)
+                  end
+                  set(gca,'ColorScale',linORlog)
+                  caxis(range)
+                  cbar = colorbar;
+                  cbar.Label.String = [indvar_ename{ivar} indvar_units{ivar}];
+                  xlabel('Time [s]')
+                  ylabel('Altitude [m]')
+                  hold off
+                  set(gca,'fontsize',16)
+                  
+                  title([mconfig ' ' ,...
+                     bintype{its}, ' ', ...
+                     indvar_ename{ivar}, ' ', ...
+                     var1_str{ivar1},' ' ...
+                     var2_str{ivar2}],...
+                     'fontsize',20,...
+                     'FontWeight','bold')
+                  
+                  if l_save
+                     saveas(fig_prof,[plot_dir,'/'...
+                        indvar_ename{ivar},' ', ...
+                        bintype{its},' ',...
+                        vnum,' ',...
+                        var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
                   end
                end
                pause(.5) % (optional) to prevent matlab from halting

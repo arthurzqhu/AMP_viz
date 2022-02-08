@@ -16,9 +16,15 @@ ts_indata=time_step/dt;
 loops = time_length;
 F(loops) = struct('cdata',[],'colormap',[]);
 
-figure('position',[233 247 800 400])
-tl=tiledlayout(1,2);
 
+if any(~isnan(var_overlay(:)))
+   figure('position',[233 247 800 400])
+else
+   figure('position',[233 247 600 400])
+end
+
+tl=tiledlayout('flow');
+nexttile(1)
 for it_idx = 1:time_length+1
    it_indata = (it_idx-1)*ts_indata;
    itime = (it_idx-1)*time_step;
@@ -40,7 +46,6 @@ for it_idx = 1:time_length+1
       DSD_prof_is = DSD_prof_is(1:length(binmean),:);
    end
    
-   nexttile(1)
    nanimagesc(binmean,z,DSD_prof_is')
    set(gca,'XScale','log')
    set(gca,'YDir','normal')

@@ -9,7 +9,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
 
 l_amp=2;
 
-nikki='2021-11-29';
+nikki='2022-02-01';
 % mconfig='noinit';
 
 % last four characters of the model output file.
@@ -22,9 +22,9 @@ mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
 mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
 mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
 
-pltflag='number';
+pltflag='mass';
 
-if contains(pltflag,{'mass','number')
+if contains(pltflag,{'mass','number'})
    cmap='Blues';
    linorlog='log';
 elseif strcmp(pltflag,'mass_ratio')
@@ -33,7 +33,7 @@ elseif strcmp(pltflag,'mass_ratio')
 end
 
 %%
-for iconf = [2]%length(mconfig_ls):-1:1
+for iconf = 1:length(mconfig_ls)
    mconfig = mconfig_ls{iconf}
    run case_dep_var.m
    for its = 1:length(bintype)
@@ -116,9 +116,9 @@ for iconf = [2]%length(mconfig_ls):-1:1
                fn = [ampORbin{iab},'-',bintype{its},' ',...
                   mconfig,'-',vnum,' '];
                total_length=max(time);
-               time_step=20;
+               time_step=1;
                DSDprof_timeprog(total_length, time_step, DSD2beplt, z,...
-                  binmean,cmap,linorlog,pltflag,RH)
+                  binmean,cmap,linorlog,pltflag)
             end
             
          end
