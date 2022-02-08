@@ -44,3 +44,9 @@ for i=1:size(colororder,1)
 end
 
 clear colororder
+
+var_name={'CWP','RWP','LWP','Rv','RH','flag1'};
+var_da={'CWP_da','RWP_da','LWP_da','Rv_da','RH_da'};
+var_req={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'PI','THETA','RV'},{'GUESSC3'}};
+var_unit={' [kg/m^2]', ' [kg/m^2]',' [kg/m^2]', ' [kg/kg]','%',''};
+
