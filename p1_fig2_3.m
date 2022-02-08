@@ -113,13 +113,15 @@ cbar=colorbar;
 cbar.Label.String='w [m/s]';
 xlabel('x [m]')
 ylabel('z [m]')
-ylim([0 3000])
+%ylim([0 3000])
+title('(a)')
 set(gca,'fontsize',16)
 
 nexttile(3,[4,1])
 plot(1e3*squeeze(qv(1,2,:)),z,'linewidth',2)
 xlabel('Specific humidity [g/kg]')
 ylabel('Altitude [m]')
+title('(b)')
 set(gca,'fontsize',16)
 
 nexttile(10,[1,2])
@@ -127,5 +129,6 @@ plot(t,max(w,[],[2,3]),'linewidth',2)
 xlim([0 3600])
 xlabel('Time [s]')
 ylabel('Max w [m/s]')
+title('(c)')
 set(gca,'fontsize',16)
 exportgraphics(gcf,'plots/p1/fig3.jpg','Resolution',300)
