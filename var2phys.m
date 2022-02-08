@@ -1,10 +1,10 @@
-function [physquant,note,range] = var2phys(var_raw,var_name,...
+function [physquant,note,range] = var2phys(var_raw,ivar,...
    setOOBasNaN,l_flatten)
 % converts raw variables into physical quantities
 % formula: [physquant,addnote] = var2phys(var_raw,var_name,note)
 % INPUT:
 % var_raw: raw variable directly out of the nc file
-% var_name: name of the variable
+% ivar: the index of the raw variable (list specified in global_var.m)
 % l_flatten: (optional) whether to flatten the output for non-plotting
 % purposes. (e.g., analyzing the performance of simulation)
 % OUTPUT:
@@ -20,6 +20,12 @@ global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
 
 threshold = -inf;
 
+%if ici<=6
+var_name=indvar_name{ivar};
+%elseif ici>=7
+%   var_name=indvar2D_name{ivar};
+%end
+
 ispath=0;
 isprof=0;
 isproc=0;
@@ -28,7 +34,7 @@ iscloud=0;
 
 var_raw(var_raw==-999)=nan;
 
-if contains(var_name,{'diag', 'Dm','RH'})
+if contains(var_name,{'diag', 'Dm','RH','gs_'})
    isprof=1;
 elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
    ispath=1;
@@ -43,6 +49,18 @@ elseif contains(var_name,'cloud')
 end
 
 switch var_name
+   case {'gs_deltac','gs_sknsc'}
+      physquant = var_raw;
+      threshold = cloud_mr_th(1);
+      note = 'log';
+      mask = 'self';
+      range = [.5 2];
+   case {'gs_deltar','gs_sknsr'}
+      physquant = var_raw;
+      threshold = rain_mr_th(1);
+      note = 'log';
+      mask = 'self';
+      range = [0.8 1.25];
    case {'Dm_c', 'Dm_r', 'Dm_w'}
       physquant = var_raw*1e6; % meter -> micron
       threshold = 1;
