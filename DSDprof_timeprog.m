@@ -26,14 +26,14 @@ end
 tl=tiledlayout('flow');
 nexttile(1)
 for it_idx = 1:time_length+1
-   it_indata = (it_idx-1)*ts_indata;
+   it_indata = int8((it_idx-1)*ts_indata);
    itime = (it_idx-1)*time_step;
-   
+
    if it_indata>time_total/dt 
       it_indata=time_total/dt; 
       itime=time_total;
    end
-   if it_indata<1 it_indata=1; itime=1; end
+   if it_indata<1 it_indata=1; itime=dt; end
    
    switch pltflag
       case {'mass','mass_ratio','mass_adv'}
@@ -104,7 +104,7 @@ for it_idx = 1:time_length+1
    
 
    annotation('textbox',[.7 .7 .2 .2],'String',...
-      sprintf('t = %.0f s', itime),'FitBoxToText','on')
+      sprintf('t = %.1f s', itime),'FitBoxToText','on')
    %     title(sprintf('t = %.0f s', itime))
    cdata = print('-RGBImage','-r144');
    F(it_idx) = im2frame(cdata);
