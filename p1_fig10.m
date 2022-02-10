@@ -7,8 +7,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-01-27';
-case_interest = [2]; % 1:length(case_list_num);
+nikki='2022-02-04';
 
 run global_var.m
 
@@ -33,7 +32,7 @@ for iconf = 1%length(mconfig_ls)
    run case_dep_var.m
    for ivar1=length(var1_str)
          %             close all
-      for ivar2=3%:length(var2_str)
+      for ivar2=2%length(var2_str)
             %                 close all
          for its=1:length(bintype)
             [its ivar1 ivar2]
@@ -61,26 +60,30 @@ for iconf = 1%length(mconfig_ls)
         figure('Position',[1291 631 850 346])
         tl=tiledlayout('flow');
         
+        style_order={'-','--','-','--'};
+        
         for ivar=1:nvar
            nexttile
-           for iline=[2 4]
+           
+           for iline=1:4
               hold on
-              plot(time,100*(sedsum.(var_name_output{ivar})(iline,:)-sedsum.(var_name_output{ivar})(iline-1,:)),...
+              plot(time,sedsum.(var_name_output{ivar})(iline,:),...
                  'LineWidth',2,...
+                 'LineStyle',style_order{iline},...
                  'color',color_order{ceil(iline/2)})
+              ylim([0 1])
            end % iline
            grid
            hold off
-           legend('TAU','SBM','location','best')
-           %legend('AMP-TAU','bin-TAU','AMP-SBM','bin-SBM','Location','best')
+           legend('AMP-TAU','bin-TAU','AMP-SBM','bin-SBM','Location','best')
            set(gca,'FontSize',18)
            title(['(' char(96+ivar) ') ' 'Rain ' var_name_output{ivar}],'fontweight','normal')
         end % ivar
         
         xlabel(tl,'Time [s]','fontsize',24)
-        ylabel(tl,'AMP-bin %','fontsize',24)
-        title(tl,'Sed. only - AMP–bin difference','fontsize',24,'fontweight','bold')
-        exportgraphics(gcf,['plots/p1/fig' num2str(10) '.jpg'],'Resolution',300)
+        ylabel(tl,'Fraction left','fontsize',24)
+        title(tl,'Sed. only - Dm=600\mum, \nu=3','fontsize',24,'fontweight','bold')
+        exportgraphics(gcf,['plots/p1/fig' num2str(9) '.jpg'],'Resolution',300)
 
 
       end % ivar2
