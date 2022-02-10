@@ -44,7 +44,7 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 3%1:length(mconfig_ls)
+for iconf = 1%1:length(mconfig_ls)
    iconf
    mconfig = mconfig_ls{iconf}
    %     mconfig = 'adv_coll';

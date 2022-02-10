@@ -9,7 +9,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
 
 l_amp=2;
 
-nikki='2022-02-01';
+nikki='2022-02-09';
 % mconfig='noinit';
 
 % last four characters of the model output file.
@@ -33,13 +33,13 @@ elseif strcmp(pltflag,'mass_ratio')
 end
 
 %%
-for iconf = 1:length(mconfig_ls)
+for iconf = 1%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf}
    run case_dep_var.m
    for its = 1:length(bintype)
-      for ivar1 = length(var1_str)
+      for ivar1 = 1%length(var1_str)
          %% read files
-         for ivar2 = length(var2_str)
+         for ivar2 = 1%length(var2_str)
             
             if l_amp % load when == 1 or 2
                [~, ~, ~, ~, amp_struct]=...
@@ -116,8 +116,8 @@ for iconf = 1:length(mconfig_ls)
                fn = [ampORbin{iab},'-',bintype{its},' ',...
                   mconfig,'-',vnum,' '];
                total_length=max(time);
-               time_step=1;
-               DSDprof_timeprog(total_length, time_step, DSD2beplt, z,...
+               time_step=0.1;
+               DSDprof_timeprog(5, time_step, DSD2beplt, z,...
                   binmean,cmap,linorlog,pltflag)
             end
             

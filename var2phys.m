@@ -54,7 +54,7 @@ switch var_name
       threshold = cloud_mr_th(1);
       note = 'log';
       mask = 'self';
-      range = [.5 2];
+      range = [.67 1.5];
    case {'gs_deltar','gs_sknsr'}
       physquant = var_raw;
       threshold = rain_mr_th(1);

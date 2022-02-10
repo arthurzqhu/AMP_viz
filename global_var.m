@@ -62,7 +62,7 @@ initVarUnit_dict = containers.Map(initvarSet, unitSet);
 
 % compare these vars
 %var_comp = [1 12 13];
-var_comp = [2 4 7];
+var_comp = [1 12];
 
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
     'cloud_M1_path','rain_M1_path','liq_M1_path',...

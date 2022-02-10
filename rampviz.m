@@ -8,9 +8,9 @@ addpath('ramsfuncs/')
 doanim=0;
 doplot=1;
 
-nikki='2022-01-28';
+nikki='2022-02-09';
 run rglobal_var
-mp_list={'bin_sbm' 'amp_sbm' 'bin_tau'};
+mp_list={'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
 deltaz=100;
 
 mconfig_ls_dir=dir([output_dir,nikki,'/']);
