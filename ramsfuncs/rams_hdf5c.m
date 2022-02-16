@@ -33,13 +33,22 @@ else
     cb = [2 139]; %start and length
 end
 
-global runs filepath
+global runs filepath z
 
 runs=struct;
 
 for f=1:length(folder)  
 %    folder{f}
     files=dir([pref,folder{f},'/*g1.h5']);
+    headfile=dir([pref,folder{f},'/*head.txt']);
+    headfile=[headfile(1).folder '/' headfile(1).name];
+
+    % get z-axis
+    hf_content=readcell(headfile);
+    zidx=find(strcmp(hf_content,'__ztn01'));
+    z_length=cell2mat(hf_content(zidx+1));
+    z=cell2mat(hf_content(zidx+2:zidx+z_length+1));
+
 %     nd=0;
 %     for ff=1:length(files)
 %         if ~strcmp(files(ff).name(18:21),'0000') & ~strcmp(files(ff).name(18:21),'1500') ...

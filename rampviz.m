@@ -1,5 +1,4 @@
 clear
-close all
 clear global
 
 global nfile outdir runs mpdat mp_list imp deltaz
@@ -9,10 +8,9 @@ addpath('ramsfuncs/')
 doanim=0;
 doplot=1;
 
-nikki='2022-02-14';
+nikki='2022-02-15';
 run rglobal_var
 mp_list={'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
-deltaz=100;
 
 mconfig_ls_dir=dir([output_dir,nikki,'/']);
 mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
@@ -33,6 +31,10 @@ for imp=1:length(mp_list) % loop through microphysics engines
    
    rams_hdf5c({'GLAT','GLON'},0,outdir)
    rams_hdf5c(var_req_uniq,0:nfile-1,outdir)
+   deltaz=z(2)-z(1);
+
+   % make sure that z is never negative
+   z=z+deltaz/2;
 
    var_int_idx=1:3;
    var_interest=var_da(var_int_idx);
