@@ -35,6 +35,8 @@ end
 
 global runs filepath
 
+runs=struct;
+
 for f=1:length(folder)  
 %    folder{f}
     files=dir([pref,folder{f},'/*g1.h5']);
@@ -52,6 +54,7 @@ for f=1:length(folder)
             filepath=[pref,folder{f},'/',files(hr(t)+1).name];
             datapath=['/',upper(var{v})];
             %if strcmpi(var{v},'FFCD')
+            time_string=files(hr(t)+1).name(end-22:end-6);
                 test=h5read(filepath,datapath);
             %else
             %    test=h5read(filepath,datapath,[1 1 cb(1)],[256 256 cb(2)]);
@@ -67,6 +70,14 @@ for f=1:length(folder)
             
             %test=permute(test,[2 1 3 4]);
             levs=size(test,3);
+
+            if ~isfield(runs(f),'time')
+               if t==1
+                  time=zeros(length(hr),1);
+               end
+               time(t)=datenum(time_string,'yyyy-mm-dd-HHMMSS');
+            end
+
             if ndim <=3
                 if t==1
                     A=zeros(size(test,1),size(test,2),size(test,3),length(hr));
@@ -74,7 +85,7 @@ for f=1:length(folder)
                 A(:,:,:,t)=test(:,:,:);
             elseif ndim==4
                 if t==1
-                    A=zeros(dims(1),dims(2),levs,length(hr),33);
+                    A=zeros(dims(1),dims(2),levs,length(hr),33); % not compatible with tau
                 end
                 A(:,:,:,t,:)=test;
             end
@@ -92,6 +103,10 @@ for f=1:length(folder)
 %                 A=A(:,:,2:end,:,:);
 %             end
 %         end
+        
+        if ~isfield(runs(f),'time')
+           runs(f).time=time;
+        end
         runs(f).(var{v})=A;
         
 %        catch

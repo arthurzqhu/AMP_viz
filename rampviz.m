@@ -1,14 +1,15 @@
 clear
+close all
 clear global
 
-global nfile outdir runs mpdat mp_list imp
+global nfile outdir runs mpdat mp_list imp deltaz
 close all
 
 addpath('ramsfuncs/')
 doanim=0;
 doplot=1;
 
-nikki='2022-02-09';
+nikki='2022-02-14';
 run rglobal_var
 mp_list={'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
 deltaz=100;
@@ -30,34 +31,12 @@ for imp=1:length(mp_list) % loop through microphysics engines
    fn={dir([outdir '*g1.h5']).name}; % get a file name and load the data info
    dat_info=h5info([outdir fn{1}]).Datasets;
    
-   rams_hdf5c({'RCP','RRP','RV','THETA','PI'},0:nfile-1,outdir)
    rams_hdf5c({'GLAT','GLON'},0,outdir)
-   runs.RH=rh(runs.RV,runs.THETA,runs.PI);
-   
-   mpdat(imp,1).(mp_list{imp})=runs;
-   
-   %lwp=deltaz*squeeze((sum(runs.DMOMC3,3)+sum(runs.DMOMR3,3))*pio6rw);
-   mpdat(imp).(mp_list{imp}).lwp=...
-      deltaz*squeeze((sum(runs.RCP,3)+sum(runs.RRP,3)));
-   mpdat(imp).(mp_list{imp}).lwp_da=...
-      squeeze(mean(mpdat(imp).(mp_list{imp}).lwp,[1 2]));
-   mpdat(imp).(mp_list{imp}).cwp=...
-      deltaz*squeeze(sum(runs.RCP,3));
-   mpdat(imp).(mp_list{imp}).cwp_da=...
-      squeeze(mean(mpdat(imp).(mp_list{imp}).cwp,[1 2]));
-   mpdat(imp).(mp_list{imp}).rwp=...
-      deltaz*squeeze(sum(runs.RRP,3));
-   mpdat(imp).(mp_list{imp}).rwp_da=...
-      squeeze(mean(mpdat(imp).(mp_list{imp}).rwp,[1 2]));
+   rams_hdf5c(var_req_uniq,0:nfile-1,outdir)
 
-   mpdat(imp).(mp_list{imp}).rv=...
-      deltaz*squeeze((sum(runs.RV,3)));
-   mpdat(imp).(mp_list{imp}).rv_da=...
-      squeeze(mean(mpdat(imp).(mp_list{imp}).rv,[1 2]));
-   mpdat(imp).(mp_list{imp}).rh_da=...
-      squeeze(mean(mpdat(imp).(mp_list{imp}).RH,[1 2 3]));
-   mpdat(imp).(mp_list{imp}).theta_da=...
-      squeeze(mean(mpdat(imp).(mp_list{imp}).THETA,[1 2 3]));
+   var_int_idx=1:3;
+   var_interest=var_da(var_int_idx);
+   rvar2phys(var_interest)
 end % imp
 
 %%
@@ -65,27 +44,27 @@ end % imp
 if doplot
 figure('position',[0 0 500 400])
 
-for imp=1:length(mp_list)
-   hold on
-   plot(mpdat(imp).(mp_list{imp}).lwp_da,'LineWidth',2,'displayname',mp_list{imp})
-   %plot(mpdat(imp).(mp_list{imp}).rh_da,'LineWidth',2,'displayname',mp_list{imp})
-   %plot(mpdat(imp).(mp_list{imp}).rv_da,'LineWidth',2,'displayname',mp_list{imp})
-end
-
-ylabel('domain avg. LWP [kg/m^2]')
-%ylabel('domain avg. column RV [kg/m^2]')
-%ylabel('domain avg. RH [%]')
-%ylabel('domain avg. \theta [K]')
-set(gca,'fontsize',16)
-legend('show','Interpreter','none')
-
-hold off
-%exportgraphics(gcf,'plots/da_lwp.png','resolution',300)
-%print('plots/rams/da_rv','-dpng','-r300')
-print(['plots/rams/da_lwp_' mps '_' mconfig],'-dpng','-r300')
+for ivar=var_int_idx
+   varn=var_da{ivar};
+   for imp=1:length(mp_list)
+      plot(runs.time,mpdat(imp).(mp_list{imp}).(varn),'LineWidth',2,'displayname',mp_list{imp})
+      hold on
+   end
+   
+   datetick('x','HHPM','keeplimits')
+   xtickangle(45)
+   
+   ylabel([var_da_name{ivar} var_da_unit{ivar}])
+   set(gca,'fontsize',16)
+   legend('show','Interpreter','none')
+   
+   hold off
+   print(['plots/rams/' varn '_' mps '_' mconfig],'-dpng','-r300')
+end % ivar
 
 end % doplot
 
+%%
 
 if doanim
 
