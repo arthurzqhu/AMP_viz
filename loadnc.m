@@ -34,6 +34,13 @@ for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
    ivar=ivar+1;
 end
 
+var_name=[var_name;'half_life_c'];
+time=stct.time;
+stct.(var_name{ivaradd+1})=time(find(stct.cloud_M1_path<stct.rain_M1_path,1));
+if isempty(stct.half_life_c)
+   stct.half_life_c=nan;
+end
+
 % only select the available vars as indvars
 indvar_name=intersect(indvar_name_set,var_name,'stable');
 vidx=ismember(indvar_name_set,indvar_name);
