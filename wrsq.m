@@ -28,10 +28,16 @@ MR=mean(ya(vidxn))/mean(yb(vidxn));
 
 % --------------
 
-mdl = fitlm(ya,yb);
-RSQ=mdl.Rsquared.Ordinary;
+if length(ya)>1
+   mdl = fitlm(ya,yb);
+   RSQ=mdl.Rsquared.Ordinary;
+end
 
 % --------------
-ER = ya(vidxn(end))/yb(vidxn(end));
+if ~isempty(vidxn)
+   ER = ya(vidxn(end))/yb(vidxn(end));
+else
+   ER = nan;
+end
 
 end
