@@ -81,6 +81,7 @@ for iconf = 1%length(mconfig_ls)
             l=legend('t=1s','t=10s','t=30s',...
                'Location','best');
             l.FontWeight='bold';
+            rectangle('position',[6e-5,1e-5,binmean(krdrop)-6e-5,5e-4],'facecolor',[0.1 0.1 0.1 0.1])
             
             xlim([binmean(1) binmean(krdrop)])
             set(gca,'YScale','log')
@@ -103,12 +104,13 @@ for iconf = 1%length(mconfig_ls)
             l=legend('t=1s','t=10s','t=30s',...
                'Location','best');
             l.FontWeight='bold';
+            rectangle('position',[6e-5,1e-5,binmean(krdrop)-6e-5,5e-4],'facecolor',[0.1 0.1 0.1 0.1])
 
             xlabel(tl,'Diameter [\mum]','fontsize',18)
             ylabel(tl,'Mass concentration [kg/kg/dlogD]','fontsize',18)
             set(gca,'fontsize',16)
             grid
-            exportgraphics(gcf,['plots/p1/fig' num2str(9) 'test.jpg'],'Resolution',300)
+            exportgraphics(gcf,['plots/p1/fig' num2str(9) '.jpg'],'Resolution',300)
          end
       end
    end
