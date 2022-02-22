@@ -137,4 +137,4 @@ set(gca,'XColor','none')
 
 hold off
 
-exportgraphics(gcf,'../paper in progress/p1/plots/fig1.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/amp_mech.jpg','Resolution',300)

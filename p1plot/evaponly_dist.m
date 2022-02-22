@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-02-10';
+nikki='2022-01-25';
 
 run global_var.m
 
@@ -41,7 +41,7 @@ for iconf = 1%length(mconfig_ls)
          krdrop=15;
       end
       
-      for ivar1 = 3%length(var1_str)
+      for ivar1 = length(var1_str)
          for ivar2 = length(var2_str)
             
             [~, ~, ~, ~, amp_struct]=...
@@ -52,9 +52,9 @@ for iconf = 1%length(mconfig_ls)
             %%
             time=amp_struct.time;
             dt=time(2)-time(1);
-            t1=int32(60/dt);
-            t2=int32(480/dt);
-            t3=int32(1200/dt);
+            t1=int8(1/dt);
+            t2=int8(10/dt);
+            t3=int8(30/dt);
             
             bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,48);
             amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,48);
@@ -70,70 +70,47 @@ for iconf = 1%length(mconfig_ls)
             nexttile
             hold on
 
-            %shaded region
-            xx=binmean(10:krdrop)';
-            yy1=amp_dist_t1(10:krdrop);
-            yy2=amp_dist_t2(10:krdrop);
-            pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
-            set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-
             plot(binmean,amp_dist_t1,'Color',amp_color,'LineWidth',2)
             plot(binmean,amp_dist_t2,'Color',amp_color,...
                'LineWidth',2,'LineStyle','--')
             plot(binmean,amp_dist_t3,'Color',amp_color,...
                'LineWidth',2,'LineStyle',':')
-            
             hold off
-
-            title('AMP-SBM')
-            l=legend('t = 1 min','t = 8 min','t = 20 min',...
-               'Location','best','AutoUpdate','off');
-            l.FontWeight='bold';
-            %rectangle('position',[4.5e-5,1e-5,3e-5,2e-4],'facecolor',[0.1 0.1 0.1 0.1])
-            xline(binmean(krdrop),'--r')
             
-
-            xlim([binmean(1) binmean(end)])
-            ylim([1e-5 0.02])
+            title('AMP-SBM')
+            l=legend('t=1s','t=10s','t=30s',...
+               'Location','best');
+            l.FontWeight='bold';
+            rectangle('position',[6e-5,1e-5,binmean(krdrop)-6e-5,5e-4],'facecolor',[0.1 0.1 0.1 0.1])
+            
+            xlim([binmean(1) binmean(krdrop)])
             set(gca,'YScale','log')
-            set(gca,'XScale','log')
             set(gca,'fontsize',16)
             grid
             
             nexttile
             hold on
-
-            %shaded region
-            xx=binmean(10:20)';
-            yy1=bin_dist_t1(10:20);
-            yy2=bin_dist_t2(10:20);
-            pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
-            set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-
             plot(binmean,bin_dist_t1,'Color',bin_color,'LineWidth',2)
             plot(binmean,bin_dist_t2,'Color',bin_color,...
                'LineWidth',2,'LineStyle','--')
             plot(binmean,bin_dist_t3,'Color',bin_color,...
                'LineWidth',2,'LineStyle',':')
             
-            xlim([binmean(1) binmean(end)])
-            ylim([1e-5 0.02])
+            xlim([binmean(1) binmean(krdrop)])
             set(gca,'YScale','log')
-            set(gca,'XScale','log')
             hold off
             
             title('bin-SBM')
-            l=legend('t = 1 min','t = 8 min','t = 20 min',...
-               'Location','best','AutoUpdate','off');
+            l=legend('t=1s','t=10s','t=30s',...
+               'Location','best');
             l.FontWeight='bold';
-            %rectangle('position',[4.5e-5,1e-5,1.2e-4-4.5e-5,2e-4],'facecolor',[0.1 0.1 0.1 0.1])
-            xline(binmean(krdrop),'--r')
+            rectangle('position',[6e-5,1e-5,binmean(krdrop)-6e-5,5e-4],'facecolor',[0.1 0.1 0.1 0.1])
 
             xlabel(tl,'Diameter [\mum]','fontsize',18)
             ylabel(tl,'Mass concentration [kg/kg/dlogD]','fontsize',18)
             set(gca,'fontsize',16)
             grid
-            exportgraphics(gcf,['plots/p1/fig' num2str(12) '.jpg'],'Resolution',300)
+            exportgraphics(gcf,['plots/p1/evaponly_dist.jpg'],'Resolution',300)
          end
       end
    end

@@ -7,15 +7,10 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-01-18';
+nikki='2022-02-10';
 run global_var.m
 
-mconfig_ls_dir=dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
-mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
-
-mconfig=mconfig_ls{1};
+mconfig='collonly';
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
 run case_dep_var.m
@@ -26,18 +21,17 @@ fldnms=fldnms(1:end-1);
 
 close all
 
-plot_var={'albedo'};
+plot_var={'half_life_c'};
 
 for ipvar=1:length(plot_var)
-
-figure('position',[1331 587 1250 390])
+figure('position',[1331 587 1250 300])
 alb_idx=find(contains(indvar_name_set,plot_var{ipvar}));
 ivar=alb_idx;
 ifn=1;
 
 tl=tiledlayout(4,4);
 for its=1:length(bintype)
-   nexttile(its*2+3,[3 2])
+   nexttile(its*2-1,[4 2])
    nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn}))
    cb=colorbar;
    if its==length(bintype), cb.Label.String='AMP/bin ratio'; end
@@ -57,6 +51,8 @@ for its=1:length(bintype)
       [XX,YY]=meshgrid(1:length(var2_str),1:length(var1_str));
       mpath_bin_str=sprintfc('%0.3g',mpath);
 
+      vidx=~isnan(pfm.(indvar_name_set{ivar}).(bintype{its}).mpath_amp);
+
       if strcmp(indvar_name_set{ivar}, 'mean_surface_ppt')
          idx_ignore=mpath<0.01;
          mpath_bin_str(idx_ignore)={' '};
@@ -65,21 +61,16 @@ for its=1:length(bintype)
       for ivar1=1:length(var1_str)
          for ivar2=1:length(var2_str)
 
-            % ----- get text color -----
-            ngrads=size(coolwarm_r,1);
-            clr_idx=roundfrac(pfm.(indvar_name_set{ivar}).(bintype{its}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
-            clr_idx=round(clr_idx); % in case prev line outputs double
-            % ----- got text color -----
 
-            if isnan(clr_idx) continue, end
-            if clr_idx==0 clr_idx=1; end
 
-            text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
-               'HorizontalAlignment','center',...
-               'Color',coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
-            text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
-               'HorizontalAlignment','center',...
-               'Color',coolwarm_r(clr_idx,:),'FontName','Menlo')
+            if vidx(ivar1,ivar2)==1
+               text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
+                  'HorizontalAlignment','center',...
+                  'Color',coolwarm_r11(9,:)*.1,'FontName','Menlo')
+               text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
+                  'HorizontalAlignment','center',...
+                  'Color',coolwarm_r11(9,:),'FontName','Menlo')
+            end
 
 
          end
@@ -88,25 +79,14 @@ for its=1:length(bintype)
    end
 end
 
-nexttile(2,[1,2])
-set(gca,'Color','none')
-set(gca,'XColor','none')
-set(gca,'YColor','none')
-colormap(gca,coolwarm_r)
-cb=colorbar('southoutside');
-cb.Label.String='R^2';
-cb.Ticks=0:.2:1;
-cb.Label.Position=[0.5000 3.3 0];
-set(gca,'FontSize',16)
-
 xlab_key=extractBefore(var2_str,digitsPattern);
 ylab_key=extractBefore(var1_str,digitsPattern);
-xlab=['Baseline vertical velocity [' initVarUnit_dict(xlab_key{1}) ']'];
-ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
+xlab=[initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
+ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['2D full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
+title(tl,['Collision-coalescence only - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/fig' num2str(3+ipvar) '.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/collonly_halflife.jpg'],'Resolution',300)
 end

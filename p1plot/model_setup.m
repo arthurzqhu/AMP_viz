@@ -74,7 +74,7 @@ set(gca,'FontSize',16)
 xlabel('RH [%]')
 ylabel('Altitude [m]')
 
-exportgraphics(gcf,'plots/p1/fig2.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/1D setup.jpg','Resolution',300)
 % print(gcf,'plots/p1/fig2','-dpng','-r300')
 
 
@@ -131,4 +131,4 @@ xlabel('Time [s]')
 ylabel('Max w [m/s]')
 title('(c)')
 set(gca,'fontsize',16)
-exportgraphics(gcf,'plots/p1/fig3.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/2D setup.jpg','Resolution',300)

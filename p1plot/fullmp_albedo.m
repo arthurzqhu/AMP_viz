@@ -7,10 +7,15 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-11-27';
+nikki='2022-01-18';
 run global_var.m
 
-mconfig='condnuc_noinit';
+mconfig_ls_dir=dir([output_dir,nikki,'/']);
+mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
+mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
+mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
+
+mconfig=mconfig_ls{1};
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
 run case_dep_var.m
@@ -21,9 +26,10 @@ fldnms=fldnms(1:end-1);
 
 close all
 
-plot_var={'cloud_M1_path','diagM0_cloud'};
+plot_var={'albedo'};
 
 for ipvar=1:length(plot_var)
+
 figure('position',[1331 587 1250 390])
 alb_idx=find(contains(indvar_name_set,plot_var{ipvar}));
 ivar=alb_idx;
@@ -89,17 +95,18 @@ set(gca,'YColor','none')
 colormap(gca,coolwarm_r)
 cb=colorbar('southoutside');
 cb.Label.String='R^2';
+cb.Ticks=0:.2:1;
 cb.Label.Position=[0.5000 3.3 0];
 set(gca,'FontSize',16)
 
 xlab_key=extractBefore(var2_str,digitsPattern);
 ylab_key=extractBefore(var1_str,digitsPattern);
-xlab=[initVarName_dict(xlab_key{1}) ' [' initVarUnit_dict(xlab_key{1}) ']'];
+xlab=['Baseline vertical velocity [' initVarUnit_dict(xlab_key{1}) ']'];
 ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['1D cond. + nuc. - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
+title(tl,['2D full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/fig' num2str(6+ipvar) '.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/fullmp_albedo.jpg'],'Resolution',300)
 end
