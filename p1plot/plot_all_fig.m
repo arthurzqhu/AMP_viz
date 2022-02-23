@@ -1,0 +1,10 @@
+amp_mech;
+model_setup;
+fullmp_albedo;
+fullmp_cloud_pcpt;
+condonly_cloud;
+evaponly_massnum;
+evaponly_dist;
+sedonly_massnum;
+collonly_halflife;
+collonly_dist;

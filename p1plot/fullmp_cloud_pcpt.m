@@ -96,5 +96,5 @@ ylabel(tl,ylab,'fontsize',16)
 
 title(tl,['1D full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/fullmp_cloud_pcpt.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/fullmp ' plot_var{ipvar} '.jpg'],'Resolution',300)
 end

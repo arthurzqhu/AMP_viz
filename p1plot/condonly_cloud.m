@@ -21,7 +21,7 @@ fldnms=fldnms(1:end-1);
 
 close all
 
-plot_var={'cloud_M1_path','diagM0_cloud'};
+plot_var={'cloud_M1_path'};
 
 for ipvar=1:length(plot_var)
 figure('position',[1331 587 1250 390])
