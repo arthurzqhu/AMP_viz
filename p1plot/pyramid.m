@@ -2,7 +2,7 @@ clear
 close all
 clear global
 global indvar_name_set indvar_name_all indvar_ename_all %#ok<*NUSED>
-
+addpath('expf/')
 
 condonly_dev=devfun(load('pfm_summary/2021-11-27_condnuc_noinit_pfm.mat').pfm);
 collonly_dev=devfun(load('pfm_summary/2022-02-24_collonly_pfm.mat').pfm);
@@ -22,11 +22,11 @@ echodemo('global_var',9);
 
 %%
 close all
-figure('Position',[1013 59 1292 1134])
-tl=tiledlayout(4,8,'TileSpacing','compact','Padding','compact');
+figure('Position',[0 59 1429 913])
+tl=tiledlayout(4,8,'TileSpacing','loose');
 
 % fullmic
-nexttile(3,[1 4])
+nexttile(4,[1 2])
 [X_fullmic,Y_fullmic]=dev2fig(fullmic_dev);
 title('(a) Full MP','FontSize',16')
 
@@ -87,7 +87,7 @@ ylabel(tl,'AMP-bin % difference','fontsize',20,...
 
 
 for iax = 1:10
-   ax_pos{iax}=tl.Children(end+2-iax*2).Position;
+   ax_pos{iax}=tl.Children(end+2-iax*2).OuterPosition;
 end
 
 ax_map={[2 3],[4 5],[5 6],[7 8],[8 9],[9 10]};
@@ -95,36 +95,56 @@ lsty={':',':','-.',':','-.','--'};
 lclr={[0 0 0],[0 0 0],[.4 .4 .4],[0 0 0],[.4 .4 .4],[.4 .4 .4]};
 
 for iax=1:6
-   % left line
-   x1=ax_pos{iax}(1);
-   x2=ax_pos{ax_map{iax}(1)}(1);
-   y1=ax_pos{iax}(2);
-   y2=ax_pos{ax_map{iax}(1)}(2)+ax_pos{ax_map{iax}(1)}(4);
-   annotation('line',[x1 x2], [y1 y2], ...
-      'Color',lclr{iax}, ...
-      'LineStyle',lsty{iax},'LineWidth',1);
-   % right line
-   x1=ax_pos{iax}(1)+ax_pos{iax}(3);
-   x2=ax_pos{ax_map{iax}(2)}(1)+ax_pos{ax_map{iax}(2)}(3);
-   y1=ax_pos{iax}(2);
-   y2=ax_pos{ax_map{iax}(2)}(2)+ax_pos{ax_map{iax}(2)}(4);
-   annotation('line',[x1 x2], [y1 y2], ...
-      'Color',lclr{iax}, ...
-      'LineStyle',lsty{iax},'LineWidth',1);
+%    % left line
+%    xul=ax_pos{iax}(1);
+%    xdl=ax_pos{ax_map{iax}(1)}(1);
+%    yul=ax_pos{iax}(2);
+%    ydl=ax_pos{ax_map{iax}(1)}(2)+ax_pos{ax_map{iax}(1)}(4);
+%    annotation('line',[xul xdl], [yul ydl], ...
+%       'Color',lclr{iax}, ...
+%       'LineStyle',lsty{iax},'LineWidth',1);
+%    % right line
+%    xur=ax_pos{iax}(1)+ax_pos{iax}(3);
+%    xdr=ax_pos{ax_map{iax}(2)}(1)+ax_pos{ax_map{iax}(2)}(3);
+%    yur=ax_pos{iax}(2);
+%    ydr=ax_pos{ax_map{iax}(2)}(2)+ax_pos{ax_map{iax}(2)}(4);
+%    annotation('line',[xur xdr], [yur ydr], ...
+%       'Color',lclr{iax}, ...
+%       'LineStyle',lsty{iax},'LineWidth',1);
+
+   xul = ax_pos{iax}(1)+0.5*ax_pos{iax}(3);
+   xur = ax_pos{iax}(1)+0.6*ax_pos{iax}(3);
+   xl = ax_pos{ax_map{iax}(1)}(1)+0.85*ax_pos{ax_map{iax}(1)}(3);
+   xr = ax_pos{ax_map{iax}(2)}(1)+0.25*ax_pos{ax_map{iax}(2)}(3);
+   
+   yu = ax_pos{iax}(2);
+   yl = ax_pos{ax_map{iax}(1)}(2)+0.95*ax_pos{ax_map{iax}(1)}(4);
+   yr = ax_pos{ax_map{iax}(2)}(2)+0.95*ax_pos{ax_map{iax}(2)}(4);
+   
+   annotation('arrow',[xl xul],[yl yu],'LineWidth',1)
+   annotation('arrow',[xr xur],[yr yu],'LineWidth',1)
+
+%    xx = [xul xdl xdr xur];
+%    yy = [yul ydl ydr yur];
+%    
+%    pt=patch(xx,yy,[.8 .8 .8],'edgecolor','none');
+   
+
 end
 
 str={'CWP: cloud water path',...
    'RWP: rain water path',...
    'LWP: liquid water path',...
-   'N_c: cloud droplet number',...
-   'N_r: raindrop number',...
+   'N_c:    cloud droplet number',...
+   'N_r:     raindrop number',...
    't_{1/2,c}: cloud half-life',...
    'MSP: mean surface pcpt.'};
 
-annotation('textbox',[0.77 0.54 0.19 0.41],'String', str,...
+annotation('textbox',[0.77 0.5 0.19 0.41],'String', str,...
            'FitBoxToText','on','FontSize',14)
 exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
-
+% export_fig('plots/p1/pyramid', '-dpng', '-transparent', '-r300');
+% imwrite(bitmapData, 'plots/a.png', 'png', 'transparency', backgroundColor)
 %%
 function [X,Y]=dev2fig(dev_strt)
 
@@ -156,9 +176,10 @@ b(1).BaseValue=1;
 b(1).BaseLine.Color=[.8 .8 .8];
 set(gca,'YScale','log')
 ylim([0.5 2])
-grid
+
 yticks([0.5 0.8 1 1.2 1.5 2 2.5])
 yticklabels({'-50','-20','0','20','50','100','150'})
+grid()
 
 l=legend('TAU','SBM');
 set(gca,'fontsize',16)
