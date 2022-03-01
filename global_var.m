@@ -64,7 +64,7 @@ initVarUnit_dict = containers.Map(initvarSet, unitSet);
 %% compare these vars
 %var_comp = [1 12 13];
 %var_comp = [3:5 10 16];
-var_comp = [3:7 10]; % pyramid
+var_comp = [3:7 10 16]; % pyramid
 
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
     'cloud_M1_path','rain_M1_path','liq_M1_path',...
