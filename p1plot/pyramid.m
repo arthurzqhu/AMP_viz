@@ -23,7 +23,7 @@ echodemo('global_var',9);
 %%
 close all
 figure('Position',[1013 59 1292 1134])
-tl=tiledlayout(4,8,'Padding','compact');
+tl=tiledlayout(4,8,'TileSpacing','compact','Padding','compact');
 
 % fullmic
 nexttile(3,[1 4])
@@ -91,24 +91,26 @@ for iax = 1:10
 end
 
 ax_map={[2 3],[4 5],[5 6],[7 8],[8 9],[9 10]};
+lsty={':',':','-.',':','-.','--'};
+lclr={[0 0 0],[0 0 0],[.4 .4 .4],[0 0 0],[.4 .4 .4],[.4 .4 .4]};
 
 for iax=1:6
    % left line
    x1=ax_pos{iax}(1);
    x2=ax_pos{ax_map{iax}(1)}(1);
-   y1=ax_pos{iax}(2)+.005;
-   y2=ax_pos{ax_map{iax}(1)}(2)+ax_pos{ax_map{iax}(1)}(4)-0.005;
+   y1=ax_pos{iax}(2);
+   y2=ax_pos{ax_map{iax}(1)}(2)+ax_pos{ax_map{iax}(1)}(4);
    annotation('line',[x1 x2], [y1 y2], ...
-      'Color',[.4 .4 .4], ...
-      'LineStyle',':','LineWidth',1);
+      'Color',lclr{iax}, ...
+      'LineStyle',lsty{iax},'LineWidth',1);
    % right line
    x1=ax_pos{iax}(1)+ax_pos{iax}(3);
    x2=ax_pos{ax_map{iax}(2)}(1)+ax_pos{ax_map{iax}(2)}(3);
-   y1=ax_pos{iax}(2)+.005;
-   y2=ax_pos{ax_map{iax}(2)}(2)+ax_pos{ax_map{iax}(2)}(4)-0.005;
+   y1=ax_pos{iax}(2);
+   y2=ax_pos{ax_map{iax}(2)}(2)+ax_pos{ax_map{iax}(2)}(4);
    annotation('line',[x1 x2], [y1 y2], ...
-      'Color',[.4 .4 .4], ...
-      'LineStyle',':','LineWidth',1);
+      'Color',lclr{iax}, ...
+      'LineStyle',lsty{iax},'LineWidth',1);
 end
 
 str={'CWP: cloud water path',...
@@ -120,8 +122,8 @@ str={'CWP: cloud water path',...
    'MSP: mean surface pcpt.'};
 
 annotation('textbox',[0.77 0.54 0.19 0.41],'String', str,...
-           'FitBoxToText','on','FontSize',12)
-% exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
+           'FitBoxToText','on','FontSize',14)
+exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
 
 %%
 function [X,Y]=dev2fig(dev_strt)
@@ -159,7 +161,7 @@ yticks([0.5 0.8 1 1.2 1.5 2 2.5])
 yticklabels({'-50','-20','0','20','50','100','150'})
 
 l=legend('TAU','SBM');
-set(gca,'fontsize',13)
+set(gca,'fontsize',16)
 set(gca,'GridColor',[1 1 1])
 
 end
