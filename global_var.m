@@ -4,12 +4,12 @@ global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
     color_order
 
 
-% model configs
+%% model configs
 ampORbin = {'amp' 'bin'};
 bintype = {'tau' 'sbm'};
 
 
-% dir of the model output
+%% dir of the model output
 if strcmp(computer('arch'),'maci64')
    output_dir='/Volumes/ESSD/AMP output/';
 elseif strcmp(computer('arch'),'glnxa64')
@@ -19,13 +19,13 @@ end
 % output_dir='../output/';
 
 
-% KiD cases
+%% KiD cases
 case_list_num = [101 102 103 105 106 107 601 602];
 case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num),...
     'UniformOutput', false);
 
 
-% thresholds to be considered as clouds 
+%% thresholds to be considered as clouds 
 cloud_mr_th = [1e-7 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
 rain_mr_th = [1e-7 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
@@ -36,12 +36,12 @@ meanD_th = [0 inf];
 sppt_th = [0.01 inf]; % mm/hr surface precipitation
 
 
-% set the current date as nikki if unset
+%% set the current date as nikki if unset
 if ~exist('nikki')
     nikki=datestr(date,'YYYY-mm-dd');
 end
 
-% load these python colormap
+%% load these python colormap
 Blues = getPyPlot_cMap('Blues',10);
 rainbow = getPyPlot_cMap('rainbow',20);
 coolwarm_s = getPyPlot_cMap('coolwarm');
@@ -53,7 +53,7 @@ BrBG20 = getPyPlot_cMap('BrBG',21);
 BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
 BrBG = repelem(BrBG,floor(256/ngrad),1); 
 
-% initial variables key-values
+%% initial variables key-values
 initvarSet={'a','w','dm','rh','sp','mc'};
 fullnameSet={'Aerosol concentration', 'Maximum vertical velocity',...
             'Mean mass diameter', 'Relative humidity', 'Shape parameter (\nu)', 'Initial mass content'};
@@ -61,9 +61,10 @@ unitSet={' [1/cc]', ' [m/s]', ' [\mum]', ' [%]', '', ' [g/kg]'};
 initVarName_dict = containers.Map(initvarSet, fullnameSet);
 initVarUnit_dict = containers.Map(initvarSet, unitSet);
 
-% compare these vars
+%% compare these vars
 %var_comp = [1 12 13];
-%var_comp = [3 4 5 10];
+%var_comp = [3:5 10 16];
+var_comp = [3:7 10]; % pyramid
 
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
     'cloud_M1_path','rain_M1_path','liq_M1_path',...
@@ -140,7 +141,7 @@ indvar2D_name_set=indvar2D_name_all(var2D_comp);
 indvar2D_ename_set=indvar2D_ename_all(var2D_comp);
 indvar2D_units_set=indvar2D_units_all(var2D_comp);
 
-% additional variables generating animation in AMP_vs_bin_dist
+%% additional variables generating animation in AMP_vs_bin_dist
 if l_amp==0
     ab_arr=2;
 elseif l_amp==1
