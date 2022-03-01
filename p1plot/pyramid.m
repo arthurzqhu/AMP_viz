@@ -23,7 +23,7 @@ echodemo('global_var',9);
 %%
 close all
 figure('Position',[1013 59 1292 1134])
-tl=tiledlayout(4,8,'TileSpacing','compact','Padding','compact');
+tl=tiledlayout(4,8,'Padding','compact');
 
 % fullmic
 nexttile(3,[1 4])
@@ -85,7 +85,43 @@ title('(j) Evap. only','FontSize',16')
 ylabel(tl,'AMP-bin % difference','fontsize',20,...
    'fontweight','bold')
 
-exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
+
+for iax = 1:10
+   ax_pos{iax}=tl.Children(end+2-iax*2).Position;
+end
+
+ax_map={[2 3],[4 5],[5 6],[7 8],[8 9],[9 10]};
+
+for iax=1:6
+   % left line
+   x1=ax_pos{iax}(1);
+   x2=ax_pos{ax_map{iax}(1)}(1);
+   y1=ax_pos{iax}(2)+.005;
+   y2=ax_pos{ax_map{iax}(1)}(2)+ax_pos{ax_map{iax}(1)}(4)-0.005;
+   annotation('line',[x1 x2], [y1 y2], ...
+      'Color',[.4 .4 .4], ...
+      'LineStyle',':','LineWidth',1);
+   % right line
+   x1=ax_pos{iax}(1)+ax_pos{iax}(3);
+   x2=ax_pos{ax_map{iax}(2)}(1)+ax_pos{ax_map{iax}(2)}(3);
+   y1=ax_pos{iax}(2)+.005;
+   y2=ax_pos{ax_map{iax}(2)}(2)+ax_pos{ax_map{iax}(2)}(4)-0.005;
+   annotation('line',[x1 x2], [y1 y2], ...
+      'Color',[.4 .4 .4], ...
+      'LineStyle',':','LineWidth',1);
+end
+
+str={'CWP: cloud water path',...
+   'RWP: rain water path',...
+   'LWP: liquid water path',...
+   'N_c: cloud droplet number',...
+   'N_r: raindrop number',...
+   't_{1/2,c}: cloud half-life',...
+   'MSP: mean surface pcpt.'};
+
+annotation('textbox',[0.77 0.54 0.19 0.41],'String', str,...
+           'FitBoxToText','on','FontSize',12)
+% exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
 
 %%
 function [X,Y]=dev2fig(dev_strt)
@@ -94,12 +130,24 @@ global indvar_name_set indvar_name_all indvar_ename_all
 
 fldnms=fieldnames(dev_strt);
 ivarplot=find(contains(fldnms,indvar_name_set));
-ivarset=find(contains(indvar_name_all,fldnms(ivarplot)));
+ivarset=contains(indvar_name_all,fldnms(ivarplot));
 Y_mat=cell2mat(struct2cell(dev_strt));
 Y=Y_mat(ivarplot,:);
+% indv_abbr=indvar_ename_all(ivarset);
+Xc=indvar_ename_all(ivarset);
+Xc(contains(Xc,'cloud water path'))={'CWP'};
+Xc(contains(Xc,'rain water path'))={'RWP'};
+Xc(contains(Xc,'cloud number'))={'N_c'};
+Xc(contains(Xc,'rain number'))={'N_r'};
+Xc(contains(Xc,'mean surface pcpt.'))={'MSP'};
+Xc(contains(Xc,'liquid water path'))={'LWP'};
+Xc(contains(Xc,'cloud half-life'))={'t_{1/2,c}'};
 
-X=categorical(indvar_ename_all(ivarset));
-X=reordercats(X,indvar_ename_all(ivarset));
+X=categorical(Xc);
+X=reordercats(X,Xc);
+
+
+
 %%
 b=bar(X,Y,1);
 b(1).BaseValue=1;
