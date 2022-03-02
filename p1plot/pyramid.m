@@ -28,6 +28,7 @@ tl=tiledlayout(4,8,'TileSpacing','loose');
 % fullmic
 nexttile(3,[1 4])
 [X_fullmic,Y_fullmic]=dev2fig(fullmic_dev);
+l=legend('TAU','SBM','location','best');
 title('(a) Full MP','FontSize',16')
 
 % condevapcoll
@@ -85,10 +86,14 @@ title('(j) Evap. only','FontSize',16')
 ylabel(tl,'AMP-bin % difference','fontsize',20,...
    'fontweight','bold')
 
-
-for iax = 1:10
-   ax_pos{iax}=tl.Children(end+2-iax*2).OuterPosition;
+ax_pos{1}=tl.Children(end).OuterPosition;
+for iax = 2:10
+   ax_pos{iax}=tl.Children(end-iax).OuterPosition;
 end
+
+%for iax = 1:10
+%   ax_pos{iax}=tl.Children(end+2-iax*2).OuterPosition;
+%end
 
 ax_map={[2 3],[4 5],[5 6],[7 8],[8 9],[9 10]};
 lsty={':',':','-.',':','-.','--'};
@@ -145,7 +150,7 @@ str={'CWP: cloud water path',...
 
 annotation('textbox',[0.77 0.518 0.19 0.41],'String', str,...
            'FitBoxToText','on','FontSize',14)
-exportgraphics(gcf,['plots/p1/pyramid_alt.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
 % export_fig('plots/p1/pyramid', '-dpng', '-transparent', '-r300');
 % imwrite(bitmapData, 'plots/a.png', 'png', 'transparency', backgroundColor)
 %%
@@ -178,14 +183,13 @@ b=bar(X,Y,1);
 b(1).BaseValue=1;
 b(1).BaseLine.Color=[.8 .8 .8];
 set(gca,'YScale','log')
-ylim([0.5 2])
+ylim([0.33 2.5])
 
-yticks([0.5 0.8 1 1.2 1.5 2 2.5])
-yticklabels({'-50','-20','0','20','50','100','150'})
+yticks([.33 0.5 0.8 1 1.5 2 2.5])
+yticklabels({'-67','-50','-20','0','50','100','150'})
 grid()
 
-l=legend('TAU','SBM');
 set(gca,'fontsize',14)
-set(gca,'GridColor',[1 1 1])
+%set(gca,'GridColor',[1 1 1])
 
 end
