@@ -29,7 +29,7 @@ case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num)
 cloud_mr_th = [1e-7 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
 rain_mr_th = [1e-7 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
-rain_n_th = [1e-4 inf];
+rain_n_th = [1e2 inf]; % #/m2
 cwp_th = [1e-5 inf]; % kg/m2 cloud water path threshold
 rwp_th = [1e-6 inf]; % kg/m2 rain water path threshold
 meanD_th = [0 inf];
@@ -64,7 +64,7 @@ initVarUnit_dict = containers.Map(initvarSet, unitSet);
 %% compare these vars
 %var_comp = [1 12 13];
 %var_comp = [3:5 10 16];
-var_comp = [3:7 10 16]; % pyramid
+var_comp = [3:8 10 16]; % pyramid
 
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
     'cloud_M1_path','rain_M1_path','liq_M1_path',...
