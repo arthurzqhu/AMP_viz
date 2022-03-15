@@ -33,6 +33,11 @@ tl=tiledlayout(4,4);
 for its=1:length(bintype)
    nexttile(its*2+3,[3 2])
    nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn}))
+
+   if ipvar==2 && its == 2
+      rectangle('position',[2.5 .5 1 5],'FaceColor','none')
+   end
+
    cb=colorbar;
    if its==length(bintype), cb.Label.String='AMP/bin ratio'; end
    title(upper(bintype{its}),'FontWeight','normal')

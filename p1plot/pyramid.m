@@ -37,14 +37,15 @@ global_var
 
 %%
 close all
-figure('Position',[0 59 1500 913])
+figure('Position',[0 59 1200 800])
 tl=tiledlayout(4,8,'TileSpacing','loose');
 
 % fullmic
 nexttile(3,[1 4])
 [X_fullmic,Y_fullmic]=dev2fig(fullmic_dev,fullmic_dev_a);
 % dev2fig(fullmic_dev_a);
-l=legend('TAU (arithmatic mean)','','','SBM (weight mean)',...
+l=legend('TAU (weighted mean)','SBM (weighted mean)',...
+   'TAU (arithmatic mean)','SBM (arithmatic mean)',...
    'location','best','fontsize',12);
 title('(a) Full MP','FontSize',16)
 
@@ -98,9 +99,6 @@ title('(i) Sed. only','FontSize',16)
 % evap
 nexttile(31,[1 2])
 [X_evaponly,Y_evaponly]=dev2fig(evaponly_dev,evaponly_dev_a);
-% dev2fig(evaponly_dev_a);
-% stackdata=
-% plotBarStackGroups()
 
 title('(j) Evap. only','FontSize',16)
 
@@ -117,34 +115,15 @@ end
 %end
 
 ax_map={[2 3],[4 5],[5 6],[7 8],[8 9],[9 10]};
-lsty={':',':','-.',':','-.','--'};
-lclr={[0 0 0],[0 0 0],[.4 .4 .4],[0 0 0],[.4 .4 .4],[.4 .4 .4]};
 
 for iax=1:6
-%    % left line
-%    xul=ax_pos{iax}(1);
-%    xdl=ax_pos{ax_map{iax}(1)}(1);
-%    yul=ax_pos{iax}(2);
-%    ydl=ax_pos{ax_map{iax}(1)}(2)+ax_pos{ax_map{iax}(1)}(4);
-%    annotation('line',[xul xdl], [yul ydl], ...
-%       'Color',lclr{iax}, ...
-%       'LineStyle',lsty{iax},'LineWidth',1);
-%    % right line
-%    xur=ax_pos{iax}(1)+ax_pos{iax}(3);
-%    xdr=ax_pos{ax_map{iax}(2)}(1)+ax_pos{ax_map{iax}(2)}(3);
-%    yur=ax_pos{iax}(2);
-%    ydr=ax_pos{ax_map{iax}(2)}(2)+ax_pos{ax_map{iax}(2)}(4);
-%    annotation('line',[xur xdr], [yur ydr], ...
-%       'Color',lclr{iax}, ...
-%       'LineStyle',lsty{iax},'LineWidth',1);
-
    xul = ax_pos{iax}(1)+0.5*ax_pos{iax}(3);
    xur = ax_pos{iax}(1)+0.6*ax_pos{iax}(3);
    if iax==1
       xur = ax_pos{iax}(1)+0.55*ax_pos{iax}(3); % because (a) is wider than everyone else
    end
-   xl = ax_pos{ax_map{iax}(1)}(1)+0.88*ax_pos{ax_map{iax}(1)}(3);
-   xr = ax_pos{ax_map{iax}(2)}(1)+0.22*ax_pos{ax_map{iax}(2)}(3);
+   xl = ax_pos{ax_map{iax}(1)}(1)+0.95*ax_pos{ax_map{iax}(1)}(3);
+   xr = ax_pos{ax_map{iax}(2)}(1)+0.15*ax_pos{ax_map{iax}(2)}(3);
    
    yu = ax_pos{iax}(2);
    yl = ax_pos{ax_map{iax}(1)}(2)+0.95*ax_pos{ax_map{iax}(1)}(4);
@@ -153,13 +132,9 @@ for iax=1:6
    annotation('arrow',[xl xul],[yl yu],'LineWidth',1)
    annotation('arrow',[xr xur],[yr yu],'LineWidth',1)
 
-%    xx = [xul xdl xdr xur];
-%    yy = [yul ydl ydr yur];
-%    
-%    pt=patch(xx,yy,[.8 .8 .8],'edgecolor','none');
-   
-
 end
+
+set(l,'Position',[0.73 0.64 0.15 0.07],'FontSize',12);
 
 str={'CWP: cloud water path',...
    'RWP: rain water path',...
@@ -169,6 +144,6 @@ str={'CWP: cloud water path',...
    't_{1/2,c}: cloud half-life',...
    'MSP:  mean surface pcpt.'};
 
-annotation('textbox',[0.77 0.518 0.19 0.41],'String', str,...
+annotation('textbox',[0.73 0.528 0.19 0.41],'String', str,...
            'FitBoxToText','on','FontSize',14)
-% exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)

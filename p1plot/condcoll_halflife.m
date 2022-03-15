@@ -10,7 +10,7 @@ vnum='0001'; % last four characters of the model output file.
 nikki='2022-02-24';
 run global_var.m
 
-mconfig='collonly';
+mconfig='condcoll';
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
 run case_dep_var.m
@@ -25,8 +25,7 @@ plot_var={'half_life_c'};
 
 for ipvar=1:length(plot_var)
 figure('position',[1331 587 1250 300])
-alb_idx=find(contains(indvar_name_set,plot_var{ipvar}));
-ivar=alb_idx;
+ivar=find(contains(indvar_name_set,plot_var{ipvar}));
 ifn=1;
 
 tl=tiledlayout(4,4);
@@ -88,5 +87,5 @@ ylabel(tl,ylab,'fontsize',16)
 
 title(tl,['Collision-coalescence only - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/collonly_halflife.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/condcoll_halflife.jpg'],'Resolution',300)
 end
