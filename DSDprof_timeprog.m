@@ -26,7 +26,7 @@ end
 tl=tiledlayout('flow');
 nexttile(1)
 for it_idx = 1:time_length+1
-   it_indata = int8((it_idx-1)*ts_indata);
+   it_indata = int32((it_idx-1)*ts_indata);
    itime = (it_idx-1)*time_step;
 
    if it_indata>time_total/dt 
