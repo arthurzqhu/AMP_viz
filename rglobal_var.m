@@ -2,6 +2,7 @@ global thhd cmap pio6rw
 
 
 % model configs
+addpath('ramsfuncs/')
 ampORbin={'amp' 'bin'};
 bintype={'tau' 'sbm'};
 
@@ -45,12 +46,9 @@ end
 
 clear colororder
 
-var_name={'CWP','RWP','LWP','Rv','RH'};
-var_req={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'PI','THETA','RV'}};
-var_unit={' [kg/m^2]', ' [kg/m^2]',' [kg/m^2]', ' [kg/kg]',' %'};
-
-var_da={'CWP_da','RWP_da','LWP_da','Rv_da','RH_da'};
-var_da_name={'domain avg. CWP', 'domain avg. RWP', 'domain avg. LWP', ...
-             'domain avg. RV', 'domain avg. RH'};
-var_da_unit={' [kg/m^2]', ' [kg/m^2]', ' [kg/m^2]', ' [kg/kg]', ' %'};
-var_req_uniq=unique(horzcat(var_req{:}));
+var_name_set={'CWP','RWP','LWP','Rv','RH'};
+var_ename_set={'cloud water path','rain water path','liquid water path',...
+               'mixing ratio','relative humidity'};
+var_req_set={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'RV'}};
+var_unit_set={' [kg/m^2]', ' [kg/m^2]',' [kg/m^2]', ' [kg/kg]',' %'};
+var_da_unit_set={' [kg/m^2]', ' [kg/m^2]', ' [kg/m^2]', ' [kg/kg]', ' %'};

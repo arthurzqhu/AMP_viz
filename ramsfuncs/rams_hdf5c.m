@@ -35,12 +35,11 @@ end
 
 global runs filepath z
 
-runs=struct;
 
 for f=1:length(folder)  
 %    folder{f}
-    files=dir([pref,folder{f},'/*g1.h5']);
-    headfile=dir([pref,folder{f},'/*head.txt']);
+    files=dir([pref,folder{f},'/a-L*g1.h5']);
+    headfile=dir([pref,folder{f},'/a-L*head.txt']);
     headfile=[headfile(1).folder '/' headfile(1).name];
 
     % get z-axis
@@ -64,7 +63,7 @@ for f=1:length(folder)
             datapath=['/',upper(var{v})];
             %if strcmpi(var{v},'FFCD')
             time_string=files(hr(t)+1).name(end-22:end-6);
-                test=h5read(filepath,datapath);
+                test=single(h5read(filepath,datapath));
             %else
             %    test=h5read(filepath,datapath,[1 1 cb(1)],[256 256 cb(2)]);
             %end
@@ -80,7 +79,7 @@ for f=1:length(folder)
             %test=permute(test,[2 1 3 4]);
             levs=size(test,3);
 
-            if ~isfield(runs(f),'time')
+            if v==1
                if t==1
                   time=zeros(length(hr),1);
                end
@@ -90,15 +89,17 @@ for f=1:length(folder)
             if ndim <=3
                 if t==1
                     A=zeros(size(test,1),size(test,2),size(test,3),length(hr));
+                    A=single(A);
                 end
                 A(:,:,:,t)=test(:,:,:);
             elseif ndim==4
                 if t==1
                     A=zeros(dims(1),dims(2),levs,length(hr),33); % not compatible with tau
+                    A=single(A);
                 end
                 A(:,:,:,t,:)=test;
             end
-        end
+        end % loop over t
 %         if numel(varargin)>0
 %             if ~isempty(varargin{1})
 %                 A=A(:,:,varargin{1},:);
@@ -113,7 +114,7 @@ for f=1:length(folder)
 %             end
 %         end
         
-        if ~isfield(runs(f),'time')
+        if v==1
            runs(f).time=time;
         end
         runs(f).(var{v})=A;
@@ -123,8 +124,8 @@ for f=1:length(folder)
 %        end
         %suf=num2str(f);
         %assignin('base',[var{v},suf],A);
-    end
-end
+    end % loop over v
+end % loop over f
 %assignin('base','A',runs);
 evalin('base','global runs')
 %toc
