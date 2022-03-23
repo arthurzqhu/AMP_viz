@@ -46,9 +46,8 @@ end
 
 clear colororder
 
-var_name_set={'CWP','RWP','LWP','Rv','RH'};
+var_name_set={'CWP','RWP','LWP','Rv','RH','LWC'};
 var_ename_set={'cloud water path','rain water path','liquid water path',...
-               'mixing ratio','relative humidity'};
-var_req_set={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'RV'}};
-var_unit_set={' [kg/m^2]', ' [kg/m^2]',' [kg/m^2]', ' [kg/kg]',' %'};
-var_da_unit_set={' [kg/m^2]', ' [kg/m^2]', ' [kg/m^2]', ' [kg/kg]', ' %'};
+               'mixing ratio','relative humidity','liquid water content'};
+var_req_set={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'RV'},{'RCP','RRP'}};
+var_unit_set={' [kg/m^2]', ' [kg/m^2]',' [kg/m^2]', ' [kg/kg]',' %',' [kg/kg]'};

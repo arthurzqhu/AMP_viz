@@ -39,18 +39,21 @@ global nfile outdir runs mpdat mp_list imp deltaz density
          mpdat(imp).(mp_list{imp}).(var_interest(ivar).var_name) = ...
             loaded_var.(var_interest(ivar).var_name);
       end
-   
    end
-
 end
+
+
 function [loaded_var, loaded_varname] = loadvar(varin_obj,loaded_var,loaded_varname)
 % update the loaded_var (struct) and loaded_varname (cell)
 global runs deltaz density
-
-   if varin_obj.var_name == "LWP"
-      var_to_read = {'CWP','RWP'};
-   else
-      var_to_read = {varin_obj.var_name};
+   
+   switch varin_obj.var_name
+      case "LWP"
+         var_to_read = {'CWP','RWP'};
+      case "LWC"
+         var_to_read = {'CWC','RWC'};
+      otherwise
+         var_to_read = {varin_obj.var_name};
    end
    
    for ivar = 1:length(var_to_read)
@@ -61,6 +64,10 @@ global runs deltaz density
       end
    
       switch varname
+         case 'CWC'
+            loaded_var.(varname) = runs.RCP;
+         case 'RWC'
+            loaded_var.(varname) = runs.RRP;
          case 'CWP'
             loaded_var.(varname) = deltaz*squeeze(sum(runs.RCP.*density,3));
          case 'RWP'
@@ -72,8 +79,12 @@ global runs deltaz density
       end
       loaded_varname{end+1} = varname;
    end
-   if varin_obj.var_name == "LWP"
-      loaded_var.(varin_obj.var_name) = loaded_var.CWP + loaded_var.RWP;
+
+   switch varin_obj.var_name 
+      case "LWP"
+         loaded_var.(varin_obj.var_name) = loaded_var.CWP + loaded_var.RWP;
+      case "LWC"
+         loaded_var.(varin_obj.var_name) = loaded_var.CWC + loaded_var.RWC;
    end
    
    % mark additional loaded var if it's a compound variable (calculated from multiple sources)
@@ -83,8 +94,8 @@ global runs deltaz density
 end
 
 function da_val = calc_domainavg(val)
-   % assuming the last dimension is the time
+   % assuming x, y are the first two dimensions
    % i.e., val in the form of (x,y,z,t) or (x,y,t) etc.
    
-   da_val = squeeze(mean(val,1:ndims(val)-1));
+   da_val = squeeze(mean(val,[1 2]));
 end
