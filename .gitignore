@@ -9,3 +9,4 @@ vids/*
 cases for plot/*
 *.out
 *.swp
+*.png
