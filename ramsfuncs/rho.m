@@ -4,4 +4,4 @@ function density = rho(theta, pi)
 R = 287;
 pressure = press(pi);
 tampk = temp(theta, pi);
-density = pressure./(R*tampk);
+density = 100*pressure./(R*tampk);
