@@ -1,7 +1,7 @@
 clear
 clear global
 
-global nfile outdir runs mpdat mp_list imp deltaz deltax z
+global nfile outdir runs mpdat mp_list imp deltaz deltax z nikki
 close all
 
 addpath('ramsfuncs/')
@@ -9,7 +9,7 @@ doanim = 0;
 doplot = 1;
 l_da = 1; % whether we want the domain averaged quantity, can be set to an array but it as an argument to ramsvar() needs to be changed to l_da(ivar)
 
-nikki = '2022-03-22';
+nikki = '2022-03-19';
 run rglobal_var
 mp_list = {'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
 %mp_list = {'amp_tau'};
@@ -72,7 +72,7 @@ for ivar = 1:length(varname_interest)
    legend('show','Interpreter','none','location','southwest')
    
    hold off
-   print(['plots/rams/' varn '_' mps '_' mconfig '.png'],'-dpng','-r300')
+   print(['plots/rams/' nikki '/' varn '_' mps '_' mconfig '.png'],'-dpng','-r300')
 end % ivar
 
 end % doplot
