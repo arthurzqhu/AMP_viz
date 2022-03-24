@@ -65,13 +65,13 @@ global runs deltaz density
    
       switch varname
          case 'CWC'
-            loaded_var.(varname) = runs.RCP;
+            loaded_var.(varname) = 1e3*runs.RCP;
          case 'RWC'
-            loaded_var.(varname) = runs.RRP;
+            loaded_var.(varname) = 1e3*runs.RRP;
          case 'CWP'
-            loaded_var.(varname) = deltaz*squeeze(sum(runs.RCP.*density,3));
+            loaded_var.(varname) = 1e3*deltaz*squeeze(sum(runs.RCP.*density,3));
          case 'RWP'
-            loaded_var.(varname) = deltaz*squeeze(sum(runs.RRP.*density,3));
+            loaded_var.(varname) = 1e3*deltaz*squeeze(sum(runs.RRP.*density,3));
          case 'Rv'
             loaded_var.(varname) = deltaz*squeeze(sum(runs.RV.*density,3));
          case 'RH'
