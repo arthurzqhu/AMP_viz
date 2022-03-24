@@ -1,5 +1,4 @@
-global thhd cmap pio6rw
-
+global thhd cmap pio6rw nikki
 
 % model configs
 addpath('ramsfuncs/')
@@ -9,12 +8,12 @@ bintype={'tau' 'sbm'};
 pio6rw=3.1415926535/6*1000;
 
 % thresholds to be considered as clouds 
-thhd.cloud_mr_th=[1e-10 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
-thhd.rain_mr_th=[1e-10 1e-2];
+thhd.cloud_mr_th=[1e-7 1e-2]; % g/kg, threshold for mixing ratio
+thhd.rain_mr_th=[1e-8 1e-2];
 thhd.cloud_n_th=[1e-1 inf]; % #/cc, threshold for droplet number concentration
 thhd.rain_n_th=[1e-4 inf];
-thhd.cwp_th=[1e-5 inf]; % kg/m2 cloud water path threshold
-thhd.rwp_th=[1e-6 inf]; % kg/m2 rain water path threshold
+thhd.cwp_th=[1 inf]; % g/m2 cloud water path threshold
+thhd.rwp_th=[1e-1 inf]; % g/m2 rain water path threshold
 thhd.meanD_th=[0 inf];
 thhd.sppt_th=[0 inf]; % mm/hr surface precipitation
 
@@ -22,6 +21,7 @@ thhd.sppt_th=[0 inf]; % mm/hr surface precipitation
 % set the current date as nikki if unset
 if ~exist('nikki')
     nikki=datestr(date,'YYYY-mm-dd');
+
 end
 
 % dir of the model output
@@ -50,4 +50,11 @@ var_name_set={'CWP','RWP','LWP','Rv','RH','LWC'};
 var_ename_set={'cloud water path','rain water path','liquid water path',...
                'mixing ratio','relative humidity','liquid water content'};
 var_req_set={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'RV'},{'RCP','RRP'}};
-var_unit_set={' [kg/m^2]', ' [kg/m^2]',' [kg/m^2]', ' [kg/kg]',' %',' [kg/kg]'};
+var_unit_set={' [g/m^2]', ' [g/m^2]',' [g/m^2]', ' [kg/kg]',' %',' [g/kg]'};
+
+
+% output dir for the figures
+plot_dir=['plots/rams/' nikki '/'];
+if ~exist(['plots/rams/' nikki '/'],'dir')
+    mkdir(['plots/rams/' nikki '/'])
+end
