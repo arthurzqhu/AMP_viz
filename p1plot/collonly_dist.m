@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-02-10';
+nikki='2022-02-24';
 
 run global_var.m
 
@@ -45,9 +45,9 @@ for iconf = 1%length(mconfig_ls)
          for ivar2 = length(var2_str)
             
             [~, ~, ~, ~, amp_struct]=...
-               loadnc('amp');
+               loadnc('amp',{'mass_dist_init'});
             [~, ~, ~, ~, bin_struct]=...
-               loadnc('bin');
+               loadnc('bin',{'mass_dist'});
             
             %%
             time=amp_struct.time;
