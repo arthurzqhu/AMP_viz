@@ -34,9 +34,12 @@ for its=1:length(bintype)
    nexttile(its*2+3,[3 2])
    nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn}))
 
-   if ipvar==2 && its == 2
-      rectangle('position',[2.5 .5 1 5],'FaceColor','none')
+   if ipvar==2
+      if its == 2
+         rectangle('position',[2.5 .5 1 5],'edgecolor','#268785','linewidth',3)
+      end
    end
+
 
    cb=colorbar;
    if its==length(bintype), cb.Label.String='AMP/bin ratio'; end
