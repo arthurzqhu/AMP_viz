@@ -62,19 +62,16 @@ yyaxis left
 set(gca,'YColor','none')
 yyaxis right
 hold on
-plot(oneD_struct.RH(1,:),oneD_struct.z,'LineWidth',2,...
-   'DisplayName','max 100%')
-plot(oneD_struct_evaponly.RH(1,:),oneD_struct_evaponly.z,...
-   'DisplayName','max 40%','LineWidth',2)
+plot(oneD_struct.RH(1,:),oneD_struct.z,'LineWidth',2)
 title('(b)')
+set(gca,'xTick',[0 100])
+set(gca,'xticklabels',{'0' 'RH_{max}'})
 hold off
-legend('show')
 set(gca,'FontSize',16)
-% xlabel('Specific humidity [g/kg]')
 xlabel('RH [%]')
 ylabel('Altitude [m]')
 
-exportgraphics(gcf,'plots/p1/1D setup.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/model setup.jpg','Resolution',300)
 % print(gcf,'plots/p1/fig2','-dpng','-r300')
 
 
