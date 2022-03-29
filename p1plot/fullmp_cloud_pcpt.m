@@ -102,7 +102,7 @@ ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['1D full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
+title(tl,['Full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
 exportgraphics(gcf,['plots/p1/fullmp ' plot_var{ipvar} '.jpg'],'Resolution',300)
 end

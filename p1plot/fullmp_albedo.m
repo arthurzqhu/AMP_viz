@@ -7,15 +7,11 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-01-18';
+nikki='2021-11-27';
 run global_var.m
 
-mconfig_ls_dir=dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
-mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
-
-mconfig=mconfig_ls{1};
+% mconfig_ls = get_mconfig_list(output_dir,nikki);
+mconfig='fullmic';
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
 run case_dep_var.m
@@ -101,12 +97,15 @@ set(gca,'FontSize',16)
 
 xlab_key=extractBefore(var2_str,digitsPattern);
 ylab_key=extractBefore(var1_str,digitsPattern);
-xlab=['Baseline vertical velocity [' initVarUnit_dict(xlab_key{1}) ']'];
-ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
+% xlab=['Maximum vertical velocity [' initVarUnit_dict(xlab_key{1}) ']'];
+xlab=[initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
+ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
+% xlab=[initVarName_dict(xlab_key{1}) ' [' initVarUnit_dict(xlab_key{1}) ']'];
+% ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['2D full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
+title(tl,['Full microphysics - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
 exportgraphics(gcf,['plots/p1/fullmp_albedo.jpg'],'Resolution',300)
 end
