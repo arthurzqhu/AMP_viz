@@ -32,6 +32,7 @@ b(1).FaceColor=color_order{1};
 b(2).FaceColor=color_order{2};
 b(1).FaceAlpha=0.5;
 b(2).FaceAlpha=0.5;
+%b(2).HandleVisibility='off';
 % b(1).LineStyle=':';
 % b(2).LineStyle=':';
 b(1).LineWidth=1;
@@ -40,6 +41,7 @@ b(1).BaseValue=1;
 b(1).BaseLine.Color=[.8 .8 .8];
 
 b_a=bar(X,Y_a,1);
+%b_a(1).HandleVisibility='off';
 b_a(1).FaceColor=color_order{1};
 b_a(2).FaceColor=color_order{2};
 b_a(1).FaceAlpha=0.5;
@@ -56,13 +58,13 @@ b_a(1).BaseLine.Color=[.8 .8 .8];
 hold off
 
 set(gca,'YScale','log')
-ylim([0.33 2.5])
+ylim([0.33 2])
+yticks([0.33 0.5 0.8 1 1.5 2])
+yticklabels({'-67','-50','-20','0','50','100'})
 
-yticks([.33 0.5 0.8 1 1.5 2 2.5])
-yticklabels({'-67','-50','-20','0','50','100','150'})
 grid()
 
-set(gca,'fontsize',14)
+set(gca,'fontsize',12)
 %set(gca,'GridColor',[1 1 1])
 
 end
