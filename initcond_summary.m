@@ -2,44 +2,28 @@ clear
 clear global
 close all
 
-global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
+global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    bintype var1_str var2_str indvar_name indvar_name_set ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-%nikkis={'2021-09-22','2021-10-07','2021-10-11','2021-10-12',...
-%         '2021-10-14','2021-10-16','2021-10-27','2021-10-28','2021-10-29',...
-%         '2021-11-04','2021-11-05','2021-11-06','2021-11-08','2021-11-09',...
-%         '2021-11-10','2021-11-12','2021-11-15'};
-nikkis={'2022-02-04'};
-%case_interest=1; % 1:length(case_list_num);
+nikkis={'2021-11-27'};
+doplot=0
+doload=1
 
 for ink=1:length(nikkis)
    nikki=nikkis{ink}
-   
    run global_var.m
    
    % get the list of configs. cant put it into globar_var
-   mconfig_ls_dir=dir([output_dir,nikki,'/']);
-   mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];
-   mconfig_ls_dir_flags(1:2)=0; % ignore the current and parent dir
-   mconfig_ls={mconfig_ls_dir(mconfig_ls_dir_flags).name};
-   
-   set(0, 'DefaultFigurePosition',[1331 587 1250 390])
-   
+   mconfig_ls = get_mconfig_list(output_dir,nikki);
+
    %%
-   
-   % fig_prof=figure('visible','off');
-   % fig_path=figure('visible','off');
-   % fig_proc=figure('visible','off');
-   % fig_profdiff=figure('visible','off');
-   % fig_pathdiff=figure('visible','off');
-   % fig_procdiff=figure('visible','off');
-   
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf=1:length(mconfig_ls)
-      pfm=struct;
+   for iconf=7%:length(mconfig_ls)
       mconfig=mconfig_ls{iconf}
+      if doload
+      pfm=struct;
       %     mconfig='adv_coll';
       run case_dep_var.m
       for its=1:length(bintype)
@@ -76,7 +60,7 @@ for ink=1:length(nikkis)
                   
                   var_comp_raw_bin=bin_struct.(indvar_name{ivar});
                   var_bin_flt=var2phys(var_comp_raw_bin,ivar,0,1);
-                  
+
                   % get the non-nan indices for both bin and amp
                   vidx=~isnan(var_amp_flt+var_bin_flt);
                   nzidx=var_amp_flt.*var_bin_flt>0;
@@ -86,7 +70,6 @@ for ink=1:length(nikkis)
                   
                   [mr,rsq,er]=wrsq(var_amp_flt,var_bin_flt,weight);
                   
-                  %pfm(ici).(indvar_name{ivar}).(bintype{its}).mrsq(ivar1,ivar2)=mrsq;
                   pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
                   pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
                   pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=nanmean(var_bin_flt);
@@ -95,13 +78,18 @@ for ink=1:length(nikkis)
                   
                end % ivar
 
-            end
-         end
-      end
-      save(['pfm_summary/' nikki '_' mconfig '_pfm.mat'],'pfm');
+            end % ivar2
+         end % ivar1
+      end % its
+      save(['pfm_summary/' nikki '_' mconfig '_pfm.mat'],'pfm')
+      else
+      load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
+      end % doload
 
 
 %% plot
+      if doplot
+
       tmpvarname=fieldnames(pfm(1));
       fldnms=fieldnames(pfm(1).(tmpvarname{1}).(bintype{1}));
       fldnms=fldnms(1:end-1);
@@ -122,6 +110,7 @@ for ink=1:length(nikkis)
             end
             %%
             figure(ifn)
+            set(gcf,'position',[1331 587 1250 390])
             tl=tiledlayout(4,4);
             for its=1:length(bintype)
                nexttile(its*2+3,[3 2])
@@ -145,11 +134,6 @@ for ink=1:length(nikkis)
                   [XX,YY]=meshgrid(1:length(var2_str),1:length(var1_str));
                   mpath_bin_str=sprintfc('%0.3g',mpath);
    
-                  if strcmp(indvar_name{ivar}, 'mean_surface_ppt')
-                     idx_ignore=mpath<0.01;
-                     mpath_bin_str(idx_ignore)={' '};
-                  end
-   
                   for ivar1=1:length(var1_str)
                      for ivar2=1:length(var2_str)
                         
@@ -157,6 +141,12 @@ for ink=1:length(nikkis)
                         ngrads=size(coolwarm_r,1);
                         clr_idx=roundfrac(pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
                         clr_idx=round(clr_idx); % in case prev line outputs double
+                        if contains(indvar_name{ivar},'half_life_c')
+                           clr_idx=9;
+                           if isnan(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn})(ivar1,ivar2))
+                              clr_idx=nan;
+                           end
+                        end
                         % ----- got text color -----
                         
                         if isnan(clr_idx) continue, end
@@ -164,10 +154,10 @@ for ink=1:length(nikkis)
                         
                         text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
                            'HorizontalAlignment','center',...
-                           'Color',coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
+                           'Color',coolwarm_r11(clr_idx,:)*.1,'FontName','Menlo')
                         text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
                            'HorizontalAlignment','center',...
-                           'Color',coolwarm_r(clr_idx,:),'FontName','Menlo')
+                           'Color',coolwarm_r11(clr_idx,:),'FontName','Menlo')
                         
                         
                      end
@@ -198,8 +188,8 @@ for ink=1:length(nikkis)
    
             xlab_key=extractBefore(var2_str,digitsPattern);
             ylab_key=extractBefore(var1_str,digitsPattern);
-            xlab=[initVarName_dict(xlab_key{1}) ' [' initVarUnit_dict(xlab_key{1}) ']'];
-            ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
+            xlab=[initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
+            ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
             xlabel(tl,xlab,'fontsize',16)
             ylabel(tl,ylab,'fontsize',16)
             %ylabel(tl,[ylab repelem(' ',23)],'fontsize',16)
@@ -212,6 +202,7 @@ for ink=1:length(nikkis)
                '.png'])
             pause(.5)
          end
+      end
       end
 
 
