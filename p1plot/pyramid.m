@@ -129,12 +129,12 @@ for iax=1:6
    yl = ax_pos{ax_map{iax}(1)}(2)+0.95*ax_pos{ax_map{iax}(1)}(4);
    yr = ax_pos{ax_map{iax}(2)}(2)+0.95*ax_pos{ax_map{iax}(2)}(4);
    
-   annotation('arrow',[xl xul],[yl yu],'LineWidth',1)
-   annotation('arrow',[xr xur],[yr yu],'LineWidth',1)
+   annotation('arrow',[xl xul],[yl yu],'LineWidth',1,'color',[.5 .5 .5 .8])
+   annotation('arrow',[xr xur],[yr yu],'LineWidth',1,'color',[.5 .5 .5 .8])
 
 end
 
-set(l,'Position',[0.73 0.64 0.15 0.07],'FontSize',12);
+set(l,'Position',[0.73 0.85 0.15 0.07],'FontSize',12);
 
 str={'CWP: cloud water path',...
    'RWP: rain water path',...
@@ -144,6 +144,6 @@ str={'CWP: cloud water path',...
    't_{1/2,c}: cloud half-life',...
    'MSP:  mean surface pcpt.'};
 
-annotation('textbox',[0.73 0.528 0.19 0.41],'String', str,...
+annotation('textbox',[0.07 0.528 0.19 0.41],'String', str,...
            'FitBoxToText','on','FontSize',14)
 exportgraphics(gcf,['plots/p1/pyramid.jpg'],'Resolution',300)

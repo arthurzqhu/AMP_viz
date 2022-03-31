@@ -3,138 +3,114 @@ clear global
 close all
 
 global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
-   bintype var1_str var2_str indvar_name indvar_name_set ...
-   indvar_ename indvar_ename_set %#ok<*NUSED>
+   bintype var1_str var2_str %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-02-24';
-
+nikki='2022-03-11';
 run global_var.m
+mconfig = 'collonly';
+run case_dep_var.m
 
-% get the list of configs. cant put it into globar_var
-mconfig_ls_dir = dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
-mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
-
-bg_color='#66789F';
-light_color='#E7E6E6';
-%amp_color='#15E8CF';
-%bin_color='#FBE232';
-amp_color=color_order{3};
-bin_color=color_order{4};
-%%
-for iconf = 1%length(mconfig_ls)
-   mconfig = mconfig_ls{iconf};
-   run case_dep_var.m
-   %% read files
+figure('Position',[1000 491 1000 486])
+tl=tiledlayout(2,2,'TileSpacing','compact');
+%% read files
+for its = 1:length(bintype)
+   if its==2
+      binmean = load('diamg_sbm.txt');
+      nkr=33;
+      krdrop=14;
+   elseif its==1
+      binmean = load('diamg_tau.txt');
+      nkr=34;
+      krdrop=15;
+   end
    
-   for its = length(bintype)
-      
-      if its==2
-         binmean = load('diamg_sbm.txt');
-         nkr=33;
-         krdrop=14;
-      elseif its==1
-         binmean = load('diamg_tau.txt');
-         nkr=34;
-         krdrop=15;
-      end
-      
-      for ivar1 = 3%length(var1_str)
-         for ivar2 = length(var2_str)
-            
-            [~, ~, ~, ~, amp_struct]=...
-               loadnc('amp',{'mass_dist_init'});
-            [~, ~, ~, ~, bin_struct]=...
-               loadnc('bin',{'mass_dist'});
-            
-            %%
-            time=amp_struct.time;
-            dt=time(2)-time(1);
-            t1=int32(60/dt);
-            t2=int32(480/dt);
-            t3=int32(1200/dt);
-            
-            bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,48);
-            amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,48);
-            
-            bin_dist_t2=bin_struct.mass_dist(t2,1:nkr,48);
-            amp_dist_t2=amp_struct.mass_dist_init(t2+1,1:nkr,48);
-            
-            bin_dist_t3=bin_struct.mass_dist(t3,1:nkr,48);
-            amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,48);
-            
-            figure('Position',[1000 491 640 486])
-            tl=tiledlayout('flow','TileSpacing','compact');
-            nexttile
-            hold on
+   for ivar1 = 3%length(var1_str)
+      for ivar2 = length(var2_str)
+         
+         [~, ~, ~, ~, amp_struct]=...
+            loadnc('amp',{'mass_dist_init'});
+         [~, ~, ~, ~, bin_struct]=...
+            loadnc('bin',{'mass_dist'});
+         
+         %%
+         time=amp_struct.time;
+         dt=time(2)-time(1);
+         t1=int32(60/dt);
+         t2=int32(360/dt);
+         t3=int32(720/dt);
+         
+         bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,48);
+         amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,48);
+         
+         bin_dist_t2=bin_struct.mass_dist(t2,1:nkr,48);
+         amp_dist_t2=amp_struct.mass_dist_init(t2+1,1:nkr,48);
+         
+         bin_dist_t3=bin_struct.mass_dist(t3,1:nkr,48);
+         amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,48);
+         
+         nexttile
+         hold on
 
-            %shaded region
-            xx=binmean(10:krdrop)';
-            yy1=amp_dist_t1(10:krdrop);
-            yy2=amp_dist_t2(10:krdrop);
-            pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
-            set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+         %shaded region
+         xx=binmean(10:krdrop)';
+         yy1=amp_dist_t1(10:krdrop);
+         yy2=amp_dist_t2(10:krdrop);
+         pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
+         set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+         plot(binmean,amp_dist_t1,'Color',color_order{5-its},'LineWidth',2)
+         plot(binmean,amp_dist_t2,'Color',color_order{5-its},...
+            'LineWidth',2,'LineStyle','--')
+         plot(binmean,amp_dist_t3,'Color',color_order{5-its},...
+            'LineWidth',2,'LineStyle',':')
+         hold off
 
-            plot(binmean,amp_dist_t1,'Color',amp_color,'LineWidth',2)
-            plot(binmean,amp_dist_t2,'Color',amp_color,...
-               'LineWidth',2,'LineStyle','--')
-            plot(binmean,amp_dist_t3,'Color',amp_color,...
-               'LineWidth',2,'LineStyle',':')
-            
-            hold off
+         title(['AMP-' upper(bintype{its})])
+         lg=legend('t = 1 min','t = 6 min','t = 12 min',...
+            'Location','northeast','AutoUpdate','off');
+         lg.FontWeight='bold';
+         xline(binmean(krdrop),'linestyle','--','linewidth',3,'color',[color_order{7} 0.2])
 
-            title('AMP-SBM')
-            l=legend('t = 1 min','t = 8 min','t = 20 min',...
-               'Location','northwest','AutoUpdate','off');
-            l.FontWeight='bold';
-            %rectangle('position',[4.5e-5,1e-5,3e-5,2e-4],'facecolor',[0.1 0.1 0.1 0.1])
-            xline(binmean(krdrop),'--r')
-            
+         xlim([binmean(1) 5e-4])
+         ylim([1e-5 3e-3])
+         set(gca,'YScale','log')
+         set(gca,'XScale','log')
+         set(gca,'fontsize',16)
+         grid
+         
+         nexttile(2+its)
+         hold on
+         %shaded region
+         xx=binmean(10:krdrop+2)';
+         yy1=bin_dist_t1(10:krdrop+2);
+         yy2=bin_dist_t2(10:krdrop+2);
+         pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
+         set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+         plot(binmean,bin_dist_t1,'Color',color_order{its},'LineWidth',2)
+         plot(binmean,bin_dist_t2,'Color',color_order{its},...
+            'LineWidth',2,'LineStyle','--')
+         plot(binmean,bin_dist_t3,'Color',color_order{its},...
+            'LineWidth',2,'LineStyle',':')
+         
+         xlim([binmean(1) 5e-4])
+         ylim([1e-5 3e-3])
+         set(gca,'YScale','log')
+         set(gca,'XScale','log')
+         hold off
+         
+         title(['bin-' upper(bintype{its})])
+         lg=legend('t = 1 min','t = 6 min','t = 12 min',...
+            'Location','northeast','AutoUpdate','off');
+         lg.FontWeight='bold';
+         xline(binmean(krdrop),'--','linewidth',3,'color',[color_order{7} 0.2])
 
-            xlim([binmean(1) 5e-4])
-            ylim([1e-5 1e-3])
-            set(gca,'YScale','log')
-            set(gca,'XScale','log')
-            set(gca,'fontsize',16)
-            grid
-            
-            nexttile
-            hold on
-
-            %shaded region
-            xx=binmean(10:20)';
-            yy1=bin_dist_t1(10:20);
-            yy2=bin_dist_t2(10:20);
-            pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
-            set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-
-            plot(binmean,bin_dist_t1,'Color',bin_color,'LineWidth',2)
-            plot(binmean,bin_dist_t2,'Color',bin_color,...
-               'LineWidth',2,'LineStyle','--')
-            plot(binmean,bin_dist_t3,'Color',bin_color,...
-               'LineWidth',2,'LineStyle',':')
-            
-            xlim([binmean(1) 5e-4])
-            ylim([1e-5 1e-3])
-            set(gca,'YScale','log')
-            set(gca,'XScale','log')
-            hold off
-            
-            title('bin-SBM')
-            l=legend('t = 1 min','t = 8 min','t = 20 min',...
-               'Location','northwest','AutoUpdate','off');
-            l.FontWeight='bold';
-            %rectangle('position',[4.5e-5,1e-5,1.2e-4-4.5e-5,2e-4],'facecolor',[0.1 0.1 0.1 0.1])
-            xline(binmean(krdrop),'--r')
-
-            xlabel(tl,'Diameter [\mum]','fontsize',18)
-            ylabel(tl,'Mass concentration [kg/kg/dlogD]','fontsize',18)
-            set(gca,'fontsize',16)
-            grid
-            exportgraphics(gcf,['plots/p1/collonly_dist.jpg'],'Resolution',300)
-         end
+         xlabel(tl,'Diameter [\mum]','fontsize',18)
+         ylabel(tl,'Mass concentration [kg/kg/dlogD]','fontsize',18)
+         set(gca,'fontsize',16)
+         grid
       end
    end
 end
+
+annotation('line',[0.485 0.485], [0.125 0.927], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
+exportgraphics(gcf,['plots/p1/collonly_dist.jpg'],'Resolution',300)

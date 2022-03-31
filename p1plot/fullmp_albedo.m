@@ -97,11 +97,8 @@ set(gca,'FontSize',16)
 
 xlab_key=extractBefore(var2_str,digitsPattern);
 ylab_key=extractBefore(var1_str,digitsPattern);
-% xlab=['Maximum vertical velocity [' initVarUnit_dict(xlab_key{1}) ']'];
 xlab=[initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
 ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
-% xlab=[initVarName_dict(xlab_key{1}) ' [' initVarUnit_dict(xlab_key{1}) ']'];
-% ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 

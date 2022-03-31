@@ -94,12 +94,12 @@ set(gca,'FontSize',16)
 
 xlab_key=extractBefore(var2_str,digitsPattern);
 ylab_key=extractBefore(var1_str,digitsPattern);
-xlab=[initVarName_dict(xlab_key{1}) ' [' initVarUnit_dict(xlab_key{1}) ']'];
-ylab=[initVarName_dict(ylab_key{1}) ' [' initVarUnit_dict(ylab_key{1}) ']'];
+xlab=[initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
+ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['1D cond. + nuc. - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
+title(tl,['Cond. + nuc. - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
 exportgraphics(gcf,['plots/p1/condonly_cloud.jpg'],'Resolution',300)
 end
