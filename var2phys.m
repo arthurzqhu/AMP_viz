@@ -16,15 +16,15 @@ function [physquant,note,range] = var2phys(var_raw,ivar,...
 
 global indvar_name cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
    cwp_th rwp_th ispath isprof isproc israin iscloud sppt_th ...
-   indvar2D_name
+   indvar2D_name casenum
 
 threshold = -inf;
 
-%if ici<=6
-var_name=indvar_name{ivar};
-%elseif ici>=7
-%   var_name=indvar2D_name{ivar};
-%end
+if casenum<200
+   var_name=indvar_name{ivar};
+else
+   var_name=indvar2D_name{ivar};
+end
 
 ispath=0;
 isprof=0;
@@ -34,7 +34,7 @@ iscloud=0;
 
 var_raw(var_raw==-999)=nan;
 
-if contains(var_name,{'diag', 'Dm','RH','gs_'})
+if contains(var_name,{'diag', 'Dm','RH','gs_','reldisp'})
    isprof=1;
 elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
    ispath=1;
@@ -189,6 +189,11 @@ switch var_name
       %         range = [0 1e-5];
       %         mask = 'self';
       %         note = 'lin';
+   case 'reldisp'
+      physquant = var_raw;
+      range = [0 1];
+      mask = 'self';
+      note = 'lin';
    otherwise
       physquant = var_raw;
       note = 'log';

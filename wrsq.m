@@ -31,6 +31,8 @@ MR=mean(ya(vidxn))/mean(yb(vidxn));
 if length(ya)>1
    mdl = fitlm(ya,yb);
    RSQ=mdl.Rsquared.Ordinary;
+else
+   RSQ=nan;
 end
 
 % --------------
