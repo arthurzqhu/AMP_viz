@@ -68,13 +68,14 @@ for ink=1:length(nikkis)
                   weight=var_bin_flt(vidx)/sum(var_bin_flt(vidx));
                   weight_log=log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
                   
-                  [mr,rsq,er]=wrsq(var_amp_flt,var_bin_flt,weight);
+                  [mr,rsq,er,maxr]=wrsq(var_amp_flt,var_bin_flt,weight);
                   
                   pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2)=mr;
                   pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2)=rsq;
                   pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2)=nanmean(var_bin_flt);
                   pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2)=nanmean(var_amp_flt);
                   pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2)=er;
+                  pfm.(indvar_name{ivar}).(bintype{its}).maxr(ivar1,ivar2)=maxr;
                   
                end % ivar
 

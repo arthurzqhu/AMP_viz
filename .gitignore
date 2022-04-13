@@ -10,3 +10,4 @@ cases for plot/*
 *.out
 *.swp
 *.png
+Session.vim
