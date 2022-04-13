@@ -1,4 +1,4 @@
-function [MR, RSQ, ER] = wrsq(ya,yb,wgt)
+function [MR, RSQ, ER, MAXR] = wrsq(ya,yb,wgt)
 % calculate MRSQ modified rsq (mass weighted, bin as standard)
 % MD ratio of mean amp vs mean bin (accuracy of magnitude estimation)
 % RSQ regular rsq except mass weighted (accuracy of trend capturing)
@@ -11,7 +11,7 @@ yb=double(yb);
 wgt=double(wgt);
 
 if all(ya==0) || all(yb==0)
-   [MRSQ, MR, RSQ, ER]=deal(nan);
+   [MRSQ, MR, RSQ, ER, MAXR]=deal(nan);
    return
 end
 
@@ -38,8 +38,11 @@ end
 % --------------
 if ~isempty(vidxn)
    ER = ya(vidxn(end))/yb(vidxn(end));
+   MAXR = max(ya(vidxn))/max(yb(vidxn));
 else
    ER = nan;
+   MAXR = nan;
 end
+
 
 end
