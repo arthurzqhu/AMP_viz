@@ -1,8 +1,8 @@
 clear
 close all
 clear global
-global indvar_name_set indvar_name_all indvar_ename_all %#ok<*NUSED>
-%addpath('expf/')
+global indvar_name_set indvar_name_all indvar_ename_set indvar_ename_all ...
+   indvar_units_set indvar_units_all
 
 condonly_dev=devfun(load('pfm_summary/2021-11-27_condnuc_noinit_pfm.mat').pfm);
 collonly_dev=devfun(load('pfm_summary/2022-02-24_collonly_pfm.mat').pfm);
@@ -34,6 +34,7 @@ collsedevap_dev_a=devfun(load('pfm_summary/2021-11-27_collsedevap_pfm.mat').pfm,
 fullmic_dev_a=devfun(load('pfm_summary/2021-11-27_fullmic_pfm.mat').pfm,"a");
 
 global_var
+get_var_comp([3:8 10 16])
 
 %%
 close all
@@ -43,7 +44,6 @@ tl=tiledlayout(4,8,'TileSpacing','loose');
 % fullmic
 nexttile(3,[1 4])
 [X_fullmic,Y_fullmic]=dev2fig(fullmic_dev,fullmic_dev_a);
-% dev2fig(fullmic_dev_a);
 l=legend('TAU (weighted mean)','SBM (weighted mean)',...
    'TAU (arithmatic mean)','SBM (arithmatic mean)',...
    'location','best','fontsize',12);
@@ -109,10 +109,6 @@ ax_pos{1}=tl.Children(end).OuterPosition;
 for iax = 2:10
    ax_pos{iax}=tl.Children(end-iax).OuterPosition;
 end
-
-%for iax = 1:10
-%   ax_pos{iax}=tl.Children(end+2-iax*2).OuterPosition;
-%end
 
 ax_map={[2 3],[4 5],[5 6],[7 8],[8 9],[9 10]};
 
