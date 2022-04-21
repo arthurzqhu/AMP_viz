@@ -8,15 +8,13 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'2022-04-17'};
-doplot = 0
+nikkis = {'2022-04-21'};
+doplot = 1
 doload = 1
 
 for ink = 1:length(nikkis)
    nikki = nikkis{ink}
    global_var
-   % get_var_comp([3 4 6 7 10])
-   get_var_comp([3 4 6 7 16])
 
    % get the list of configs. cant put it into globar_var
    mconfig_ls = get_mconfig_list(output_dir,nikki);
@@ -25,6 +23,8 @@ for ink = 1:length(nikkis)
    % creating structures for performance analysis based on Rsq and ratio
    for iconf = 1:length(mconfig_ls)
       mconfig = mconfig_ls{iconf}
+      var_comp = mconfigivar_dict(mconfig);
+      get_var_comp(var_comp) % fullmic
       if doload
       pfm = struct;
       run case_dep_var.m
