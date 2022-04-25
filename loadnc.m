@@ -56,9 +56,7 @@ var_wcloud=var_name(contains(var_name,'cloud'));
 var_wrain=replace(var_wcloud,'cloud','rain');
 var_wliq=replace(var_wcloud,'cloud','liq');
 var_name=[var_name;var_wliq];
-
 liq_count=length(var_wliq);
-
 ivar=1;
 for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
    stct.(var_name{ivaradd})=stct.(var_wcloud{ivar})+stct.(var_wrain{ivar});
@@ -66,21 +64,23 @@ for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
 end
 
 % calculate cloud half life
-var_name=[var_name;'half_life_c'];
-time=stct.time;
-z=stct.z;
-
-if casenum<200
-   cpath=stct.cloud_M1_path;
-   rpath=stct.rain_M1_path;
-else
-   cpath=stct.mean_cloud_M1_path;
-   rpath=stct.mean_rain_M1_path;
-end
-
-stct.half_life_c=time(find(cpath<rpath,1));
-if isempty(stct.half_life_c)
-   stct.half_life_c=nan;
+if exist('var_name', 'var')
+   if contains('half_life_c', indvar_name_set)
+      var_name=[var_name;'half_life_c'];
+      time=stct.time;
+      z=stct.z;
+      if casenum<200
+         cpath=stct.cloud_M1_path;
+         rpath=stct.rain_M1_path;
+      else
+         cpath=stct.mean_cloud_M1_path;
+         rpath=stct.mean_rain_M1_path;
+      end
+      stct.half_life_c=time(find(cpath<rpath,1));
+      if isempty(stct.half_life_c)
+         stct.half_life_c=nan;
+      end
+   end
 end
 
 % calculate relative dispersion of each grid
@@ -111,14 +111,17 @@ end
 %stct.(var_name{ivaradd+1})
 
 % only select the available vars as indvars
-indvar_name=intersect(indvar_name_set,var_name,'stable');
-vidx=ismember(indvar_name_set,indvar_name);
-indvar_ename=indvar_ename_set(vidx);
-indvar_units=indvar_units_set(vidx);
+if exist('var_name', 'var')
+   indvar_name=intersect(indvar_name_set,var_name,'stable');
+   vidx=ismember(indvar_name_set,indvar_name);
+   indvar_ename=indvar_ename_set(vidx);
+   indvar_units=indvar_units_set(vidx);
 
-indvar2D_name=intersect(indvar2D_name_set,var_name,'stable');
-vidx=ismember(indvar2D_name_set,indvar2D_name);
-indvar2D_ename=indvar2D_ename_set(vidx);
-indvar2D_units=indvar2D_units_set(vidx);
-
+   indvar2D_name=intersect(indvar2D_name_set,var_name,'stable');
+   vidx=ismember(indvar2D_name_set,indvar2D_name);
+   indvar2D_ename=indvar2D_ename_set(vidx);
+   indvar2D_units=indvar2D_units_set(vidx);
+else
+   var_name = {};
+end
 end
