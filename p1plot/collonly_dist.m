@@ -3,10 +3,10 @@ clear global
 close all
 
 global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
-   bintype var1_str var2_str %#ok<*NUSED>
+   bintype var1_str var2_str 
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-03-11';
+nikki='smaller_threshold';
 run global_var.m
 mconfig = 'collonly';
 run case_dep_var.m
@@ -18,14 +18,14 @@ for its = 1:length(bintype)
    if its==2
       binmean = load('diamg_sbm.txt');
       nkr=33;
-      krdrop=14;
+      krdrop=12;
    elseif its==1
       binmean = load('diamg_tau.txt');
       nkr=34;
-      krdrop=15;
+      krdrop=13;
    end
    
-   for ivar1 = 3%length(var1_str)
+   for ivar1 = 2%length(var1_str)
       for ivar2 = length(var2_str)
          
          [~, ~, ~, ~, amp_struct]=...
@@ -36,26 +36,26 @@ for its = 1:length(bintype)
          %%
          time=amp_struct.time;
          dt=time(2)-time(1);
-         t1=int32(60/dt);
+         t1=int32(1/dt);
          t2=int32(360/dt);
          t3=int32(720/dt);
          
-         bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,48);
-         amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,48);
+         bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,24);
+         amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,24);
          
-         bin_dist_t2=bin_struct.mass_dist(t2,1:nkr,48);
-         amp_dist_t2=amp_struct.mass_dist_init(t2+1,1:nkr,48);
+         bin_dist_t2=bin_struct.mass_dist(t2,1:nkr,24);
+         amp_dist_t2=amp_struct.mass_dist_init(t2+1,1:nkr,24);
          
-         bin_dist_t3=bin_struct.mass_dist(t3,1:nkr,48);
-         amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,48);
+         bin_dist_t3=bin_struct.mass_dist(t3,1:nkr,24);
+         amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,24);
          
          nexttile
          hold on
 
          %shaded region
-         xx=binmean(10:krdrop)';
-         yy1=amp_dist_t1(10:krdrop);
-         yy2=amp_dist_t2(10:krdrop);
+         xx=binmean(10:krdrop+5)';
+         yy1=amp_dist_t1(10:krdrop+5);
+         yy2=amp_dist_t2(10:krdrop+5);
          pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
          set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
          plot(binmean,amp_dist_t1,'Color',color_order{5-its},'LineWidth',2)
@@ -81,9 +81,9 @@ for its = 1:length(bintype)
          nexttile(2+its)
          hold on
          %shaded region
-         xx=binmean(10:krdrop+2)';
-         yy1=bin_dist_t1(10:krdrop+2);
-         yy2=bin_dist_t2(10:krdrop+2);
+         xx=binmean(10:krdrop+5)';
+         yy1=bin_dist_t1(10:krdrop+5);
+         yy2=bin_dist_t2(10:krdrop+5);
          pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
          set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
          plot(binmean,bin_dist_t1,'Color',color_order{its},'LineWidth',2)
@@ -99,7 +99,7 @@ for its = 1:length(bintype)
          hold off
          
          title(['bin-' upper(bintype{its})])
-         lg=legend('t = 1 min','t = 6 min','t = 12 min',...
+         lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';
          xline(binmean(krdrop),'--','linewidth',3,'color',[color_order{7} 0.2])
@@ -113,4 +113,4 @@ for its = 1:length(bintype)
 end
 
 annotation('line',[0.485 0.485], [0.125 0.927], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
-exportgraphics(gcf,['plots/p1/collonly_dist.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/collonly_dist_lowerthres.jpg'],'Resolution',300)
