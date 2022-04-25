@@ -9,7 +9,7 @@ doanim = 0;
 doplot = 1;
 l_da = 1; % whether we want the domain averaged quantity, can be set to an array but it as an argument to ramsvar() needs to be changed to l_da(ivar)
 
-nikki = '2022-03-19';
+nikki = '2022-04-22';
 run rglobal_var
 mp_list = {'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
 %mp_list = {'amp_tau'};

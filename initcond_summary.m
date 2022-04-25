@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'2022-04-21'};
+nikkis = {'proc_intxn_condcoll'};
 doplot = 1
 doload = 1
 
@@ -23,8 +23,9 @@ for ink = 1:length(nikkis)
    % creating structures for performance analysis based on Rsq and ratio
    for iconf = 1:length(mconfig_ls)
       mconfig = mconfig_ls{iconf}
-      var_comp = mconfigivar_dict(mconfig);
-      get_var_comp(var_comp) % fullmic
+      % get_var_comp
+      get_var_comp([3:7 16]) % condcoll proc_intxn
+      % get_var_comp([3:7 10]) % collsedevap proc_intxn
       if doload
       pfm = struct;
       run case_dep_var.m
@@ -67,7 +68,7 @@ for ink = 1:length(nikkis)
                   weight = var_bin_flt(vidx)/sum(var_bin_flt(vidx));
                   weight_log = log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
 
-                  [mr,rsq,er,maxr,md,sed] = wrsq(var_amp_flt,var_bin_flt,weight);
+                  [mr,rsq,er,maxr,md,sedd,sed_amp,sed_bin] = wrsq(var_amp_flt,var_bin_flt,weight);
 
                   pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2) = mr;
                   pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2) = rsq;
@@ -76,7 +77,9 @@ for ink = 1:length(nikkis)
                   pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2) = er;
                   pfm.(indvar_name{ivar}).(bintype{its}).maxr(ivar1,ivar2) = maxr;
                   pfm.(indvar_name{ivar}).(bintype{its}).md(ivar1,ivar2) = md;
-                  pfm.(indvar_name{ivar}).(bintype{its}).sed(ivar1,ivar2) = sed;
+                  pfm.(indvar_name{ivar}).(bintype{its}).sedd(ivar1,ivar2) = sedd;
+                  pfm.(indvar_name{ivar}).(bintype{its}).sed_amp(ivar1,ivar2) = sed_amp;
+                  pfm.(indvar_name{ivar}).(bintype{its}).sed_bin(ivar1,ivar2) = sed_bin;
 
                end % ivar
 

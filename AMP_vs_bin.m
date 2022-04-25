@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its nikki output_dir vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-02-02';
+nikki='proc_intxn_condcoll';
 
 run global_var.m
 
@@ -44,13 +44,12 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 2:length(mconfig_ls)
    iconf
    mconfig = mconfig_ls{iconf}
-   %     mconfig = 'adv_coll';
    run case_dep_var.m
-   %% read files
-   
+   get_var_comp([3 4])
+
    for its = 1:length(bintype)
       for ivar1 = 1:length(var1_str)
          %             close all

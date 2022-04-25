@@ -6,7 +6,7 @@ close all
 
 cabin=load('VOCALS_CABIN/081019.mat');
 
-nikki='2022-03-13'
+nikki='2022-04-22'
 run rglobal_var
 mp_list={'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
 
@@ -28,7 +28,14 @@ for imp=1:length(mp_list) % loop through microphysics engines
    dat_info=h5info([outdir fn{1}]).Datasets;
 
    rams_hdf5c({'GLAT','GLON'},0,outdir)
-   rams_hdf5c(var_req_uniq,1:nfile-1,outdir)
+   var_int_idx = [3 6]; % 3: LWP (for checking the threshold for cloudiness), 6: LWC
+   idx = 1;
+   for ivar = var_int_idx
+      var_interest(idx) = ramsvar(var_name_set{ivar}, var_ename_set{ivar},...
+                                  var_req_set{ivar}, var_unit_set{ivar}, 0);
+      idx = idx + 1;
+   end 
+   rvar2phys(var_interest, 0)
    
    deltaz=z(2)-z(1);
 
@@ -65,7 +72,7 @@ for imp=1:length(mp_list) % loop through microphysics engines
    annotation('textbox',[0.7 0.7 0.1 0.2],'String',['R^2=' num2str(RSQ)],'FitBoxToText','on')
    refline(1,0)
 
-   print(['plots/rams/lwc_' mps '_' mconfig '.png'],'-dpng','-r300')
+   print(['plots/rams/' nikki '/lwc_' mps '_' mconfig '.png'],'-dpng','-r300')
    delete(findall(gcf,'type','annotation'))
 
 end % imp

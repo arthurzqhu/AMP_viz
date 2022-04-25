@@ -7,7 +7,7 @@ close all
 cabin = load('VOCALS_CABIN/081019.mat');
 addpath('ramsfuncs/')
 
-nikki = '2022-03-19'
+nikki = '2022-04-22'
 run rglobal_var
 mp_list = {'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
 
@@ -66,6 +66,6 @@ for imp = 1:length(mp_list) % loop through microphysics engines
 end
 
 % pretending there's I'm only plotting LWC for now...
-print(['plots/rams/LWC_prof_' mconfig '.png'],'-dpng','-r300')
+print(['plots/rams/' nikki '/LWC_prof_' mconfig '.png'],'-dpng','-r300')
 
 end
