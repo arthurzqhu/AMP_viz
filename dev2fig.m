@@ -28,22 +28,22 @@ hold on
 b=bar(X,Y,1);
 b(1).FaceColor=color_order{1};
 b(2).FaceColor=color_order{2};
-b(1).FaceAlpha=0.50;
-b(2).FaceAlpha=0.50;
+b(1).FaceAlpha=0.75;
+b(2).FaceAlpha=0.75;
 b(1).LineWidth=1;
 b(2).LineWidth=1;
 b(1).BaseValue=1;
 b(1).BaseLine.Color=[.8 .8 .8];
 
-b_a=bar(X,Y_a,1);
-b_a(1).FaceColor=color_order{1};
-b_a(2).FaceColor=color_order{2};
-b_a(1).FaceAlpha=0.5;
-b_a(2).FaceAlpha=0.5;
-b_a(1).LineStyle=':';
-b_a(2).LineStyle=':';
-b_a(1).BaseValue=1;
-b_a(1).BaseLine.Color=[.8 .8 .8];
+% b_a=bar(X,Y_a,1);
+% b_a(1).FaceColor=color_order{1};
+% b_a(2).FaceColor=color_order{2};
+% b_a(1).FaceAlpha=0.5;
+% b_a(2).FaceAlpha=0.5;
+% b_a(1).LineStyle=':';
+% b_a(2).LineStyle=':';
+% b_a(1).BaseValue=1;
+% b_a(1).BaseLine.Color=[.8 .8 .8];
 
 hold off
 
