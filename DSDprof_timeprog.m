@@ -1,4 +1,4 @@
-function DSDprof_timeprog(time_total, time_step, DSDprof_mphys,z,binmean,...
+function DSDprof_timeprog(ti, tf, ts_plot, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
 global dt fn var1_str var2_str ivar1 ivar2 color_order %#ok<NUSED>
@@ -10,8 +10,8 @@ if ~exist('var_overlay','var') || isempty(var_overlay)
    var_overlay=nan;
 end
 
-time_length = floor(time_total/time_step);
-ts_indata=time_step/dt;
+time_length = floor((tf-ti+1)/ts_plot);
+ts_output=ts_plot/dt;
 
 loops = time_length;
 F(loops) = struct('cdata',[],'colormap',[]);
@@ -25,21 +25,15 @@ end
 
 tl=tiledlayout('flow');
 nexttile(1)
-for it_idx = 1:time_length+1
-   it_indata = int32((it_idx-1)*ts_indata);
-   itime = (it_idx-1)*time_step;
+iframe = 1;
+for itime = ti:ts_plot:tf
+   it_output = int32(itime*dt);
 
-   if it_indata>time_total/dt 
-      it_indata=time_total/dt; 
-      itime=time_total;
-   end
-   if it_indata<1 it_indata=1; itime=dt; end
-   
    switch pltflag
       case {'mass','mass_ratio','mass_adv'}
-         DSD_prof_is=squeeze(DSDprof_mphys(it_indata,:,:));
+         DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:));
       case 'nd'
-         DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_indata,:,:)),binmean)/1e6;
+         DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_output,:,:)),binmean)/1e6;
    end
    
    if length(binmean)<size(DSD_prof_is,1)
@@ -80,7 +74,7 @@ for it_idx = 1:time_length+1
    
    if any(~isnan(var_overlay(:)))
    %   hold on
-   %   plot(var_overlay(it_idx,:),z,'color',color_order{2},'linewidth',2)
+   %   plot(var_overlay(itime,:),z,'color',color_order{2},'linewidth',2)
    %   hold off
    %   ax1 = gca;
    %   ax1_pos = ax1.Position;
@@ -89,14 +83,14 @@ for it_idx = 1:time_length+1
    %      'YAxisLocation','left',...
    %      'Color','none');
    %   
-   %   line(var_overlay(it_idx,:),z,'Parent',ax2,'linewidth',2,'color','g')
+   %   line(var_overlay(itime,:),z,'Parent',ax2,'linewidth',2,'color','g')
    %   set(gca,'YColor','none')
    %   %         xlim([30 110])
    %   %xlim([-1e-5 1e-5])
    %   xlim([min(binmean) max(binmean)])
    %   %         xline(0,'color','r')
       nexttile(2)
-      plot(var_overlay(it_idx,:),z,'linewidth',2)
+      plot(var_overlay(itime,:),z,'linewidth',2)
       xlabel('RH')
       xlim([min(var_overlay(:)) max(var_overlay(:))])
 
@@ -107,9 +101,11 @@ for it_idx = 1:time_length+1
       sprintf('t = %.1f s', itime),'FitBoxToText','on')
    %     title(sprintf('t = %.0f s', itime))
    cdata = print('-RGBImage','-r144');
-   F(it_idx) = im2frame(cdata);
-   %F(it_idx) = getframe(gcf);
+   F(iframe) = im2frame(cdata);
+   %F(itime) = getframe(gcf);
    ['time=' num2str(itime)]
+
+   iframe = iframe + 1;
    
    delete(findall(gcf,'type','annotation'))
    
