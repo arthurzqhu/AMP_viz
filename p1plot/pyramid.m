@@ -203,4 +203,4 @@ devdiff2fig(condcoll_dev1, condcollsed_dev1)
 title('(b) - (c)')
 ylabel('                                            Change in error (pp)')
 
-exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_trimmed.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_samescale.jpg'],'Resolution',300)

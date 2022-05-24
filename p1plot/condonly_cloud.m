@@ -7,13 +7,12 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-11-27';
-run global_var.m
-
-mconfig='condnuc_noinit';
-
+nikki='normal_threshold';
+global_var
+get_var_comp([3 6])
+mconfig='condnuc';
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
-run case_dep_var.m
+case_dep_var
 
 tmpvarname=fieldnames(pfm(1));
 fldnms=fieldnames(pfm(1).(tmpvarname{1}).(bintype{1}));
@@ -58,24 +57,19 @@ for its=1:length(bintype)
 
       for ivar1=1:length(var1_str)
          for ivar2=1:length(var2_str)
-
             % ----- get text color -----
             ngrads=size(coolwarm_r,1);
             clr_idx=roundfrac(pfm.(indvar_name_set{ivar}).(bintype{its}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
             clr_idx=round(clr_idx); % in case prev line outputs double
             % ----- got text color -----
-
             if isnan(clr_idx) continue, end
             if clr_idx==0 clr_idx=1; end
-
             text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
                'HorizontalAlignment','center',...
                'Color',coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
             text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
                'HorizontalAlignment','center',...
                'Color',coolwarm_r(clr_idx,:),'FontName','Menlo')
-
-
          end
       end
 
@@ -99,7 +93,8 @@ ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['Cond. + nuc. - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
+title(tl,['Cond. + Nucl. - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/condonly_cloud.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/condonly_cloudmass.jpg'],'Resolution',300)
+
 end
