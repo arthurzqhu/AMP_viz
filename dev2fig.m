@@ -51,6 +51,7 @@ set(gca,'YScale','log')
 ylim([0.67 1.7])
 yticks([0.67 0.8 1 1.2 1.5])
 yticklabels({'-33','-20','0','20','50'})
+box on
 
 grid()
 

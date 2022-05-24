@@ -193,14 +193,14 @@ annotation('textbox',[0.11 0.791 0.20 0.135],'String', str2,...
 annotation('rectangle',[0.07 0.791 0.18 0.135])
 
 % fullmic - ccs
-nexttile(15,[2 2])
+axes('Position',[.64 .53 .15 .1])
 devdiff2fig(condcollsed_dev1, fullmic_dev1)
 title('(a) - (b)')
 
 % ccs - cc
-nexttile(31,[2 2])
+axes('Position',[.48 .38 .15 .1])
 devdiff2fig(condcoll_dev1, condcollsed_dev1)
 title('(b) - (c)')
-ylabel('                                            Change in error (pp)')
+% ylabel('                                            Change in error (pp)')
 
-exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_samescale.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_newdiffpos.jpg'],'Resolution',300)

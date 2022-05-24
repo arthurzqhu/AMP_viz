@@ -23,16 +23,22 @@ X = reordercats(X, Xc);
 
 %%
 hold on
-b = bar(X, (abs(Y2-1)-abs(Y1-1))*100, 1);
+% b = bar(X, (abs(Y2-1)-abs(Y1-1))*100, 1);
+b = bar(X, (abs(Y2-1)-abs(Y1-1))+1, 1);
 b(1).FaceColor = color_order{1};
 b(2).FaceColor = color_order{2};
 b(1).FaceAlpha = 0.75;
 b(2).FaceAlpha = 0.75;
 b(1).LineWidth = 1;
 b(2).LineWidth = 1;
+b(1).BaseValue=1;
 b(1).BaseLine.Color = [.8 .8 .8];
 
 hold off
-ylim([-15 15])
+set(gca,'YScale','log')
+ylim([0.67 1.7])
+yticks([0.67 0.8 1 1.2 1.5])
+% yticklabels({'-33','-20','0','20','50'})
+set(gca,'ycolor','none')
 grid()
 set(gca,'fontsize',12)
