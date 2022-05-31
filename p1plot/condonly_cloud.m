@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='normal_threshold';
+nikki='2022-05-25';
 global_var
 get_var_comp([3 6])
 mconfig='condnuc';

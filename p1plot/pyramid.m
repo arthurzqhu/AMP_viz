@@ -195,12 +195,12 @@ annotation('rectangle',[0.07 0.791 0.18 0.135])
 % fullmic - ccs
 axes('Position',[.64 .53 .15 .1])
 devdiff2fig(condcollsed_dev1, fullmic_dev1)
-title('(a) - (b)')
+title('(a) - (b): effect of Evap.')
 
 % ccs - cc
 axes('Position',[.48 .38 .15 .1])
 devdiff2fig(condcoll_dev1, condcollsed_dev1)
-title('(b) - (c)')
+title('(b) - (c): effect of Sed.')
 % ylabel('                                            Change in error (pp)')
 
 exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_newdiffpos.jpg'],'Resolution',300)

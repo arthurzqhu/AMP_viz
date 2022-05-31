@@ -34,7 +34,7 @@ for its = 1:length(bintype)
    end
    for ivar1 = 1:length(var1_str)
       for ivar2 = 1:length(var2_str)
-         [~, ~, ~, ~, bin_struct] = loadnc('bin');
+         bin_struct = loadnc('bin');
          time = bin_struct.time;
          z = bin_struct.z;
          lwcprof_tstd = bin_struct.diagM3_liq(1, :);
@@ -60,7 +60,7 @@ for its = 1:length(bintype)
    end
    for ivar1 = 1:length(var1_str)
       for ivar2 = 1:length(var2_str)
-         [~, ~, ~, ~, bin_struct] = loadnc('bin');
+         bin_struct = loadnc('bin');
          bin_struct.mass_dist(bin_struct.mass_dist < 0) = 0;
          time = bin_struct.time;
          z = bin_struct.z;
@@ -202,4 +202,4 @@ annotation('rectangle', [xa, ya, dx, dy])
 % --- finishing annotating ---
 
 xlabel(tl, 'Standard deviation [\mum]', 'FontSize', 16)
-exportgraphics(gcf, 'plots/p1/error_std_corr_halfup_smallthres.jpg', 'resolution', 300)
+exportgraphics(gcf, 'plots/p1/error_std_corr_halfup_rain.jpg', 'resolution', 300)

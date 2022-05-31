@@ -7,16 +7,13 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='normal_threshold';
+nikki='2022-05-25';
 
 run global_var.m
 
 % get the list of configs. cant put it into globar_var
-mconfig_ls_dir = dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
-mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
-load('pfm_summary/normal_threshold_evaponly_pfm.mat');
+mconfig_ls = get_mconfig_list(output_dir,nikki);
+load('pfm_summary/2022-05-25_evaponly_pfm.mat');
 
 
 %%
@@ -27,7 +24,7 @@ var_name_mod={'diagM0_cloud','diagM3_cloud'};
 var_name_output={'number','mass'};
 nvar=length(var_name_mod);
 
-for iconf = 7%:length(mconfig_ls)
+for iconf = 2%:length(mconfig_ls)
    evapsum=struct;
    mconfig=mconfig_ls{iconf};
    run case_dep_var.m
@@ -49,6 +46,11 @@ for iconf = 7%:length(mconfig_ls)
             end
 
             for ivar=1:nvar
+
+               % cloud_i(ivar)=sum(amp_struct.(var_name_mod{ivar})(1,:));
+               % amp_cloud_path{ivar}=sum(amp_struct.(var_name_mod{ivar}),2);
+               % bin_cloud_path{ivar}=sum(bin_struct.(var_name_mod{ivar}),2);
+
                cloud_i(ivar) = nansum(amp_struct.(var_name_mod{ivar})(1,:).*rho(1,:)*dz);
                for it = 1:length(time)
                   amp_cloud_path{ivar}(it) = nansum(amp_struct.(var_name_mod{ivar})(it,:).*rho(it,:)*dz);
@@ -78,7 +80,7 @@ for iconf = 7%:length(mconfig_ls)
                   'LineWidth',2,...
                   'LineStyle',style_order{iline},...
                   'color',color_order{ceil(iline/2)})
-               ylim([0 1])
+               % ylim([0 1])
             end
             grid
             hold off
@@ -108,8 +110,8 @@ for iconf = 7%:length(mconfig_ls)
          set(gca,'ycolor','none')
 
          xlabel(tl,'Time [s]','fontsize',24)
-         ylabel(tl,'Fraction evaporated','fontsize',24)
-         title(tl,'Evap. only - 99% RH, Dm=25\mum','fontsize',24,'fontweight','bold')
+         ylabel(tl,'Fraction left','fontsize',24)
+         title(tl,'Evap. only - RH = 99%, Dm = 27\mum','fontsize',24,'fontweight','bold')
          exportgraphics(gcf,['plots/p1/evaponly_massnum.jpg'],'Resolution',300)
       end
    end
