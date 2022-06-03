@@ -58,9 +58,15 @@ yticks([-1 0 1])
 yticklabels({'-w_{max}','0','w_{max}'})
 
 nexttile
+oneD_struct.z = [oneD_struct.z;[6050:50:8000]'];
+oneD_struct.RH(1,end+1:end+40) = oneD_struct.RH(1,end);
 yyaxis left
 set(gca,'YColor','none')
 yyaxis right
+rectangle('position', [0 600 max(oneD_struct.RH(:)) 600], ...
+   'facecolor', [color_order{5} .3], 'linestyle', 'none')
+rectangle('position', [0 5500 max(oneD_struct.RH(:)) 7000], ...
+   'facecolor', [color_order{6} .3], 'linestyle', 'none')
 hold on
 plot(oneD_struct.RH(1,:),oneD_struct.z,'LineWidth',2)
 title('(b)')
@@ -70,62 +76,6 @@ hold off
 set(gca,'FontSize',16)
 xlabel('RH [%]')
 ylabel('Altitude [m]')
+ylim([0 8000])
 
 exportgraphics(gcf,'plots/p1/model setup.jpg','Resolution',300)
-% print(gcf,'plots/p1/fig2','-dpng','-r300')
-
-
-%%% fig 3 read files
-%twoDcase_meta=dir('./cases for plot/2D case');
-%twoDcasename = [twoDcase_meta.folder, '/', twoDcase_meta.name];
-%twoDcaseinfo = ncinfo(twoDcasename);
-%
-%for ivar = 1:length(twoDcaseinfo.Variables)
-%  var_name{ivar,1} = twoDcaseinfo.Variables(ivar).Name;
-%  twoD_struct.(var_name{ivar}) = ncread(twoDcasename, var_name{ivar});
-%end
-%
-%%% figure 3 plot
-%close all
-%t=twoD_struct.time;
-%x=twoD_struct.x;
-%z=twoD_struct.z;
-%w=twoD_struct.w;
-%w(w==-999)=nan;
-%
-%% % fix the discontinuity!!
-%% w(:,46,:)=0;
-%% w(:,135,:)=0;
-%
-%qv=twoD_struct.vapor;
-%qv(qv==-999)=nan;
-%
-%figure('position',[1245 587 1060 560])
-%tl=tiledlayout(4,3);
-%nexttile(1,[3,2])
-%nanimagesc(x,z,squeeze(w(90,:,:))')
-%cbar=colorbar;
-%% colormap(coolwarm_s)
-%% caxis([-max(w(:)),max(w(:))])
-%cbar.Label.String='w [m/s]';
-%xlabel('x [m]')
-%ylabel('z [m]')
-%%ylim([0 3000])
-%title('(a)')
-%set(gca,'fontsize',16)
-%
-%nexttile(3,[4,1])
-%plot(1e3*squeeze(qv(1,2,:)),z,'linewidth',2)
-%xlabel('Specific humidity [g/kg]')
-%ylabel('Altitude [m]')
-%title('(b)')
-%set(gca,'fontsize',16)
-%
-%nexttile(10,[1,2])
-%plot(t,max(w,[],[2,3]),'linewidth',2)
-%xlim([0 3600])
-%xlabel('Time [s]')
-%ylabel('Max w [m/s]')
-%title('(c)')
-%set(gca,'fontsize',16)
-%exportgraphics(gcf,'plots/p1/2D setup.jpg','Resolution',300)
