@@ -8,8 +8,8 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'proc_intxn_condcoll'};
-doplot = 1
+nikkis = {'normal_threshold'};
+doplot = 0
 doload = 1
 
 for ink = 1:length(nikkis)
@@ -22,21 +22,21 @@ for ink = 1:length(nikkis)
    %%
    % creating structures for performance analysis based on Rsq and ratio
    for iconf = 1:length(mconfig_ls)
+   % for iconf = [1 4:7 9 10] %1:length(mconfig_ls)
       mconfig = mconfig_ls{iconf}
-      % get_var_comp
-      get_var_comp([3:7 16]) % condcoll proc_intxn
+      % get_var_comp([3:7 10])
+      get_var_comp
+      % get_var_comp([3:7 16]) % condcoll proc_intxn
       % get_var_comp([3:7 10]) % collsedevap proc_intxn
       if doload
       pfm = struct;
-      run case_dep_var.m
+      case_dep_var
       for its = 1:length(bintype)
          for ivar1 = 1:length(var1_str)
             for ivar2 = 1:length(var2_str)
-               [its,ivar1,ivar2]
-               [~, ~, ~, ~, amp_struct] = ...
-                  loadnc('amp');
-               [~, ~, ~, ~, bin_struct] = ...
-                  loadnc('bin');
+               [its,ivar1, ivar2]
+               amp_struct = loadnc('amp');
+               bin_struct = loadnc('bin');
 
                % indices of vars to compare
                vars = 1;
@@ -68,18 +68,27 @@ for ink = 1:length(nikkis)
                   weight = var_bin_flt(vidx)/sum(var_bin_flt(vidx));
                   weight_log = log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
 
-                  [mr,rsq,er,maxr,md,sedd,sed_amp,sed_bin] = wrsq(var_amp_flt,var_bin_flt,weight);
+                  [mr, rsq, er, maxr, md, serr, msd_amp, msd_bin, ...
+                     mval_amp, mval_bin, sval_amp, sval_bin] = ...
+                  wrsq(var_amp_flt, var_bin_flt, weight);
 
-                  pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2) = mr;
-                  pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2) = rsq;
-                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2) = nanmean(var_bin_flt);
-                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2) = nanmean(var_amp_flt);
-                  pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2) = er;
-                  pfm.(indvar_name{ivar}).(bintype{its}).maxr(ivar1,ivar2) = maxr;
-                  pfm.(indvar_name{ivar}).(bintype{its}).md(ivar1,ivar2) = md;
-                  pfm.(indvar_name{ivar}).(bintype{its}).sedd(ivar1,ivar2) = sedd;
-                  pfm.(indvar_name{ivar}).(bintype{its}).sed_amp(ivar1,ivar2) = sed_amp;
-                  pfm.(indvar_name{ivar}).(bintype{its}).sed_bin(ivar1,ivar2) = sed_bin;
+                  if indvar_name{ivar} == "mean_surface_ppt"
+                     mval_bin(mval_bin < sppt_th(1)) = 0;
+                     mr(mval_bin < sppt_th(1)) = nan;
+                  end
+
+                  pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1, ivar2) = mr;
+                  pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2) = rsq;
+                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1, ivar2) = mval_bin;
+                  pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1, ivar2) = mval_amp;
+                  pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1, ivar2) = er;
+                  pfm.(indvar_name{ivar}).(bintype{its}).maxr(ivar1, ivar2) = maxr;
+                  pfm.(indvar_name{ivar}).(bintype{its}).md(ivar1, ivar2) = md;
+                  pfm.(indvar_name{ivar}).(bintype{its}).serr(ivar1, ivar2) = serr;
+                  pfm.(indvar_name{ivar}).(bintype{its}).msd_amp(ivar1, ivar2) = msd_amp;
+                  pfm.(indvar_name{ivar}).(bintype{its}).msd_bin(ivar1, ivar2) = msd_bin;
+                  pfm.(indvar_name{ivar}).(bintype{its}).sval_amp(ivar1, ivar2) = sval_amp;
+                  pfm.(indvar_name{ivar}).(bintype{its}).sval_bin(ivar1, ivar2) = sval_bin;
 
                end % ivar
 
@@ -96,7 +105,7 @@ for ink = 1:length(nikkis)
       if doplot
 
       tmpvarname = fieldnames(pfm(1));
-      fldnms = fieldnames(pfm(1).(tmpvarname{1}).(bintype{1}));
+      fldnms = fieldnames(pfm(1).(tmpvarname{1}).(bintype{its}));
       fldnms = fldnms(1:end-1);
 
       close all
@@ -117,7 +126,7 @@ for ink = 1:length(nikkis)
             figure(ifn)
             set(gcf,'position',[1331 587 1250 390])
             tl = tiledlayout(4,4);
-            for its = 1:length(bintype)
+            for its = 2:length(bintype)
                nexttile(its*2+3,[3 2])
                nanimagesc(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                cb = colorbar;
@@ -144,11 +153,11 @@ for ink = 1:length(nikkis)
 
                         % ----- get text color -----
                         ngrads = size(coolwarm_r,1);
-                        clr_idx = roundfrac(pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
+                        clr_idx = roundfrac(pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2),1/ngrads)*ngrads;
                         clr_idx = round(clr_idx); % in case prev line outputs double
                         if contains(indvar_name{ivar},'half_life_c')
                            clr_idx = 9;
-                           if isnan(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn})(ivar1,ivar2))
+                           if isnan(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn})(ivar1, ivar2))
                               clr_idx = nan;
                            end
                         end
@@ -157,10 +166,10 @@ for ink = 1:length(nikkis)
                         if isnan(clr_idx) continue, end
                         if clr_idx == 0 clr_idx = 1; end
 
-                        text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
+                        text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1, ivar2},'FontSize',15,...
                            'HorizontalAlignment','center',...
                            'Color',coolwarm_r11(clr_idx,:)*.1,'FontName','Menlo')
-                        text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
+                        text(ivar2,ivar1,mpath_bin_str{ivar1, ivar2},'FontSize',15,...
                            'HorizontalAlignment','center',...
                            'Color',coolwarm_r11(clr_idx,:),'FontName','Menlo')
 

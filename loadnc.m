@@ -1,10 +1,15 @@
-function [filemeta,filename,fileinfo,var_name,stct]=loadnc(mp_in,varargin)
+function [stct,filemeta,filename,fileinfo,var_name]=loadnc(mp_in,varargin)
 
 global ivar1 ivar2 its nikki mconfig output_dir vnum ...
    bintype var1_str var2_str indvar_name_set indvar_name ...
    indvar_units indvar_ename indvar_ename_set indvar_units_set ...
    indvar2D_name indvar2D_units indvar2D_ename indvar2D_name_set ...
-   indvar2D_ename_set indvar2D_units_set casenum
+   indvar2D_ename_set indvar2D_units_set casenum split_bins col ...
+   binmean
+
+if isempty(vnum)
+   vnum = '0001';
+end
 
 filedir=[output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
    upper(bintype{its}),'/',var1_str{ivar1},...
@@ -14,21 +19,24 @@ filedir=[output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
 filemeta = dir(filedir);
 filename = [filemeta.folder, '/', filemeta.name];
 fileinfo = ncinfo(filename);
-
 casenum=str2num(extractBetween(string(filemeta.name),'c-0','_v-'));
+
+stct.time = ncread(filename, 'time');
+stct.z = ncread(filename, 'z');
 
 if isempty(varargin)
    for ivar = 1:length(fileinfo.Variables)
       var_name{ivar,1} = fileinfo.Variables(ivar).Name;
       stct.(var_name{ivar}) = ncread(filename, var_name{ivar});
+      stct.(var_name{ivar})(stct.(var_name{ivar})==-999)=nan;
    end
+
 else
-   stct.time = ncread(filename, 'time');
-   stct.z = ncread(filename, 'z');
    for ivar = 1:length(indvar_name_set)
       try
          var_name{ivar,1} = indvar_name_set{ivar};
          stct.(var_name{ivar}) = ncread(filename, var_name{ivar});
+         stct.(var_name{ivar})(stct.(var_name{ivar}) == -999) = nan;
       catch
       end
    end
@@ -37,6 +45,7 @@ else
    for ivar = 1:length(varargin{1})
       try
          stct.(varargin{1}{ivar}) = ncread(filename, varargin{1}{ivar});
+         stct.(varargin{1}{ivar})(stct.(varargin{1}{ivar}) == -999) = nan;
       catch
          warning(['Variable ' varargin{1}{ivar} ' does not exist. Skipping...'])
       end
@@ -51,20 +60,21 @@ else
    end
 end
 
-% combine cloud and rain type
-var_wcloud=var_name(contains(var_name,'cloud'));
-var_wrain=replace(var_wcloud,'cloud','rain');
-var_wliq=replace(var_wcloud,'cloud','liq');
-var_name=[var_name;var_wliq];
-liq_count=length(var_wliq);
-ivar=1;
-for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
-   stct.(var_name{ivaradd})=stct.(var_wcloud{ivar})+stct.(var_wrain{ivar});
-   ivar=ivar+1;
-end
 
 % calculate cloud half life
 if exist('var_name', 'var')
+   % combine cloud and rain type
+   var_wcloud=var_name(contains(var_name,'cloud'));
+   var_wrain=replace(var_wcloud,'cloud','rain');
+   var_wliq=replace(var_wcloud,'cloud','liq');
+   var_name=[var_name;var_wliq];
+   liq_count=length(var_wliq);
+   ivar=1;
+   for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
+      stct.(var_name{ivaradd})=stct.(var_wcloud{ivar})+stct.(var_wrain{ivar});
+      ivar=ivar+1;
+   end
+
    if contains('half_life_c', indvar_name_set)
       var_name=[var_name;'half_life_c'];
       time=stct.time;
@@ -124,4 +134,5 @@ if exist('var_name', 'var')
 else
    var_name = {};
 end
+
 end

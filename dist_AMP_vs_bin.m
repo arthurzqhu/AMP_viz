@@ -6,11 +6,11 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str dt l_amp fn cloud_mr_th %#ok<*NUSED>
 
 % l_amp = 0 for bin, 1 for amp, 2 for both
-l_amp=0; 
+l_amp=1; 
 
-nikki='2022-05-11';
-vnum='0001';
-run global_var.m
+nikki='2022-05-31';
+vnum='0003';
+global_var
 mconfig_ls = get_mconfig_list(output_dir, nikki);
 pltflag='mass';
 
@@ -22,23 +22,21 @@ elseif strcmp(pltflag, 'mass_ratio')
    linorlog='lin';
 end
 
-bintype = {'sbm'};
-
 %%
 for iconf = 1%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf}
    run case_dep_var.m
-   for its = 1:length(bintype)
-      for ivar1 = 1:length(var1_str)
+   for its = 1%:length(bintype)
+      for ivar1 = 1%:length(var1_str)
          %% read files
-         for ivar2 = 1:length(var2_str)
+         for ivar2 = 1%:length(var2_str)
             
             if l_amp % load when == 1 or 2
-               [~, ~, ~, ~, amp_struct] = loadnc('amp', {'mass_dist_init', 'RH'});
+               amp_struct = loadnc('amp');
             end
             
             if l_amp~=1 % load when == 0 or 2
-               [~, ~, ~, ~, bin_struct] = loadnc('bin', {'mass_dist', 'RH'});
+               bin_struct = loadnc('bin');
             end
                
             %% plot
@@ -82,7 +80,7 @@ for iconf = 1%:length(mconfig_ls)
                      bin_DSDprof(2:end, :, :)=bin_DSDprof(1:end-1, :, :);
                      DSD2beplt=amp_DSDprof-bin_DSDprof;
                   end
-               elseif strcmp(pltflag, 'mass')
+               elseif any(strcmp(pltflag, {'mass','number'}))
                   DSD2beplt=DSDprof;
                end
 
@@ -94,12 +92,15 @@ for iconf = 1%:length(mconfig_ls)
 
                fn = [ampORbin{iab}, '-', bintype{its}, ' ', ...
                   mconfig, '-', vnum, ' '];
-               % tf=max(time);
+
                ti = 1;
                tf = max(time);
-               % ti = 800;
-               % tf = 900;
                time_step=20;
+
+               % ti = 800;
+               % tf = 820;
+               % time_step = 1;
+
                DSDprof_timeprog(ti, tf, time_step, DSD2beplt, z, ...
                   binmean, cmap, linorlog, pltflag)
             end

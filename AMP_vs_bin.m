@@ -8,17 +8,13 @@ global mconfig ivar2 ivar1 its nikki output_dir vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='proc_intxn_condcoll';
+nikki='2022-05-30';
 
-run global_var.m
+global_var
 
 % get the list of configs. cant put it into globar_var
-mconfig_ls_dir = dir([output_dir,nikki,'/']);
-mconfig_ls_dir_flags = [mconfig_ls_dir.isdir];
-mconfig_ls_dir_flags(1:2) = 0; % ignore the current and parent dir
-mconfig_ls = {mconfig_ls_dir(mconfig_ls_dir_flags).name};
+mconfig_ls = get_mconfig_list(output_dir, nikki);
 
-set(0, 'DefaultFigurePosition',[1553 458 1028 527])
 %%
 % create separate figure widows for profile, path, process rates, and
 % their differences between AMP and BIN
@@ -44,21 +40,18 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 2:length(mconfig_ls)
-   iconf
+for iconf = 3%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf}
-   run case_dep_var.m
-   get_var_comp([3 4])
+   case_dep_var
+   get_var_comp([1 2 3 4 6 7 10 19])
 
-   for its = 1:length(bintype)
+   for its = 2:length(bintype)
       for ivar1 = 1:length(var1_str)
          %             close all
          for ivar2 = 1:length(var2_str)
             [its ivar1 ivar2]    
-            [~, ~, ~, ~, amp_struct]=...
-               loadnc('amp');
-            [~, ~, ~, ~, bin_struct]=...
-               loadnc('bin');
+            amp_struct = loadnc('amp');
+            bin_struct = loadnc('bin');
             % indices of vars to compare
             vars=1;
             vare=length(indvar_name);
