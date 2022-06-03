@@ -107,7 +107,7 @@ for iconf = length(mconfig_ls)
 
          xlabel(tl,'Time [s]','fontsize',24)
          ylabel(tl,'Fraction left','fontsize',24)
-         title(tl,'Sed. only - Dm = 600\mum, \nu = 3','fontsize',24,'fontweight','bold')
+         title(tl,'Sed. only - D\fontsize{16}m\fontsize{24} = 600 \mum, \nu = 3','fontsize',24,'fontweight','bold')
          exportgraphics(gcf,['plots/p1/sedonly_massnum.jpg'],'Resolution',300)
 
 
