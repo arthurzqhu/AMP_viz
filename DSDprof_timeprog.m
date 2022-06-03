@@ -1,7 +1,7 @@
 function DSDprof_timeprog(ti, tf, ts_plot, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
-global dt fn var1_str var2_str ivar1 ivar2 color_order %#ok<NUSED>
+global its bintype dt fn var1_str var2_str ivar1 ivar2 color_order %#ok<NUSED>
 
 close all
 c_map = getPyPlot_cMap(Cmap,20);
@@ -32,8 +32,12 @@ for itime = ti:ts_plot:tf
    switch pltflag
       case {'mass','mass_ratio','mass_adv'}
          DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:));
-      case 'nd'
-         DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_output,:,:)),binmean)/1e6;
+      case 'number'
+         if bintype{its}=="tau"
+            DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:))*1e6;
+         else
+            DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_output,:,:)),binmean)/1e6;
+         end
    end
    
    if length(binmean)<size(DSD_prof_is,1)
@@ -57,9 +61,9 @@ for itime = ti:ts_plot:tf
          caxis([1e-8 1e-2])
          %             cbar.Label.String = 'AMP/TAU mass';
          %             caxis([1e-4 1e4])
-      case 'nd'
+      case 'number'
          cbar.Label.String = 'DSD [1/cc/ln(r)]';
-         caxis([1e-8 1e0])
+         caxis([1e-4 1e4])
       case 'mass_adv'
          cbar.Label.String = 'DSD_adv [kg/kg/ln(r)/s]';
          caxis([-1e-8 1e-8])
