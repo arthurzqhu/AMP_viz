@@ -2,7 +2,7 @@ clear
 close all
 clear global
 global indvar_name_set indvar_name_all indvar_ename_set indvar_ename_all ...
-   indvar_units_set indvar_units_all
+   indvar_units_set indvar_units_all 
 
 % old pfm files: {{{
 
@@ -128,7 +128,7 @@ title('(c) Cond. Coll.','FontSize',16)
 % cond
 nexttile(49,[2 2])
 [X_condonly,Y_condonly]=dev2fig(condonly_dev1,condonly_dev2);
-title('(d) Cond. (incl. Nucl.)','FontSize',16)
+title('(d) Cond. + Nucl.','FontSize',16)
 
 % coll
 nexttile(51,[2 2])
@@ -192,15 +192,15 @@ annotation('textbox',[0.11 0.791 0.20 0.135],'String', str2,...
            'FontSize',14,'edgecolor','none')
 annotation('rectangle',[0.07 0.791 0.18 0.135])
 
-% fullmic - ccs
-axes('Position',[.64 .53 .15 .1])
-devdiff2fig(condcollsed_dev1, fullmic_dev1)
-title('(a) - (b): effect of Evap.')
+% % fullmic - ccs
+% axes('Position',[.64 .53 .15 .1])
+% devdiff2fig(condcollsed_dev1, fullmic_dev1)
+% title('(a) - (b): effect of Evap.')
 
-% ccs - cc
-axes('Position',[.48 .38 .15 .1])
-devdiff2fig(condcoll_dev1, condcollsed_dev1)
-title('(b) - (c): effect of Sed.')
-% ylabel('                                            Change in error (pp)')
+% % ccs - cc
+% axes('Position',[.48 .38 .15 .1])
+% devdiff2fig(condcoll_dev1, condcollsed_dev1)
+% title('(b) - (c): effect of Sed.')
+% % ylabel('                                            Change in error (pp)')
 
-exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_newdiffpos.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_errorbar.jpg'],'Resolution',300)

@@ -2,11 +2,19 @@ global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
    l_amp l_sbm indvar_name_set indvar_ename_set indvar_units_set ...
    cwp_th rwp_th sppt_th indvar2D_name_set indvar2D_ename_set indvar2D_units_set ...
    color_order indvar_name_all indvar_ename_all indvar_units_all ...
-   mconfigivar_dict
+   mconfigivar_dict split_bins col binmean
 
 indvar_name_set = {};
 indvar_ename_set = {};
 indvar_units_set = {};
+
+%% bin cloud-rain threshold
+split_bins = [15 14];
+
+%% constants
+col = log(2)/3;
+binmean(1,:) = load('diamg_tau.txt');
+binmean(2,1:33) = load('diamg_sbm.txt');
 
 %% model configs
 ampORbin = {'amp' 'bin'};
@@ -17,7 +25,7 @@ bintype = {'tau' 'sbm'};
 if strcmp(computer('arch'),'maci64')
    output_dir='/Volumes/ESSD/AMP output/';
 elseif strcmp(computer('arch'),'glnxa64')
-   output_dir='../KiD_repo/KiD_1mode_gam/output/';
+   output_dir='../github/KiD_repo/KiD_1mode_gam/output/';
 end
 % output_dir='/Volumes/PESSD/AMP output/';
 % output_dir='../output/';
@@ -69,10 +77,10 @@ initVarName_dict = containers.Map(initvarSet, fullnameSet);
 initVarUnit_dict = containers.Map(initvarSet, unitSet);
 
 %% mconfig indvar key-values
-mconfigSet = {'condnuc', 'collonly', 'sedonly', 'evaponly', ...
+mconfigSet = {'condnuc', 'condonly', 'collonly', 'sedonly', 'evaponly', ...
               'condcoll', 'collsed', 'evapsed', 'condcollsed', ...
               'collsedevap', 'fullmic'};
-indvaridx = {[3 6], [3:7], [4 5 7 10], [3 6], ...
+indvaridx = {[1 3 6], [1 3 6], [3:7], [2 4 5 7 10], [1 3 6], ...
              [3:7], [3:7 10], [3:7 10], [3:7 10], ...
              [3:7 10], [3:7 10]};
 % indvaridx = {[3 6], [3:7 16], [4 5 7 10], [3 6], ...
