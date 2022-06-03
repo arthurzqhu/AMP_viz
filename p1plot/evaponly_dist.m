@@ -16,11 +16,11 @@ tl=tiledlayout(2,2,'TileSpacing','compact');
 %% read files
 for its = 1:length(bintype)
    if its==2
-      binmean = load('diamg_sbm.txt');
+      binmean = load('diamg_sbm.txt')*1e6;
       nkr=33;
       krdrop=14;
    elseif its==1
-      binmean = load('diamg_tau.txt');
+      binmean = load('diamg_tau.txt')*1e6;
       nkr=34;
       krdrop=15;
    end
@@ -28,10 +28,8 @@ for its = 1:length(bintype)
    for ivar1 = length(var1_str)
       for ivar2 = length(var2_str)
 
-         [~, ~, ~, ~, amp_struct]=...
-            loadnc('amp');
-         [~, ~, ~, ~, bin_struct]=...
-            loadnc('bin');
+         amp_struct = loadnc('amp');
+         bin_struct = loadnc('bin');
 
          %%
          time=amp_struct.time;
@@ -72,7 +70,8 @@ for its = 1:length(bintype)
          l.FontWeight='bold';
          rectangle('position',[binmean(15-its),amp_dist_t1(krdrop)/1.2,binmean(krdrop)-binmean(15-its),amp_dist_t1(15-its)*1.2],'facecolor',[0.1 0.1 0.1 0.1])
 
-         xlim([binmean(1) binmean(krdrop)])
+         xlim([0 binmean(krdrop)])
+         ylim([1e-8 1e-3])
          set(gca,'YScale','log')
          set(gca,'fontsize',16)
          grid
@@ -91,7 +90,8 @@ for its = 1:length(bintype)
          plot(binmean,bin_dist_t3,'Color',color_order{its},...
             'LineWidth',2,'LineStyle',':')
 
-         xlim([binmean(1) binmean(krdrop)])
+         xlim([0 binmean(krdrop)])
+         ylim([1e-8 1e-3])
          set(gca,'YScale','log')
          hold off
 
