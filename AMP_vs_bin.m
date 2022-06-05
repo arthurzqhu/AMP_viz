@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its nikki output_dir vnum ...
    israin indvar_units_set indvar_units%#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-05-30';
+nikki='2022-06-03';
 
 global_var
 
@@ -40,18 +40,19 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 3%:length(mconfig_ls)
+for iconf = 1%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf}
    case_dep_var
-   get_var_comp([1 2 3 4 6 7 10 19])
+   % get_var_comp([1 2 3 4 6 7 10 19])
+   get_var_comp([3 4 19])
 
-   for its = 2:length(bintype)
+   for its = 1:length(bintype)
       for ivar1 = 1:length(var1_str)
          %             close all
          for ivar2 = 1:length(var2_str)
             [its ivar1 ivar2]    
-            amp_struct = loadnc('amp');
             bin_struct = loadnc('bin');
+            amp_struct = loadnc('amp');
             % indices of vars to compare
             vars=1;
             vare=length(indvar_name);
@@ -68,10 +69,12 @@ for iconf = 3%:length(mconfig_ls)
             for ivar = vars:vare
                
                var_comp_raw_amp = amp_struct.(indvar_name{ivar});
-               [var_comp_amp,~,~] = var2phys(var_comp_raw_amp,ivar,1);
+               [var_comp_amp, linORlog, range] = var2phys(var_comp_raw_amp,ivar,1);
                
-               var_comp_raw_bin = bin_struct.(indvar_name{ivar});
-               [var_comp_bin,linORlog,range] = var2phys(var_comp_raw_bin,ivar,1);
+               if ~contains(indvar_name{ivar}, 'flag')
+                  var_comp_raw_bin = bin_struct.(indvar_name{ivar});
+                  var_comp_bin = var2phys(var_comp_raw_bin,ivar,1);
+               end
                
                % change linestyle according to cloud/rain
                if israin
@@ -199,15 +202,20 @@ for iconf = 3%:length(mconfig_ls)
                      if iab==1
                         var_plt = var_comp_amp;
                      else
+                        if contains(indvar_name{ivar}, 'flag')
+                           break
+                        end
                         var_plt = var_comp_bin;
                      end
                      
                      nanimagesc(time,z,var_plt')
                      set(gca,'YDir','normal')
-                     if ~contains(indvar_name{ivar},{'flag','adv','mphys'})
-                        colormap(Blues)
-                     else
+                     if contains(indvar_name{ivar},{'adv','mphys'})
                         colormap(coolwarm)
+                     elseif contains(indvar_name{ivar},'flag')
+                        colormap(BrBG3)
+                     else
+                        colormap(Blues)
                      end
                      set(gca,'ColorScale',linORlog)
                      caxis(range)
@@ -235,7 +243,7 @@ for iconf = 3%:length(mconfig_ls)
                      end
                   end
                end
-               pause(.5) % (optional) to prevent matlab from halting
+               % pause(.5) % (optional) to prevent matlab from halting
             end
 %             % plot difference
 %             for ici = case_interest
