@@ -60,8 +60,6 @@ else
    end
 end
 
-
-% calculate cloud half life
 if exist('var_name', 'var')
    % combine cloud and rain type
    var_wcloud=var_name(contains(var_name,'cloud'));
@@ -75,6 +73,13 @@ if exist('var_name', 'var')
       ivar=ivar+1;
    end
 
+   % calculate supersaturation
+   var_name=[var_name;'ss_w'];
+   supsat = stct.RH - 100;
+   supsat(supsat < 0) = nan;
+   stct.ss_w = supsat;
+
+   % calculate cloud half life
    if contains('half_life_c', indvar_name_set)
       var_name=[var_name;'half_life_c'];
       time=stct.time;

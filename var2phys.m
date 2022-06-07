@@ -34,7 +34,7 @@ iscloud=0;
 
 var_raw(var_raw==-999)=nan;
 
-if contains(var_name,{'diag', 'Dm','RH','gs_','reldisp','flag'})
+if contains(var_name,{'diag', 'Dm','RH','gs_','reldisp','flag','ss_w'})
    isprof=1;
 elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
    ispath=1;
@@ -199,11 +199,16 @@ switch var_name
       range = [0 1];
       mask = 'self';
       note = 'lin';
+   case 'ss_w'
+      physquant = var_raw;
+      range = [min(physquant(:)) max(physquant(:))];
+      mask = 'self';
+      note = 'lin';
    otherwise
       physquant = var_raw;
       note = 'log';
       mask = 'self';
-      range = [min(physquant) max(physquant)];
+      range = [min(physquant(:)) max(physquant(:))];
 end
 
 if setOOBasNaN
