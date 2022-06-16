@@ -8,8 +8,8 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'normal_threshold'};
-doplot = 0
+nikkis = {'2022-06-15'};
+doplot = 1
 doload = 1
 
 for ink = 1:length(nikkis)
@@ -21,13 +21,9 @@ for ink = 1:length(nikkis)
 
    %%
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf = 1:length(mconfig_ls)
-   % for iconf = [1 4:7 9 10] %1:length(mconfig_ls)
+   for iconf = 9%1:length(mconfig_ls)
       mconfig = mconfig_ls{iconf}
-      % get_var_comp([3:7 10])
       get_var_comp
-      % get_var_comp([3:7 16]) % condcoll proc_intxn
-      % get_var_comp([3:7 10]) % collsedevap proc_intxn
       if doload
       pfm = struct;
       case_dep_var
@@ -56,10 +52,10 @@ for ink = 1:length(nikkis)
                   end
 
                   var_comp_raw_amp = amp_struct.(indvar_name{ivar});
-                  var_amp_flt = var2phys(var_comp_raw_amp,ivar,0,1);
+                  var_amp_flt = var2phys(var_comp_raw_amp,ivar,0,1,1);
 
                   var_comp_raw_bin = bin_struct.(indvar_name{ivar});
-                  var_bin_flt = var2phys(var_comp_raw_bin,ivar,0,1);
+                  var_bin_flt = var2phys(var_comp_raw_bin,ivar,0,1,1);
 
                   % get the non-nan indices for both bin and amp
                   vidx = ~isnan(var_amp_flt+var_bin_flt);
@@ -70,7 +66,7 @@ for ink = 1:length(nikkis)
 
                   [mr, rsq, er, maxr, md, serr, msd_amp, msd_bin, ...
                      mval_amp, mval_bin, sval_amp, sval_bin] = ...
-                  wrsq(var_amp_flt, var_bin_flt, weight);
+                     wrsq(var_amp_flt, var_bin_flt, weight);
 
                   if indvar_name{ivar} == "mean_surface_ppt"
                      mval_bin(mval_bin < sppt_th(1)) = 0;
@@ -126,7 +122,7 @@ for ink = 1:length(nikkis)
             figure(ifn)
             set(gcf,'position',[1331 587 1250 390])
             tl = tiledlayout(4,4);
-            for its = 2:length(bintype)
+            for its = 1:length(bintype)
                nexttile(its*2+3,[3 2])
                nanimagesc(pfm.(indvar_name{ivar}).(bintype{its}).(fldnms{ifn}))
                cb = colorbar;

@@ -62,8 +62,8 @@ erb.LineStyle = 'none';
 hold off
 
 set(gca,'YScale','log')
-ylim([0.5 2])
-yticks([0.5 0.67 0.8 1 1.25 1.5 2])
+ylim([0.4 2])
+yticks([0.50 0.67 0.8 1 1.25 1.5 2])
 yticklabels({'-50','-33','-20','0','+25','+50','+100'})
 box on
 

@@ -41,7 +41,7 @@ b(1).BaseLine.Color = [.8 .8 .8];
 
 ypos = zeros(size(Y1_err));
 yneg = zeros(size(Y1_err));
-for i = 1:length(Y1_err)
+for i = 1:numel(Y1_err)
    if Y2_err(i) > Y1_err(i)
       ypos(i) = Y2_err(i) - Y1_err(i);
    else
@@ -49,18 +49,26 @@ for i = 1:length(Y1_err)
    end
 end
 
-barwidth = b(1).BarWidth;
-erb = errorbar((1:length(X)) - barwidth/7, Y_val(:,1)*0+1, yneg(:,1), ypos(:,1), 'LineWidth', 1);
-erb.Color = color_order{1};
-erb.LineStyle = 'none';
-erb = errorbar((1:length(X)) + barwidth/7, Y_val(:,2)*0+1, yneg(:,2), ypos(:,2), 'LineWidth', 1);
-erb.Color = color_order{2};
-erb.LineStyle = 'none';
-
 hold off
 set(gca,'YScale','log')
 ylim([0.5 2])
 yticks([0.5 0.67 0.8 1 1.25 1.5 2])
 yticklabels({'-50','-33','-20','0','+25','+50','+100'})
+
+yyaxis right
+hold on
+barwidth = b(1).BarWidth;
+erb = errorbar((1:length(X)) - barwidth/7, Y_val(:,1)*0+1, yneg(:,1), ypos(:,1), 'LineWidth', 2);
+erb.Color = color_order{1};
+erb.LineStyle = 'none';
+erb = errorbar((1:length(X)) + barwidth/7, Y_val(:,2)*0+1, yneg(:,2), ypos(:,2), 'LineWidth', 2);
+erb.Color = color_order{2};
+erb.LineStyle = 'none';
+set(gca,'YScale','log')
+ylim([0.5 2])
+yticks([])
+set(gca,'ycolor',color_order{1})
+hold off
+
 grid()
 set(gca,'fontsize',12)
