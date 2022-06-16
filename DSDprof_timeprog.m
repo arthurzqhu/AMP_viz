@@ -30,11 +30,11 @@ for itime = ti:ts_plot:tf
    it_output = int32(itime*dt);
 
    switch pltflag
-      case {'mass','mass_ratio','mass_adv'}
+      case {'mass','mass_diff','mass_adv'}
          DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:));
-      case 'number'
+      case {'number','number_diff'}
          if bintype{its}=="tau"
-            DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:))*1e6;
+            DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:))/1e6;
          else
             DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_output,:,:)),binmean)/1e6;
          end
@@ -59,19 +59,19 @@ for itime = ti:ts_plot:tf
       case 'mass'
          cbar.Label.String = 'DSD [kg/kg/ln(r)]';
          caxis([1e-8 1e-2])
-         %             cbar.Label.String = 'AMP/TAU mass';
-         %             caxis([1e-4 1e4])
       case 'number'
          cbar.Label.String = 'DSD [1/cc/ln(r)]';
-         caxis([1e-4 1e4])
+         caxis([1e-10 1e3])
       case 'mass_adv'
          cbar.Label.String = 'DSD_adv [kg/kg/ln(r)/s]';
          caxis([-1e-8 1e-8])
-      case 'mass_ratio'
+      case 'mass_diff'
          cbar.Label.String = 'AMP-BIN mass';
          caxis([-max(abs(DSDprof_mphys(:))) max(abs(DSDprof_mphys(:)))])
+      case 'number_diff'
+         cbar.Label.String = 'AMP-BIN number';
+         caxis([-1e2 1e2])
    end
-        tic
    set(gca,'colorscale',clr_linORlog)
    xlabel('Diameter [m]')
    ylabel('Altitude [m]')
@@ -113,7 +113,6 @@ for itime = ti:ts_plot:tf
    
    delete(findall(gcf,'type','annotation'))
    
-        toc
    %     title('')
 end
 
@@ -129,6 +128,5 @@ saveVid(F,['DSD', pltflag, ' ',...
 %open(v)
 %writeVideo(v,F)
 %close(v)
-% toc
 % finishingTaskSound
 end
