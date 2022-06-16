@@ -23,8 +23,9 @@ title('(1): (b) - (c) effect of Sed.')
 nexttile
 devdiff2fig(condcollsed_dev, fullmic_dev)
 title('(2): (a) - (b) effect of Evap.')
+ylabel('Change in standard dev.')
 
 title(tl, 'Interaction effect on AMP-bin difference', 'fontweight', 'bold', 'fontsize', 20)
-ylabel(tl, 'Change in percent points', 'fontweight', 'bold', 'fontsize', 16)
+ylabel(tl, 'Change in AMP-bin % diff. (pp)', 'fontweight', 'bold', 'fontsize', 16)
 
 exportgraphics(gcf,['plots/p1/proc_intxn_newerrorbar.jpg'],'Resolution',300)

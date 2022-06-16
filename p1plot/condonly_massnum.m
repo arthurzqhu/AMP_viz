@@ -7,13 +7,13 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-05-25';
+nikki='2022-06-15';
 
 run global_var.m
 
 % get the list of configs. cant put it into globar_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
-load('pfm_summary/2022-05-25_condnuc_pfm.mat');
+load('pfm_summary/2022-06-15_condnuc_nummasscorr_dt1_pfm.mat');
 
 
 %%
@@ -119,7 +119,7 @@ for iconf = 1%:length(mconfig_ls)
 
          xlabel(tl,'Time [s]','fontsize',24)
          title(tl,'Cond. only - N_a = 400/cc, w_{max} = 4 m/s','fontsize',24,'fontweight','bold')
-         exportgraphics(gcf,['plots/p1/condonly_massnum.jpg'],'Resolution',300)
+         exportgraphics(gcf,['plots/p1/condonly_massnum_massconsv.jpg'],'Resolution',300)
       end
    end
 

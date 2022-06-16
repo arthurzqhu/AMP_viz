@@ -53,16 +53,16 @@ global indvar_name_set indvar_name_all indvar_ename_set indvar_ename_all ...
 
 % }}}
 
-condonly_dev1 = devfun(load('pfm_summary/normal_threshold_condnuc_pfm.mat').pfm);
-collonly_dev1 = devfun(load('pfm_summary/normal_threshold_collonly_pfm.mat').pfm);
-evaponly_dev1 = devfun(load('pfm_summary/normal_threshold_evaponly_pfm.mat').pfm);
-sedonly_dev1 = devfun(load('pfm_summary/normal_threshold_sedonly_pfm.mat').pfm);
-condcoll_dev1 = devfun(load('pfm_summary/normal_threshold_condcoll_pfm.mat').pfm);
-collsed_dev1 = devfun(load('pfm_summary/normal_threshold_collsed_pfm.mat').pfm);
-evapsed_dev1 = devfun(load('pfm_summary/normal_threshold_evapsed_pfm.mat').pfm);
-condcollsed_dev1 = devfun(load('pfm_summary/normal_threshold_condcollsed_pfm.mat').pfm);
-collsedevap_dev1 = devfun(load('pfm_summary/normal_threshold_collsedevap_pfm.mat').pfm);
-fullmic_dev1 = devfun(load('pfm_summary/normal_threshold_fullmic_pfm.mat').pfm);
+condonly_dev1 = devfun(load('pfm_summary/2022-06-15_condnuc_pfm.mat').pfm);
+collonly_dev1 = devfun(load('pfm_summary/2022-06-15_collonly_pfm.mat').pfm);
+evaponly_dev1 = devfun(load('pfm_summary/2022-06-15_evaponly_pfm.mat').pfm);
+sedonly_dev1 = devfun(load('pfm_summary/2022-06-15_sedonly_pfm.mat').pfm);
+condcoll_dev1 = devfun(load('pfm_summary/2022-06-15_condcoll_pfm.mat').pfm);
+collsed_dev1 = devfun(load('pfm_summary/2022-06-15_collsed_pfm.mat').pfm);
+evapsed_dev1 = devfun(load('pfm_summary/2022-06-15_evapsed_pfm.mat').pfm);
+condcollsed_dev1 = devfun(load('pfm_summary/2022-06-15_condcollsed_pfm.mat').pfm);
+collsedevap_dev1 = devfun(load('pfm_summary/2022-06-15_collsedevap_pfm.mat').pfm);
+fullmic_dev1 = devfun(load('pfm_summary/2022-06-15_fullmic_pfm.mat').pfm);
 
 % these aren't being plotted right now: {{{
 
@@ -203,4 +203,4 @@ annotation('rectangle',[0.07 0.791 0.18 0.135])
 % title('(b) - (c): effect of Sed.')
 % % ylabel('                                            Change in error (pp)')
 
-exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_errorbar.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/pyramid_onlyweighted_massconv.jpg'],'Resolution',300)

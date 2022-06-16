@@ -7,13 +7,14 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2021-11-27';
-run global_var.m
+nikki='2022-06-15';
+global_var
+get_var_comp
 
 mconfig='fullmic';
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm_bincomp.mat'])
-run case_dep_var.m
+case_dep_var
 
 tmpvarname=fieldnames(pfm(1));
 fldnms=fieldnames(pfm(1).(tmpvarname{1}));

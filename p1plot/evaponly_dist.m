@@ -34,9 +34,9 @@ for its = 1:length(bintype)
          %%
          time=amp_struct.time;
          dt=time(2)-time(1);
-         t1=int8(1/dt);
-         t2=int8(10/dt);
-         t3=int8(20/dt);
+         t1=int32(1/dt);
+         t2=int32(10/dt);
+         t3=int32(20/dt);
 
          bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,48);
          amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,48);

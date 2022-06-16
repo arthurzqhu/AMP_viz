@@ -6,7 +6,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str 
 
 vnum='0001'; % last four characters of the model output file.
-nikki='smaller_threshold';
+nikki='normal_threshold';
 run global_var.m
 mconfig = 'collonly';
 run case_dep_var.m
@@ -16,22 +16,20 @@ tl=tiledlayout(2,2,'TileSpacing','compact');
 %% read files
 for its = 1:length(bintype)
    if its==2
-      binmean = load('diamg_sbm.txt');
+      binmean = load('diamg_sbm.txt')*1e6;
       nkr=33;
-      krdrop=12;
+      krdrop=14;
    elseif its==1
-      binmean = load('diamg_tau.txt');
+      binmean = load('diamg_tau.txt')*1e6;
       nkr=34;
-      krdrop=13;
+      krdrop=15;
    end
    
-   for ivar1 = 2%length(var1_str)
+   for ivar1 = 3%length(var1_str)
       for ivar2 = length(var2_str)
          
-         [~, ~, ~, ~, amp_struct]=...
-            loadnc('amp',{'mass_dist_init'});
-         [~, ~, ~, ~, bin_struct]=...
-            loadnc('bin',{'mass_dist'});
+         amp_struct = loadnc('amp');
+         bin_struct = loadnc('bin');
          
          %%
          time=amp_struct.time;
@@ -53,9 +51,9 @@ for its = 1:length(bintype)
          hold on
 
          %shaded region
-         xx=binmean(10:krdrop+5)';
-         yy1=amp_dist_t1(10:krdrop+5);
-         yy2=amp_dist_t2(10:krdrop+5);
+         xx=binmean(10:krdrop+4)';
+         yy1=amp_dist_t1(10:krdrop+4);
+         yy2=amp_dist_t2(10:krdrop+4);
          pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
          set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
          plot(binmean,amp_dist_t1,'Color',color_order{5-its},'LineWidth',2)
@@ -66,12 +64,12 @@ for its = 1:length(bintype)
          hold off
 
          title(['AMP-' upper(bintype{its})])
-         lg=legend('t = 1 min','t = 6 min','t = 12 min',...
+         lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';
-         xline(binmean(krdrop),'linestyle','--','linewidth',3,'color',[color_order{7} 0.2])
+         xline(binmean(krdrop+1),'linestyle','--','linewidth',3,'color',[color_order{7} 0.2])
 
-         xlim([binmean(1) 5e-4])
+         xlim([binmean(1) 500])
          ylim([1e-5 3e-3])
          set(gca,'YScale','log')
          set(gca,'XScale','log')
@@ -81,9 +79,9 @@ for its = 1:length(bintype)
          nexttile(2+its)
          hold on
          %shaded region
-         xx=binmean(10:krdrop+5)';
-         yy1=bin_dist_t1(10:krdrop+5);
-         yy2=bin_dist_t2(10:krdrop+5);
+         xx=binmean(10:krdrop+4)';
+         yy1=bin_dist_t1(10:krdrop+4);
+         yy2=bin_dist_t2(10:krdrop+4);
          pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
          set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
          plot(binmean,bin_dist_t1,'Color',color_order{its},'LineWidth',2)
@@ -92,7 +90,7 @@ for its = 1:length(bintype)
          plot(binmean,bin_dist_t3,'Color',color_order{its},...
             'LineWidth',2,'LineStyle',':')
          
-         xlim([binmean(1) 5e-4])
+         xlim([binmean(1) 500])
          ylim([1e-5 3e-3])
          set(gca,'YScale','log')
          set(gca,'XScale','log')
@@ -102,10 +100,10 @@ for its = 1:length(bintype)
          lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';
-         xline(binmean(krdrop),'--','linewidth',3,'color',[color_order{7} 0.2])
+         xline(binmean(krdrop+1),'--','linewidth',3,'color',[color_order{7} 0.2])
 
          xlabel(tl,'Diameter [\mum]','fontsize',18)
-         ylabel(tl,'Mass concentration [kg/kg/dlogD]','fontsize',18)
+         ylabel(tl,'Mass conc. [kg/kg/dlogD]','fontsize',18)
          set(gca,'fontsize',16)
          grid
       end
@@ -113,4 +111,4 @@ for its = 1:length(bintype)
 end
 
 annotation('line',[0.485 0.485], [0.125 0.927], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
-exportgraphics(gcf,['plots/p1/collonly_dist_lowerthres.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/collonly_dist.jpg'],'Resolution',300)
