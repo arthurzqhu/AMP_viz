@@ -1,11 +1,11 @@
-function [stct,filemeta,filename,fileinfo,var_name]=loadnc(mp_in,varargin)
+function [stct, mask_c, mask_r, mask_l]=loadnc(mp_in,varargin)
 
 global ivar1 ivar2 its nikki mconfig output_dir vnum ...
    bintype var1_str var2_str indvar_name_set indvar_name ...
    indvar_units indvar_ename indvar_ename_set indvar_units_set ...
    indvar2D_name indvar2D_units indvar2D_ename indvar2D_name_set ...
    indvar2D_ename_set indvar2D_units_set casenum split_bins col ...
-   binmean
+   binmean cloud_mr_th rain_mr_th
 
 if isempty(vnum)
    vnum = '0001';
@@ -79,6 +79,11 @@ if exist('var_name', 'var')
    supsat(supsat < 0) = nan;
    stct.ss_w = supsat;
 
+   % var_name=[var_name;'ss_wpremphys'];
+   % supsat = stct.RH_premphys - 100;
+   % supsat(supsat < 0) = nan;
+   % stct.ss_wpremphys = supsat;
+
    % calculate cloud half life
    if contains('half_life_c', indvar_name_set)
       var_name=[var_name;'half_life_c'];
@@ -138,6 +143,19 @@ if exist('var_name', 'var')
    indvar2D_units=indvar2D_units_set(vidx);
 else
    var_name = {};
+end
+
+
+% masks of datapoints higher than cloud/rain/liquid threshold
+mass_c = stct.diagM3_cloud*pi/6*1000;
+mass_r = stct.diagM3_rain*pi/6*1000;
+mass_l = stct.diagM3_liq*pi/6*1000;
+
+mask_c = mass_c > cloud_mr_th(1);
+mask_r = mass_r > rain_mr_th(1);
+mask_l = mass_c > min([cloud_mr_th(1), rain_mr_th(1)]);
+
+if bintype{its} == "sbm"
 end
 
 end
