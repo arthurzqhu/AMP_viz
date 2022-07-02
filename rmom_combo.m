@@ -30,7 +30,7 @@ if ~doload
    mconfig = mconfig_ls{iconf}
    for its = 1:length(bintype)
 
-      [amp_runs, var_interest] = loadrams('amp');
+      amp_runs = loadrams('amp');
       bin_runs = loadrams('bin');
 
       clear runs

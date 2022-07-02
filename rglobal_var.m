@@ -48,7 +48,7 @@ cmap.BrBG=repelem(cmap.BrBG,floor(256/ngrad),1);
 colororder=colororder;
 color_order={};
 for i=1:size(colororder,1)
-    color_order{i}=colororder(i,:);
+   color_order{i}=colororder(i,:);
 end
 
 clear colororder
