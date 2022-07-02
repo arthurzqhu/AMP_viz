@@ -1,6 +1,6 @@
-function rvar2phys(var_interest, l_da_arr)
+function mpdat = rvar2phys(var_interest, l_da_arr)
 
-global nfile outdir runs mpdat mp_list imp deltaz density
+global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
 
    threshold = -inf;
    
@@ -12,15 +12,20 @@ global nfile outdir runs mpdat mp_list imp deltaz density
    
    % load all the required variables
    var_req_uniq = unique(horzcat(var_interest.prereq_vars));
-   rams_hdf5c(var_req_uniq,1:nfile-1,outdir)
+   rams_hdf5c(var_req_uniq,1:nfile-1,filedir)
    
+   if contains(bintype{its},'tau')
+      binmean = load('tau_binmean.txt')*2;
+   elseif contains(bintype{its},'sbm')
+      binmean = load('sbm_binmean.txt')*2;
+   end
    
    % 
    loaded_varname = {}; % record what variables are already loaded
    loaded_var = struct;
    density = rho(runs.THETA, runs.PI);
    
-   mpdat(imp).(mp_list{imp}).time=runs.time;
+   mpdat.time=runs.time;
    for ivar = 1:length(var_interest)
       if length(l_da_arr) > 1
          l_da = l_da_arr(ivar);
@@ -30,13 +35,13 @@ global nfile outdir runs mpdat mp_list imp deltaz density
    
       [loaded_var, loaded_varname] = loadvar(var_interest(ivar), loaded_var, loaded_varname);
       % load variables needed, including those for domain averaged vals
-      % loadvar should have the ability to check whether the dependent variables are already
+      % loadvar can check whether the dependent variables are already
       % loaded, and load them only if necesssary
       if l_da
-         mpdat(imp).(mp_list{imp}).(var_interest(ivar).da_name) = ...
+         mpdat.(var_interest(ivar).da_name) = ...
             calc_domainavg(loaded_var.(var_interest(ivar).var_name));
       else
-         mpdat(imp).(mp_list{imp}).(var_interest(ivar).var_name) = ...
+         mpdat.(var_interest(ivar).var_name) = ...
             loaded_var.(var_interest(ivar).var_name);
       end
    end
@@ -45,7 +50,7 @@ end
 
 function [loaded_var, loaded_varname] = loadvar(varin_obj,loaded_var,loaded_varname)
 % update the loaded_var (struct) and loaded_varname (cell)
-global runs deltaz density
+global runs deltaz density binmean
    
    switch varin_obj.var_name
       case "LWP"
@@ -76,6 +81,26 @@ global runs deltaz density
             loaded_var.(varname) = deltaz*squeeze(sum(runs.RV.*density,3));
          case 'RH'
             loaded_var.(varname) = rh(runs.RV,runs.THETA,runs.PI);
+         case 'DSDm'
+            loaded_var.(varname) = runs.FFCD;
+         case 'DSDn'
+            loaded_var.(varname) = runs.FFCDN;
+         case 'reldisp'
+            loaded_var.(varname) = runs.RELDISP;
+            % runs.FFCD(runs.FFCD<0) = 0;
+            % runs.FFCD(isnan(runs.FFCD)) = 0;
+            % for ix = 1:size(runs.FFCD,1)
+            %    for iy = 1:size(runs.FFCD,2)
+            %       for iz = 1:size(runs.FFCD,3)
+            %          for it = 1:size(runs.FFCD,4)
+            %             meanD = wmean(binmean, squeeze(runs.FFCD(ix, iy, iz, it, :)));
+            %             stdD = std(binmean, squeeze(runs.FFCD(ix, iy, iz, it, :)));
+            %             loaded_var.(varname)(ix,iy,iz,it) = stdD/meanD;
+            %             % [ix, iy, iz, it, stdD/meanD]
+            %          end
+            %       end
+            %    end
+            % end
       end
       loaded_varname{end+1} = varname;
    end

@@ -1,4 +1,6 @@
-global thhd cmap pio6rw nikki
+global thhd cmap pio6rw nikki output_dir var_name_set var_ename_set ...
+   var_req_set var_unit_set var_range var_linORlog l_da ampORbin bintype ...
+   conf2grid
 
 % model configs
 addpath('ramsfuncs/')
@@ -17,22 +19,27 @@ thhd.rwp_th=[1e-1 inf]; % g/m2 rain water path threshold
 thhd.meanD_th=[0 inf];
 thhd.sppt_th=[0 inf]; % mm/hr surface precipitation
 
-
 % set the current date as nikki if unset
 if ~exist('nikki')
     nikki=datestr(date,'YYYY-mm-dd');
-
 end
+
+% convert iconf to grid location
+conf2grid = {[1,1], [1,2], [1,3], [1,4], ...
+                    [2,2], [2,3], [2,4], ...
+                           [3,3], [3,4], ...
+                                  [4,4]};
 
 % dir of the model output
 % output_dir='/Volumes/ESSD/AMP output/';
-output_dir='../rams/output/';
+output_dir='../github/rams/output/';
 
 % load these python colormap
 cmap.Blues=getPyPlot_cMap('Blues',10);
 cmap.rainbow=getPyPlot_cMap('rainbow',20);
 cmap.coolwarm=getPyPlot_cMap('coolwarm',10);
 cmap.coolwarm_r=getPyPlot_cMap('coolwarm_r',10);
+cmap.coolwarm_r11=getPyPlot_cMap('coolwarm_r',11);
 ngrad=21;
 cmap.BrBG20=getPyPlot_cMap('BrBG',20);
 cmap.BrBG=getPyPlot_cMap('BrBG',ngrad)*.9;
@@ -46,15 +53,35 @@ end
 
 clear colororder
 
-var_name_set={'CWP','RWP','LWP','Rv','RH','LWC'};
-var_ename_set={'cloud water path','rain water path','liquid water path',...
-               'mixing ratio','relative humidity','liquid water content'};
-var_req_set={{'RCP'},{'RRP'},{'RCP','RRP'},{'RV'},{'RV'},{'RCP','RRP'}};
-var_unit_set={' [g/m^2]', ' [g/m^2]',' [g/m^2]', ' [kg/kg]',' %',' [g/kg]'};
+var_name_set = {'CWP','RWP','LWP',...
+                'Rv','RH','LWC',...
+                'CWC','RWC',...
+                'DSDm', 'DSDn','reldisp'};
+var_ename_set = {'cloud water path','rain water path','liquid water path',... 3
+                 'mixing ratio','relative humidity','liquid water content',... 6
+                 'cloud water content','rain water content',... 8
+                 'DSD mass', 'DSD number', 'relative dispersion'... 11
+                 };
+var_req_set = {{'RCP'},{'RRP'},{'RCP','RRP'},...
+               {'RV'},{'RV'},{'RCP','RRP'}, ...
+               {'RCP'},{'RRP'},...
+               {'FFCD'},{'FFCDN'},{'RELDISP'}};
+var_unit_set = {' [g/m^2]', ' [g/m^2]',' [g/m^2]', ...
+                ' [kg/kg]',' %',' [g/kg]', ...
+                ' [g/kg]', ' [g/kg]', ...
+                ' [kg/kg]', ' [1/kg]', ''};
+var_range = {[],[],[], ...
+             [],[],[1e-3 3e-1], ...
+             [1e-3 3e-1], [1e-5 1e-3], ...
+             [],[],[0 1]};
+var_linORlog = {'log', 'log', 'log', ...
+                'lin', 'lin', 'log', ...
+                'log', 'log', ...
+                'log', 'log', 'lin'};
 
 
 % output dir for the figures
 plot_dir=['plots/rams/' nikki '/'];
 if ~exist(['plots/rams/' nikki '/'],'dir')
-    mkdir(['plots/rams/' nikki '/'])
+   mkdir(['plots/rams/' nikki '/'])
 end
