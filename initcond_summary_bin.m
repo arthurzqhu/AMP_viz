@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum='0001';
-nikki='2022-06-15';
+nikki='orig_thres';
 
 global_var
 
@@ -19,7 +19,7 @@ mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % creating structures for performance analysis based on Rsq and ratio
 
-for iconf=9%:length(mconfig_ls)
+for iconf = 1:length(mconfig_ls)
    mconfig=mconfig_ls{iconf}
    get_var_comp
    case_dep_var
@@ -60,16 +60,14 @@ for iconf=9%:length(mconfig_ls)
             
             pfm.(indvar_name{ivar}).mr(ivar1,ivar2)=mr;
             pfm.(indvar_name{ivar}).rsq(ivar1,ivar2)=rsq;
-            pfm.(indvar_name{ivar}).mpath_sbm(ivar1,ivar2)=mean(var_sbm_flt);
-            pfm.(indvar_name{ivar}).mpath_tau(ivar1,ivar2)=mean(var_tau_flt);
+            pfm.(indvar_name{ivar}).mpath_sbm(ivar1,ivar2)=mval_sbm;
+            pfm.(indvar_name{ivar}).mpath_tau(ivar1,ivar2)=mval_tau;
             pfm.(indvar_name{ivar}).er(ivar1,ivar2)=er;
             pfm.(indvar_name{ivar}).maxr(ivar1,ivar2)=maxr;
             pfm.(indvar_name{ivar}).md(ivar1,ivar2)=md;
             pfm.(indvar_name{ivar}).serr(ivar1,ivar2)=serr;
             pfm.(indvar_name{ivar}).msd_tau(ivar1,ivar2)=msd_tau;
             pfm.(indvar_name{ivar}).msd_sbm(ivar1,ivar2)=msd_sbm;
-            pfm.(indvar_name{ivar}).mval_tau(ivar1,ivar2)=mval_tau;
-            pfm.(indvar_name{ivar}).mval_sbm(ivar1,ivar2)=mval_sbm;
             pfm.(indvar_name{ivar}).sval_tau(ivar1,ivar2)=sval_tau;
             pfm.(indvar_name{ivar}).sval_sbm(ivar1,ivar2)=sval_sbm;
             
@@ -77,8 +75,10 @@ for iconf=9%:length(mconfig_ls)
           
       end
    end
+   pfm.misc.var1_str = var1_str;
+   pfm.misc.var2_str = var2_str;
+   save(['pfm_summary/' nikki '_' mconfig '_pfm_bincomp.mat'],'pfm');
 end
-save(['pfm_summary/' nikki '_' mconfig '_pfm_bincomp.mat'],'pfm');
 
 
 % %% plot

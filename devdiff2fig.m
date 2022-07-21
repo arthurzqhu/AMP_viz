@@ -27,7 +27,6 @@ X = reordercats(X, Xc);
 
 %%
 hold on
-% b = bar(X, (abs(Y2_val-1)-abs(Y1_val-1))*100, 1);
 Y_val = (abs(Y2_val-1)-abs(Y1_val-1))+1;
 b = bar(X, Y_val, 1);
 b(1).FaceColor = color_order{1};
@@ -51,7 +50,7 @@ end
 
 hold off
 set(gca,'YScale','log')
-ylim([0.5 2])
+ylim([0.4 2])
 yticks([0.5 0.67 0.8 1 1.25 1.5 2])
 yticklabels({'-50','-33','-20','0','+25','+50','+100'})
 
@@ -65,7 +64,7 @@ erb = errorbar((1:length(X)) + barwidth/7, Y_val(:,2)*0+1, yneg(:,2), ypos(:,2),
 erb.Color = color_order{2};
 erb.LineStyle = 'none';
 set(gca,'YScale','log')
-ylim([0.5 2])
+ylim([0.4 2])
 yticks([])
 set(gca,'ycolor',color_order{1})
 hold off

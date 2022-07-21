@@ -7,13 +7,14 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='normal_threshold';
+nikki='2022-06-15';
 
-run global_var.m
+global_var
 
 % get the list of configs. cant put it into globar_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
-load('pfm_summary/normal_threshold_sedonly_pfm.mat');
+load('pfm_summary/2022-06-15_sedonly_pfm.mat');
+get_var_comp
 
 
 %%
@@ -28,7 +29,7 @@ for iconf = length(mconfig_ls)
    sedsum=struct;
    mconfig=mconfig_ls{iconf};
    run case_dep_var.m
-   for ivar1=length(var1_str)
+   for ivar1=5%length(var1_str)
       %             close all
       for ivar2=2%length(var2_str)
          %                 close all
@@ -107,12 +108,10 @@ for iconf = length(mconfig_ls)
 
          xlabel(tl,'Time [s]','fontsize',24)
          ylabel(tl,'Fraction left','fontsize',24)
-         title(tl,'Sed. only - D\fontsize{16}m\fontsize{24} = 600 \mum, \nu = 3','fontsize',24,'fontweight','bold')
-         exportgraphics(gcf,['plots/p1/sedonly_massnum.jpg'],'Resolution',300)
-
-
+         title(tl,'Sed. only - D\fontsize{16}m\fontsize{24} = 600 \mum, \nu = 3',...
+            'fontsize',24,'fontweight','bold')
       end % ivar2
    end % ivar1
-
-
 end % iconf
+
+exportgraphics(gcf,['plots/p1/sedonly_massnum.png'],'Resolution',300)

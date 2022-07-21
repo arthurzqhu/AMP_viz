@@ -9,11 +9,11 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
 vnum='0001'; % last four characters of the model output file.
 nikki='2022-06-15';
 
-run global_var.m
+global_var
 
 % get the list of configs. cant put it into globar_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
-load('pfm_summary/2022-06-15_condnuc_nummasscorr_dt1_pfm.mat');
+load('pfm_summary/2022-06-15_condnuc_pfm.mat');
 
 
 %%
@@ -27,9 +27,9 @@ var_units = {' [1/kg]', ' [g/kg]'};
 nvar=length(var_name_mod);
 
 for iconf = 1%:length(mconfig_ls)
-   condsum=struct;
-   mconfig=mconfig_ls{iconf};
-   run case_dep_var.m
+   condsum = struct;
+   mconfig = 'condnuc';
+   case_dep_var
    for ivar1 = 3
       for ivar2 = 3
          for its=1:length(bintype)
@@ -70,6 +70,10 @@ for iconf = 1%:length(mconfig_ls)
                   bin_cloud_path{ivar}(1:length(time));
                ratios(ivar,its) = mean(pfm.(var_name_mod{ivar}).(bintype{its}).mr(:));
                rsq(ivar,its) = mean(pfm.(var_name_mod{ivar}).(bintype{its}).rsq(:));
+               % ratios(ivar,its) = wmean(pfm.(var_name_mod{ivar}).(bintype{its}).mr(:),...
+               %    pfm.(var_name_mod{ivar}).(bintype{its}).mpath_bin(:));
+               % rsq(ivar,its) = wmean(pfm.(var_name_mod{ivar}).(bintype{its}).rsq(:),...
+               %    pfm.(var_name_mod{ivar}).(bintype{its}).mpath_bin(:));
             end
          end
 
@@ -118,8 +122,8 @@ for iconf = 1%:length(mconfig_ls)
          set(gca,'ycolor','none')
 
          xlabel(tl,'Time [s]','fontsize',24)
-         title(tl,'Cond. only - N_a = 400/cc, w_{max} = 4 m/s','fontsize',24,'fontweight','bold')
-         exportgraphics(gcf,['plots/p1/condonly_massnum_massconsv.jpg'],'Resolution',300)
+         title(tl,'Cond. only - N\fontsize{16}a\fontsize{24} = 400/cc, w\fontsize{16}max\fontsize{24} = 4 m/s','fontsize',24,'fontweight','bold')
+         exportgraphics(gcf,['plots/p1/condonly_massnum.png'],'Resolution',300)
       end
    end
 

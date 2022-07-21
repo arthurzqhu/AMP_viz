@@ -6,15 +6,16 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-01-25';
-run global_var.m
-mconfig = 'evaponly_cloud';
-run case_dep_var.m
+nikki='2022-06-15';
+global_var
+mconfig = 'evaponly';
+get_var_comp
+case_dep_var
 
-figure('Position',[1000 491 1000 486])
-tl=tiledlayout(2,2,'TileSpacing','compact');
+figure('Position',[1000 491 1000 280])
+tl=tiledlayout(1,2,'TileSpacing','compact');
 %% read files
-for its = 1:length(bintype)
+for its = length(bintype)
    if its==2
       binmean = load('diamg_sbm.txt')*1e6;
       nkr=33;
@@ -38,16 +39,16 @@ for its = 1:length(bintype)
          t2=int32(10/dt);
          t3=int32(20/dt);
 
-         bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,48);
-         amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,48);
+         bin_dist_t1=bin_struct.mass_dist(t1,1:nkr,24);
+         amp_dist_t1=amp_struct.mass_dist_init(t1+1,1:nkr,24);
 
-         bin_dist_t2=bin_struct.mass_dist(t2,1:nkr,48);
-         amp_dist_t2=amp_struct.mass_dist_init(t2+1,1:nkr,48);
+         bin_dist_t2=bin_struct.mass_dist(t2,1:nkr,24);
+         amp_dist_t2=amp_struct.mass_dist_init(t2+1,1:nkr,24);
 
-         bin_dist_t3=bin_struct.mass_dist(t3,1:nkr,48);
-         amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,48);
+         bin_dist_t3=bin_struct.mass_dist(t3,1:nkr,24);
+         amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,24);
 
-         nexttile(its)
+         nexttile
          hold on
 
          %shaded region
@@ -76,7 +77,7 @@ for its = 1:length(bintype)
          set(gca,'fontsize',16)
          grid
 
-         nexttile(2+its)
+         nexttile
          hold on
          %shaded region
          xx=binmean((15-its):krdrop)';
@@ -102,7 +103,7 @@ for its = 1:length(bintype)
          rectangle('position',[binmean(15-its),bin_dist_t3(krdrop)/1.2,binmean(krdrop)-binmean(15-its),bin_dist_t1(15-its)*1.2],'facecolor',[0.1 0.1 0.1 0.1])
 
          xlabel(tl,'Diameter [\mum]','fontsize',18)
-         ylabel(tl,'Mass concentration [kg/kg/dlogD]','fontsize',18)
+         ylabel(tl,'Mass conc. [kg/kg/dlogD]    ','fontsize',18)
          set(gca,'fontsize',16)
          grid
          exportgraphics(gcf,['plots/p1/evaponly_dist.jpg'],'Resolution',300)
@@ -110,5 +111,6 @@ for its = 1:length(bintype)
    end
 end
 
-annotation('line',[0.485 0.485], [0.17 0.926], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
-exportgraphics(gcf,['plots/p1/evaponly_dist.jpg'],'Resolution',300)
+% annotation('line',[0.485 0.485], [0.17 0.926], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
+exportgraphics(gcf,['plots/p1/evaponly_dist.png'],'Resolution',300)
+% print('plots/p1/evaponly_dist.png','-dpng','-r300')

@@ -3,7 +3,7 @@ function dev_strt = devfun(pfm, wORa)
 fldnm = fieldnames(pfm);
 bintype = {'tau','sbm'};
 
-for ifld = 1:length(fldnm)
+for ifld = 1:length(fldnm)-1
    for its = 1:2
       mean_ratio = pfm.(fldnm{ifld}).(bintype{its}).mr(:);
       mean_val = pfm.(fldnm{ifld}).(bintype{its}).mpath_bin(:);

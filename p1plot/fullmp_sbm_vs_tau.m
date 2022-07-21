@@ -94,6 +94,8 @@ ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,'Full microphysics - TAU vs SBM','fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/fullmp_sbm_vs_tau.jpg'],'Resolution',300)
 end
+
+title(tl,'Full microphysics - TAU vs SBM','fontsize',20,'fontweight','bold')
+exportgraphics(gcf,['plots/p1/fullmp_sbm_vs_tau.png'],'Resolution',300)
+% print('plots/p1/fullmp_sbm_vs_tau.png','-dpng','-r300')

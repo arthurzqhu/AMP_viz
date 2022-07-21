@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='normal_threshold';
+nikki='2022-06-15';
 global_var
 mconfig='sedonly';
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
@@ -31,7 +31,7 @@ ifn=1;
 tl=tiledlayout(4,4);
 for its=1:length(bintype)
    nexttile(its*2+3,[3 2])
-   nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn}))
+   nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn})(1:end-1,:))
    cb=colorbar;
    if its==length(bintype), cb.Label.String='AMP/bin ratio'; end
    title(upper(bintype{its}),'FontWeight','normal')
@@ -55,7 +55,7 @@ for its=1:length(bintype)
          mpath_bin_str(idx_ignore)={' '};
       end
 
-      for ivar1=1:length(var1_str)
+      for ivar1=1:length(var1_str)-1
          for ivar2=1:length(var2_str)
             % ----- get text color -----
             ngrads=size(coolwarm_r,1);
@@ -95,6 +95,6 @@ ylabel(tl,ylab,'fontsize',16)
 
 title(tl,['Sed. only - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/sedonly_grid.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/sedonly_grid.png'],'Resolution',300)
 
 end

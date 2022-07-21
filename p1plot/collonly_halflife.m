@@ -7,13 +7,14 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-02-24';
-run global_var.m
+nikki='2022-06-15';
+global_var
+get_var_comp([3:7 16])
 
 mconfig='collonly';
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
-run case_dep_var.m
+case_dep_var
 
 tmpvarname=fieldnames(pfm(1));
 fldnms=fieldnames(pfm(1).(tmpvarname{1}).(bintype{1}));
@@ -60,22 +61,16 @@ for its=1:length(bintype)
 
       for ivar1=1:length(var1_str)
          for ivar2=1:length(var2_str)
-
-
-
             if vidx(ivar1,ivar2)==1
-               text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
-                  'HorizontalAlignment','center',...
+               text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},...
+                  'FontSize',15,'HorizontalAlignment','center',...
                   'Color',coolwarm_r11(9,:)*.1,'FontName','Menlo')
                text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
                   'HorizontalAlignment','center',...
                   'Color',coolwarm_r11(9,:),'FontName','Menlo')
             end
-
-
          end
       end
-
    end
 end
 
@@ -88,5 +83,5 @@ ylabel(tl,ylab,'fontsize',16)
 
 title(tl,['Collision-coalescence only - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
    ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/collonly_halflife.jpg'],'Resolution',300)
 end
+exportgraphics(gcf,['plots/p1/collonly_halflife.png'],'Resolution',300)

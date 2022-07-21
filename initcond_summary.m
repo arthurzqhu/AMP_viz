@@ -8,9 +8,9 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'2022-06-15'};
-doplot = 1
-doload = 1
+nikkis = {'lower_thres', 'orig_thres'};
+doplot = 0
+doload = 0
 
 for ink = 1:length(nikkis)
    nikki = nikkis{ink}
@@ -21,10 +21,14 @@ for ink = 1:length(nikkis)
 
    %%
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf = 9%1:length(mconfig_ls)
+   for iconf = 4%length(mconfig_ls)
       mconfig = mconfig_ls{iconf}
-      get_var_comp
-      if doload
+      % get_var_comp
+      % get_var_comp([1 3 6])
+      % get_var_comp([3:7 16])
+      get_var_comp([3:7])
+      % get_var_comp([3:7 10 8])
+      if ~doload
       pfm = struct;
       case_dep_var
       for its = 1:length(bintype)
@@ -91,6 +95,8 @@ for ink = 1:length(nikkis)
             end % ivar2
          end % ivar1
       end % its
+      pfm.misc.var1_str = var1_str;
+      pfm.misc.var2_str = var2_str;
       save(['pfm_summary/' nikki '_' mconfig '_pfm.mat'],'pfm')
       else
       load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])

@@ -6,10 +6,10 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str 
 
 vnum='0001'; % last four characters of the model output file.
-nikki='normal_threshold';
-run global_var.m
+nikki='2022-06-15';
+global_var
 mconfig = 'sedonly';
-run case_dep_var.m
+case_dep_var
 
 figure('Position',[1000 491 1000 286])
 tl=tiledlayout(1,2,'TileSpacing','compact');
@@ -25,7 +25,7 @@ for its = 1:length(bintype)
       krdrop=15;
    end
    
-   for ivar1 = length(var1_str)
+   for ivar1 = 5%length(var1_str)
       for ivar2 = 2%length(var2_str)
          
          amp_struct = loadnc('amp');
@@ -95,4 +95,4 @@ for its = 1:length(bintype)
    end
 end
 
-exportgraphics(gcf,['plots/p1/sedonly_dist.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/sedonly_dist.png'],'Resolution',300)

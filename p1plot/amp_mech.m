@@ -1,9 +1,7 @@
 clear
 close all
 
-
 gnuc=4;
-
 
 rxc=1e-3;
 nxc=300e6;
@@ -13,10 +11,6 @@ nkr=50;
 nkr_smot=200;
 dmin=1e-8;
 dmax=1e-4;
-
-% diams=load('sbm_binmean.txt')*2;
-% diams=logspace(log10(dmin),log10(dmax),nkr);
-% diams_smot=logspace(log10(dmin),log10(dmax),nkr_smot);
 
 diams=linspace(dmin,dmax,nkr);
 diams_smot=linspace(dmin,dmax,nkr_smot);
@@ -37,22 +31,8 @@ ffcd=ffcd_smot(1:4:end);
 
 set(gcf,'visible','off')
 %%
-% 
-% for kr=1:nkr
-%    exptermc=exp(-1*diams(kr)/dnc);
-%    ffcd(kr)=n0c*exptermc*(diams(kr)/dnc)^(gnuc+3);
-%    ffcd_pert(kr)=n0c*exptermc*(diams(kr)/dnc)^(gnuc+3)*(0.8+rand*0.4);
-%    if ffcd_pert(kr)<0
-%       ffcd_pert(kr)=0;
-%    end
-% end
-% 
-% for kr=1:nkr_smot
-%    exptermc=exp(-1*diams_smot(kr)/dnc);
-%    ffcd_smot(kr)=n0c*exptermc*(diams_smot(kr)/dnc)^(gnuc+3);
-% end
 
-hf=figure('Position',[1236 117 1345 860]);
+hf=figure('Position',[0 0 1345 860]);
 % grid
 
 annotation('arrow',[.2729 .3019],[.4711 .3767],'LineWidth',4,...
@@ -133,8 +113,6 @@ grid
 set(gca,'YColor','none')
 set(gca,'XColor','none')
 
-
-
 hold off
 
-exportgraphics(gcf,'plots/p1/amp_mech.jpg','Resolution',300)
+exportgraphics(gcf,'plots/p1/amp_mech.png','Resolution',300)

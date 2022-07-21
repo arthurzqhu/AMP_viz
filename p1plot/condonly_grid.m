@@ -7,9 +7,9 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-05-25';
+nikki='lower_threshold';
 global_var
-get_var_comp([3 6])
+get_var_comp([3 4])
 mconfig='condnuc';
 load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
 case_dep_var
@@ -20,21 +20,23 @@ fldnms=fldnms(1:end-1);
 
 close all
 
-plot_var={'cloud_M1_path'};
+plot_var={'cloud_M1_path','rain_M1_path'};
+
+figure('position',[1331 587 1250 390])
+tl=tiledlayout(4,4);
 
 for ipvar=1:length(plot_var)
-figure('position',[1331 587 1250 390])
 alb_idx=find(contains(indvar_name_set,plot_var{ipvar}));
 ivar=alb_idx;
 ifn=1;
 
-tl=tiledlayout(4,4);
-for its=1:length(bintype)
-   nexttile(its*2+3,[3 2])
+for its=1%:length(bintype)
+   nexttile(ipvar*2+3,[3 2])
    nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn}))
    cb=colorbar;
-   if its==length(bintype), cb.Label.String='AMP/bin ratio'; end
-   title(upper(bintype{its}),'FontWeight','normal')
+   if ipvar == length(plot_var), cb.Label.String='AMP/bin ratio'; end
+   title(sprintf('(%s) %s%s', char(96+ivar), indvar_ename_set{ivar}, indvar_units_set{ivar}), ...
+      'FontWeight', 'normal')
    xticks(1:length(var2_str))
    yticks(1:length(var1_str))
    xticklabels(extractAfter(var2_str,lettersPattern))
@@ -93,8 +95,8 @@ ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
 
-title(tl,['Cond. + Nucl. - ' indvar_ename_set{ivar} indvar_units_set{ivar} ...
-   ],'fontsize',20,'fontweight','bold')
-exportgraphics(gcf,['plots/p1/condonly_cloudmass.jpg'],'Resolution',300)
+title(tl,'Cond. + Nucl. (TAU, D\fontsize{13}t\fontsize{20} = 50 \mum)',...
+   'fontsize',20,'fontweight','bold')
+exportgraphics(gcf,['plots/p1/condonly_grid.jpg'],'Resolution',300)
 
 end

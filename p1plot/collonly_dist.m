@@ -6,10 +6,10 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str 
 
 vnum='0001'; % last four characters of the model output file.
-nikki='normal_threshold';
-run global_var.m
+nikki='2022-06-15';
+global_var
 mconfig = 'collonly';
-run case_dep_var.m
+case_dep_var
 
 figure('Position',[1000 491 1000 486])
 tl=tiledlayout(2,2,'TileSpacing','compact');
@@ -56,10 +56,10 @@ for its = 1:length(bintype)
          yy2=amp_dist_t2(10:krdrop+4);
          pt=patch([xx fliplr(xx)], [yy1 fliplr(yy2)], [.8 .8 .8],'edgecolor','none');
          set(get(get(pt,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
-         plot(binmean,amp_dist_t1,'Color',color_order{5-its},'LineWidth',2)
-         plot(binmean,amp_dist_t2,'Color',color_order{5-its},...
+         plot(binmean,amp_dist_t1,'Color',color_order{its},'LineWidth',2)
+         plot(binmean,amp_dist_t2,'Color',color_order{its},...
             'LineWidth',2,'LineStyle','--')
-         plot(binmean,amp_dist_t3,'Color',color_order{5-its},...
+         plot(binmean,amp_dist_t3,'Color',color_order{its},...
             'LineWidth',2,'LineStyle',':')
          hold off
 
@@ -67,7 +67,7 @@ for its = 1:length(bintype)
          lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';
-         xline(binmean(krdrop+1),'linestyle','--','linewidth',3,'color',[color_order{7} 0.2])
+         xline(binmean(krdrop),'linestyle','--','linewidth',3,'color',color_order{7}*0.5)
 
          xlim([binmean(1) 500])
          ylim([1e-5 3e-3])
@@ -100,7 +100,7 @@ for its = 1:length(bintype)
          lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';
-         xline(binmean(krdrop+1),'--','linewidth',3,'color',[color_order{7} 0.2])
+         xline(binmean(krdrop),'--','linewidth',3,'color',color_order{7}*0.5)
 
          xlabel(tl,'Diameter [\mum]','fontsize',18)
          ylabel(tl,'Mass conc. [kg/kg/dlogD]','fontsize',18)
@@ -111,4 +111,4 @@ for its = 1:length(bintype)
 end
 
 annotation('line',[0.485 0.485], [0.125 0.927], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
-exportgraphics(gcf,['plots/p1/collonly_dist.jpg'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/collonly_dist.png'],'Resolution',300)

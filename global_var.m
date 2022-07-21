@@ -2,7 +2,7 @@ global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
    l_amp l_sbm indvar_name_set indvar_ename_set indvar_units_set ...
    cwp_th rwp_th sppt_th indvar2D_name_set indvar2D_ename_set indvar2D_units_set ...
    color_order indvar_name_all indvar_ename_all indvar_units_all ...
-   mconfigivar_dict split_bins col binmean
+   mconfigivar_dict split_bins col
 
 indvar_name_set = {};
 indvar_ename_set = {};
@@ -13,8 +13,8 @@ split_bins = [15 14];
 
 %% constants
 col = log(2)/3;
-binmean(1,:) = load('diamg_tau.txt');
-binmean(2,1:33) = load('diamg_sbm.txt');
+% binmean(1,:) = load('diamg_tau.txt');
+% binmean(2,1:33) = load('diamg_sbm.txt');
 
 %% model configs
 ampORbin = {'amp' 'bin'};
@@ -43,7 +43,7 @@ rain_mr_th = [1e-7 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
 rain_n_th = [1e2 inf]; % #/m2
 cwp_th = [1e-5 inf]; % kg/m2 cloud water path threshold
-rwp_th = [1e-6 inf]; % kg/m2 rain water path threshold
+rwp_th = [1e-4 inf]; % kg/m2 rain water path threshold
 meanD_th = [0 inf];
 sppt_th = [0.01 inf]; % mm/hr surface precipitation
 
@@ -61,9 +61,12 @@ rainbow = getPyPlot_cMap('rainbow',20);
 coolwarm_s = getPyPlot_cMap('coolwarm');
 coolwarm = getPyPlot_cMap('coolwarm',10);
 coolwarm5 = getPyPlot_cMap('coolwarm',5);
+coolwarm3 = getPyPlot_cMap('coolwarm',3);
 coolwarm_r = getPyPlot_cMap('coolwarm_r',10);
 coolwarm_r11 = getPyPlot_cMap('coolwarm_r',11);
 coolwarm_rs = getPyPlot_cMap('coolwarm_r');
+flag3 = coolwarm_r11([6 9 2],:);
+flag3(1,:) = [1, 1, 1];
 
 ngrad=21;
 BrBG5 = getPyPlot_cMap('BrBG',5);
@@ -84,7 +87,7 @@ initVarUnit_dict = containers.Map(initvarSet, unitSet);
 mconfigSet = {'condnuc', 'condonly', 'collonly', 'sedonly', 'evaponly', ...
               'condcoll', 'collsed', 'evapsed', 'condcollsed', ...
               'collsedevap', 'fullmic'};
-indvaridx = {[1 3 6], [1 3 6], [3:7], [2 4 5 7 10], [1 3 6], ...
+indvaridx = {[3 5 6], [3 5 6], [3:7], [4 5 7 10], [3 5 6], ...
              [3:7], [3:7 10], [3:7 10], [3:7 10], ...
              [3:7 10], [3:7 10]};
 % indvaridx = {[3 6], [3:7 16], [4 5 7 10], [3 6], ...

@@ -1,4 +1,4 @@
-function [MR, RSQ, ER, MAXR, MD, SEDR, MSD_AMP, MSD_BIN, ...
+function [MR, RSQ, ER, MAXR, MD, SERR, MSD_AMP, MSD_BIN, ...
       MVAL_AMP, MVAL_BIN, SVAL_AMP, SVAL_BIN] = wrsq(ya,yb,wgt)
 % calculate MRSQ modified rsq (mass weighted, bin as standard)
 % MR ratio of mean amp vs mean bin (accuracy of magnitude estimation)
@@ -6,7 +6,7 @@ function [MR, RSQ, ER, MAXR, MD, SEDR, MSD_AMP, MSD_BIN, ...
 % ER ratio of final amp vs bin
 % MAXR ratio of maximum of amp vs bin
 % MD difference between maximum of amp vs bin
-% SEDR difference between (ya(end) - ya(1)) and (yb(end) - yb(1))
+% SERR difference between (ya(end) - ya(1)) and (yb(end) - yb(1))
 % SED_AMP ya(end) - ya(1)
 % SED_BIN yb(end) - yb(1)
 % ya = amp values
@@ -21,7 +21,7 @@ wgt = double(wgt);
 vidxn = find(~isnan(ya + yb) & (ya ~= -999) & (yb ~= -999));
 
 if all(ya == 0) || all(yb == 0) || isempty(vidxn)
-   [MRSQ, MR, RSQ, ER, MAXR, MD, SEDR, MSD_AMP, MSD_BIN, ...
+   [MRSQ, MR, RSQ, ER, MAXR, MD, SERR, MSD_AMP, MSD_BIN, ...
       MVAL_AMP, MVAL_BIN, SVAL_AMP, SVAL_BIN] = deal(nan);
    return
 end
@@ -33,7 +33,7 @@ MR = MVAL_AMP / MVAL_BIN;
 MD = MVAL_AMP - MVAL_BIN;
 ER = ya(vidxn(end)) / yb(vidxn(end));
 MAXR = max(ya(vidxn)) / max(yb(vidxn));
-SEDR = (ya(vidxn(end)) / ya(vidxn(1))) / (yb(vidxn(end)) / yb(vidxn(1)));
+SERR = (ya(vidxn(end)) / ya(vidxn(1))) / (yb(vidxn(end)) / yb(vidxn(1)));
 MSD_AMP = mean(ya(vidxn)) - ya(vidxn(1));
 MSD_BIN = mean(yb(vidxn)) - yb(vidxn(1));
 SVAL_AMP = ya(vidxn(1));

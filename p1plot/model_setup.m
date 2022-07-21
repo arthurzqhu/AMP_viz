@@ -78,4 +78,4 @@ xlabel('RH [%]')
 ylabel('Altitude [m]')
 ylim([0 8000])
 
-exportgraphics(gcf,'plots/p1/model setup.jpg','Resolution',300)
+print('plots/p1/model setup.png','-dpng','-r300')
