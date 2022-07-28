@@ -2,33 +2,37 @@ clear
 clear global
 
 global nfile runs mpdat mp_list imp deltaz z mconfig bintype its output_dir var_int_idx ...
-   filedir bintype
+   filedir var_interest nikki iab
 close all
 
 addpath('ramsfuncs/')
 doplot = 1
-doload = 1
+doload = 0
 
+nikki='yesUV';
 rglobal_var
-nikki='noUV';
 mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % index of variables to be plotted
 % corresponding variables can be found in rglobal_var.m
-var_int_idx = [1:3 6:8 11];
+var_int_idx = [4:6 10:14 17];
 
 % whether we want the domain averaged quantity
 % can be set to an array but needs to have the same length as var_int_idx
 l_da = 1; 
 
-% get var_interest as an object
-var_interest = get_varint(var_int_idx);
-
 if ~doload
-   for iconf = 1:length(mconfig_ls)-1
+   for iconf = 1:length(mconfig_ls)
 
    mconfig = mconfig_ls{iconf}
    for its = 1:length(bintype)
+
+      % set dummy var iab to avoid errors
+      iab = 1;
+
+      % get var_interest as an object
+      var_interest = get_varint(var_int_idx);
+
 
       amp_runs = loadrams('amp');
       bin_runs = loadrams('bin');
@@ -72,7 +76,7 @@ if doplot
       pRange = var_interest(ivar).range;
       linORlog = var_interest(ivar).linORlog;
 
-      set(gcf,'position',[1331 587 1250 390])
+      set(gcf,'position',[0 0 1250 390])
       tl = tiledlayout(4,4);
       for its = 1:length(bintype)
          nexttile(its*2+3,[3 2])

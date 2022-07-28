@@ -216,7 +216,6 @@ for ink = 1:length(nikkis)
             saveas(figure(ifn),[plot_dir ' summ ' ...
                (indvar_ename{ivar}) ' ' fldnms{ifn}...
                '.png'])
-            pause(.5)
          end
       end
       end

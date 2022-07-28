@@ -73,12 +73,21 @@ global runs deltaz density binmean
             loaded_var.(varname) = 1e3*runs.RCP;
          case 'RWC'
             loaded_var.(varname) = 1e3*runs.RRP;
+         case 'CNC'
+            loaded_var.(varname) = runs.CCP;
+         case 'RNC'
+            loaded_var.(varname) = runs.CRP;
          case 'CWP'
             loaded_var.(varname) = 1e3*deltaz*squeeze(sum(runs.RCP.*density,3));
          case 'RWP'
             loaded_var.(varname) = 1e3*deltaz*squeeze(sum(runs.RRP.*density,3));
+         case 'CNP'
+            loaded_var.(varname) = deltaz*squeeze(sum(runs.CCP.*density,3));
+         case 'RNP'
+            loaded_var.(varname) = deltaz*squeeze(sum(runs.CRP.*density,3));
          case 'Rv'
-            loaded_var.(varname) = deltaz*squeeze(sum(runs.RV.*density,3));
+            % loaded_var.(varname) = deltaz*squeeze(sum(runs.RV.*density,3));
+            loaded_var.(varname) = runs.RV;
          case 'RH'
             loaded_var.(varname) = rh(runs.RV,runs.THETA,runs.PI);
          case 'DSDm'
@@ -87,29 +96,27 @@ global runs deltaz density binmean
             loaded_var.(varname) = runs.FFCDN;
          case 'reldisp'
             loaded_var.(varname) = runs.RELDISP;
-            % runs.FFCD(runs.FFCD<0) = 0;
-            % runs.FFCD(isnan(runs.FFCD)) = 0;
-            % for ix = 1:size(runs.FFCD,1)
-            %    for iy = 1:size(runs.FFCD,2)
-            %       for iz = 1:size(runs.FFCD,3)
-            %          for it = 1:size(runs.FFCD,4)
-            %             meanD = wmean(binmean, squeeze(runs.FFCD(ix, iy, iz, it, :)));
-            %             stdD = std(binmean, squeeze(runs.FFCD(ix, iy, iz, it, :)));
-            %             loaded_var.(varname)(ix,iy,iz,it) = stdD/meanD;
-            %             % [ix, iy, iz, it, stdD/meanD]
-            %          end
-            %       end
-            %    end
-            % end
+         case 'flagc'
+            loaded_var.(varname) = runs.GUESSC3;
+         case 'flagr'
+            loaded_var.(varname) = runs.GUESSR3;
+         case 'pres'
+            loaded_var.(varname) = press(runs.PI);
+         case 'temp'
+            loaded_var.(varname) = temp(runs.THETA, runs.PI);
       end
       loaded_varname{end+1} = varname;
    end
 
    switch varin_obj.var_name 
-      case "LWP"
-         loaded_var.(varin_obj.var_name) = loaded_var.CWP + loaded_var.RWP;
       case "LWC"
          loaded_var.(varin_obj.var_name) = loaded_var.CWC + loaded_var.RWC;
+      case "LWP"
+         loaded_var.(varin_obj.var_name) = loaded_var.CWP + loaded_var.RWP;
+      case "LNC"
+         loaded_var.(varin_obj.var_name) = loaded_var.CNC + loaded_var.RNC;
+      case "LNP"
+         loaded_var.(varin_obj.var_name) = loaded_var.CNP + loaded_var.RNP;
    end
    
    % mark additional loaded var if it's a compound variable (calculated from multiple sources)
@@ -120,7 +127,7 @@ end
 
 function da_val = calc_domainavg(val)
    % assuming x, y are the first two dimensions
-   % i.e., val in the form of (x,y,z,t) or (x,y,t) etc.
+   % i.e., vars in the form of (x,y,z,t) or (x,y,t) etc.
    
    da_val = squeeze(mean(val,[1 2]));
 end

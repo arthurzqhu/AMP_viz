@@ -2,28 +2,24 @@ clear
 clear global
 
 global nfile filedir runs mpdat mp_list deltaz deltax z nikki mconfig its ...
-   var_interest
+   var_interest iab
 close all
 
 addpath('ramsfuncs/')
 doanim = 0;
 doplot = 1;
 
+nikki = 'yesUV';
 rglobal_var
-nikki = 'noUV';
 mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % index of variables to be plotted
 % corresponding variables can be found in rglobal_var.m
-var_int_idx = [1:3 6:8 11];
+var_int_idx = [7:9];
 
 % whether we want the domain averaged quantity
 % can be set to an array but needs to have the same length as var_int_idx
 l_da = 1; 
-
-% get var_interest as an object
-var_interest = get_varint(var_int_idx);
-
 
 for iconf = 1:length(mconfig_ls)
 mconfig = mconfig_ls{iconf}
@@ -31,6 +27,9 @@ mconfig = mconfig_ls{iconf}
 % load RAMS output
 for its = 1:length(bintype)
    for iab = 1:length(ampORbin)
+      % get var_interest as an object
+      var_interest = get_varint(var_int_idx);
+
       mps = [ampORbin{iab} '_' bintype{its}];
       mp_runs.(mps) = loadrams(ampORbin{iab});
       % make sure that z is never negative
@@ -123,7 +122,7 @@ for ivar = 1:length(varname_interest)
             ylabel('lat')
             title(['time = ' fn{it}(end-11:end-6)])
 
-            cdata = print('-RGBImage','-r144');
+            cdata = print('-RGBImage','-r300');
             F(it) = im2frame(cdata);
             %F(it)=getframe(gcf);
          end
