@@ -15,7 +15,7 @@ mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % index of variables to be plotted
 % corresponding variables can be found in rglobal_var.m
-var_int_idx = [7:9];
+var_int_idx = [4:6 10:14 17 20 22];
 
 % whether we want the domain averaged quantity
 % can be set to an array but needs to have the same length as var_int_idx
@@ -49,6 +49,16 @@ for ivar = 1:length(varname_interest)
    tl = tiledlayout('flow');
    varn = varname_interest{ivar};
    pRange = var_interest(ivar).range;
+   if isempty(pRange)
+      ubound = max(abs(mp_runs.(mps).(varn)(:)));
+      if min(mp_runs.(mps).(varn)(:)) < 0
+         lbound = -ubound;
+      else
+         lbound = min(mp_runs.(mps).(varn)(:));
+      end
+      pRange = [lbound ubound];
+   end
+
    linORlog = var_interest(ivar).linORlog;
    for its = 1:length(bintype)
       for iab = 1:length(ampORbin)
@@ -64,10 +74,14 @@ for ivar = 1:length(varname_interest)
             % domain averaged profile
             nexttile
             nanimagesc(mp_runs.(mps).time, z, mp_runs.(mps).(varn))
-            ylim([600 1100])
             cbar = colorbar;
             cbar.Label.String = [varename_interest{ivar} varunit_interest{ivar}];
-            colormap(cmap.Blues)
+            ylim([0 1100])
+            if varn == "w_da"
+               colormap(cmap.coolwarm)
+            else
+               colormap(cmap.Blues)
+            end
             datetick('keeplimits')
             caxis(pRange)
             set(gca,'ColorScale',linORlog)

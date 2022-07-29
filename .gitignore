@@ -11,3 +11,4 @@ cases for plot/*
 *.swp
 *.png
 Session.vim
+rams_ml_dataset/*

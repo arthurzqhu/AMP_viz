@@ -73,10 +73,6 @@ global runs deltaz density binmean
             loaded_var.(varname) = 1e3*runs.RCP;
          case 'RWC'
             loaded_var.(varname) = 1e3*runs.RRP;
-         case 'CNC'
-            loaded_var.(varname) = runs.CCP;
-         case 'RNC'
-            loaded_var.(varname) = runs.CRP;
          case 'CWP'
             loaded_var.(varname) = 1e3*deltaz*squeeze(sum(runs.RCP.*density,3));
          case 'RWP'
@@ -85,25 +81,14 @@ global runs deltaz density binmean
             loaded_var.(varname) = deltaz*squeeze(sum(runs.CCP.*density,3));
          case 'RNP'
             loaded_var.(varname) = deltaz*squeeze(sum(runs.CRP.*density,3));
-         case 'Rv'
-            % loaded_var.(varname) = deltaz*squeeze(sum(runs.RV.*density,3));
-            loaded_var.(varname) = runs.RV;
          case 'RH'
             loaded_var.(varname) = rh(runs.RV,runs.THETA,runs.PI);
-         case 'DSDm'
-            loaded_var.(varname) = runs.FFCD;
-         case 'DSDn'
-            loaded_var.(varname) = runs.FFCDN;
-         case 'reldisp'
-            loaded_var.(varname) = runs.RELDISP;
-         case 'flagc'
-            loaded_var.(varname) = runs.GUESSC3;
-         case 'flagr'
-            loaded_var.(varname) = runs.GUESSR3;
          case 'pres'
             loaded_var.(varname) = press(runs.PI);
          case 'temp'
             loaded_var.(varname) = temp(runs.THETA, runs.PI);
+         otherwise
+            loaded_var.(varname) = runs.(varin_obj.prereq_vars{end});
       end
       loaded_varname{end+1} = varname;
    end

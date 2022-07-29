@@ -15,24 +15,23 @@ mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % index of variables to be plotted
 % corresponding variables can be found in rglobal_var.m
-var_int_idx = [4:6 10:14 17];
+var_int_idx = [4:6 10:14 17 20 22];
 
 % whether we want the domain averaged quantity
 % can be set to an array but needs to have the same length as var_int_idx
 l_da = 1; 
+
+% set dummy var iab to avoid errors
+iab = 1;
+% get var_interest as an object
+var_interest = get_varint(var_int_idx);
+
 
 if ~doload
    for iconf = 1:length(mconfig_ls)
 
    mconfig = mconfig_ls{iconf}
    for its = 1:length(bintype)
-
-      % set dummy var iab to avoid errors
-      iab = 1;
-
-      % get var_interest as an object
-      var_interest = get_varint(var_int_idx);
-
 
       amp_runs = loadrams('amp');
       bin_runs = loadrams('bin');
@@ -84,7 +83,7 @@ if doplot
          mean_ratio(mean_ratio==0) = nan;
          nanimagesc(mean_ratio)
 
-         set(gca,'ydir','reverse')
+         % set(gca,'ydir','reverse')
          cb = colorbar;
          if its == length(bintype)
             cb.Label.String = 'AMP/bin'; 
@@ -104,7 +103,7 @@ if doplot
 
          xticks(1:size(mval_amp,2))
          yticks(1:size(mval_amp,1))
-         xticklabels((1:size(mval_amp,2))*2)
+         xticklabels((0:size(mval_amp,2)-1)*2)
          yticklabels((0:size(mval_amp,1)-1)*2)
 
          set(gca,'FontSize',16)

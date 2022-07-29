@@ -7,7 +7,7 @@ close all
 
 addpath('ramsfuncs/')
 
-nikki = 'yesUV';
+nikki = 'noUV';
 rglobal_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
 
@@ -17,32 +17,27 @@ l_da = 0;
 
 
 
-% for iconf = 1:length(mconfig_ls)
-%    mconfig = mconfig_ls{iconf}
-
-%    % load RAMS output
-%    for its = 1:length(bintype)
-%       iab = 1;
-
-%       % get var_interest as an object
-%       var_interest = get_varint(var_int_idx);
-
-%       mps = [ampORbin{iab} '_' bintype{its}];
-%       mp_runs.(mps) = loadrams(ampORbin{iab});
-
-%       mat2write_amp(:,1) = mp_runs.(mps).pres(:);
-%       mat2write_amp(:,2) = mp_runs.(mps).temp(:);
-%       mat2write_amp(:,3) = mp_runs.(mps).Rv(:);
-%       mat2write_amp(:,4) = mp_runs.(mps).CWC(:);
-%       mat2write_amp(:,5) = mp_runs.(mps).RWC(:);
-%       mat2write_amp(:,6) = mp_runs.(mps).CNC(:);
-%       mat2write_amp(:,7) = mp_runs.(mps).RNC(:);
-%       mat2write_amp(:,8) = mp_runs.(mps).flagc(:);
-%       mat2write_amp(:,9) = mp_runs.(mps).flagr(:);
-
-%       writematrix(mat2write_amp, sprintf('rams_ml_dataset/%s_%s.txt', mconfig, mps))
-%    end
-% end
+for iconf = 1:length(mconfig_ls)
+   mconfig = mconfig_ls{iconf}
+   % load RAMS output
+   for its = 1:length(bintype)
+      iab = 1;
+      % get var_interest as an object
+      var_interest = get_varint(var_int_idx);
+      mps = [ampORbin{iab} '_' bintype{its}];
+      mp_runs.(mps) = loadrams(ampORbin{iab});
+      mat2write_amp(:,1) = mp_runs.(mps).pres(:);
+      mat2write_amp(:,2) = mp_runs.(mps).temp(:);
+      mat2write_amp(:,3) = mp_runs.(mps).Rv(:);
+      mat2write_amp(:,4) = mp_runs.(mps).CWC(:);
+      mat2write_amp(:,5) = mp_runs.(mps).RWC(:);
+      mat2write_amp(:,6) = mp_runs.(mps).CNC(:);
+      mat2write_amp(:,7) = mp_runs.(mps).RNC(:);
+      mat2write_amp(:,8) = mp_runs.(mps).flagc(:);
+      mat2write_amp(:,9) = mp_runs.(mps).flagr(:);
+      writematrix(mat2write_amp, sprintf('rams_ml_dataset/%s_%s.txt', mconfig, mps))
+   end
+end
 
 clear mat2write_amp
 
