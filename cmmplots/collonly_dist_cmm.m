@@ -12,6 +12,9 @@ figbg_color = '#7F96C5';
 shade_color_rgb = [.8 .8 .8];
 textclr_rgb = num2str(hex2rgb(textclr));
 wrapper_color = {'#16E8CF', '#FBE232'};
+tau_color = '#0072BD';
+sbm_color = '#FF7439';
+bintype_color = {tau_color, sbm_color};
 
 
 vnum='0001'; % last four characters of the model output file.
@@ -75,7 +78,7 @@ for its = 1:length(bintype)
 
    title(sprintf('\\color[rgb]{%s}AMP\\color[rgb]{%s}-\\color[rgb]{%s}%s',...
       num2str(hex2rgb(wrapper_color{1})), textclr_rgb, ...
-      num2str(color_order{its}), upper(bintype{its})))
+      num2str(hex2rgb(bintype_color{its})), upper(bintype{its})))
    lg=legend('t = 0 min','t = 6 min','t = 12 min',...
       'Location','northeast','AutoUpdate','off');
    lg.FontWeight='bold';
@@ -118,7 +121,7 @@ for its = 1:length(bintype)
    
    title(sprintf('\\color[rgb]{%s}bin\\color[rgb]{%s}-\\color[rgb]{%s}%s',...
       num2str(hex2rgb(wrapper_color{2})), textclr_rgb, ...
-      num2str(color_order{its}), upper(bintype{its})))
+      num2str(hex2rgb(bintype_color{its})), upper(bintype{its})))
    lg=legend('t = 0 min','t = 6 min','t = 12 min',...
       'Location','northeast','AutoUpdate','off');
    lg.FontWeight='bold';
