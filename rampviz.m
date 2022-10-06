@@ -9,13 +9,13 @@ addpath('ramsfuncs/')
 doanim = 0;
 doplot = 1;
 
-nikki = 'yesUV';
+nikki = '2022-09-09';
 rglobal_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % index of variables to be plotted
 % corresponding variables can be found in rglobal_var.m
-var_int_idx = [4:6 10:14 17 20 22];
+var_int_idx = [4:6 10:14];
 
 % whether we want the domain averaged quantity
 % can be set to an array but needs to have the same length as var_int_idx

@@ -47,7 +47,9 @@ else
          stct.(varargin{1}{ivar}) = ncread(filename, varargin{1}{ivar});
          stct.(varargin{1}{ivar})(stct.(varargin{1}{ivar}) == -999) = nan;
       catch
-         warning(['Variable ' varargin{1}{ivar} ' does not exist. Skipping...'])
+         if ~contains(varargin{1}{ivar}, {'liq','half_life_c'})
+            warning(['Variable ' varargin{1}{ivar} ' does not exist. Skipping...'])
+         end
       end
    end
    for iliq = find(contains(varargin{1},'liq'))
@@ -62,22 +64,25 @@ end
 
 if exist('var_name', 'var')
    % combine cloud and rain type
+   nvar = length(var_name);
    var_wcloud=var_name(contains(var_name,'cloud'));
    var_wrain=replace(var_wcloud,'cloud','rain');
    var_wliq=replace(var_wcloud,'cloud','liq');
    var_name=[var_name;var_wliq];
    liq_count=length(var_wliq);
    ivar=1;
-   for ivaradd = length(fileinfo.Variables)+1:length(fileinfo.Variables)+liq_count
-      stct.(var_name{ivaradd})=stct.(var_wcloud{ivar})+stct.(var_wrain{ivar});
-      ivar=ivar+1;
+   for ivaradd = nvar+1:nvar+liq_count
+      try % in case I only want to EITHER cloud OR rain
+         stct.(var_name{ivaradd})=stct.(var_wcloud{ivar})+stct.(var_wrain{ivar});
+         ivar=ivar+1;
+      end
    end
 
-   % calculate supersaturation
-   var_name=[var_name;'ss_w'];
-   supsat = stct.RH - 100;
-   supsat(supsat < 0) = nan;
-   stct.ss_w = supsat;
+   % % calculate supersaturation
+   % var_name=[var_name;'ss_w'];
+   % supsat = stct.RH - 100;
+   % supsat(supsat < 0) = nan;
+   % stct.ss_w = supsat;
 
    % var_name=[var_name;'ss_wpremphys'];
    % supsat = stct.RH_premphys - 100;
@@ -146,16 +151,13 @@ else
 end
 
 
-% masks of datapoints higher than cloud/rain/liquid threshold
-mass_c = stct.diagM3_cloud*pi/6*1000;
-mass_r = stct.diagM3_rain*pi/6*1000;
-mass_l = stct.diagM3_liq*pi/6*1000;
+% % masks of datapoints higher than cloud/rain/liquid threshold
+% mass_c = stct.diagM3_cloud*pi/6*1000;
+% mass_r = stct.diagM3_rain*pi/6*1000;
+% mass_l = stct.diagM3_liq*pi/6*1000;
 
-mask_c = mass_c > cloud_mr_th(1);
-mask_r = mass_r > rain_mr_th(1);
-mask_l = mass_c > min([cloud_mr_th(1), rain_mr_th(1)]);
-
-if bintype{its} == "sbm"
-end
+% mask_c = mass_c > cloud_mr_th(1);
+% mask_r = mass_r > rain_mr_th(1);
+% mask_l = mass_c > min([cloud_mr_th(1), rain_mr_th(1)]);
 
 end

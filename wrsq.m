@@ -1,5 +1,5 @@
-function [MR, RSQ, ER, MAXR, MD, SERR, MSD_AMP, MSD_BIN, ...
-      MVAL_AMP, MVAL_BIN, SVAL_AMP, SVAL_BIN] = wrsq(ya,yb,wgt)
+function [MR, RSQ, MVAL_AMP, MVAL_BIN, ER, MAXR, MD, SERR, MSD_AMP, MSD_BIN, ...
+      SVAL_AMP, SVAL_BIN] = wrsq(ya,yb,wgt)
 % calculate MRSQ modified rsq (mass weighted, bin as standard)
 % MR ratio of mean amp vs mean bin (accuracy of magnitude estimation)
 % RSQ regular rsq except mass weighted (accuracy of trend capturing)

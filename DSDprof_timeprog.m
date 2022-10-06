@@ -10,11 +10,10 @@ if ~exist('var_overlay','var') || isempty(var_overlay)
    var_overlay=nan;
 end
 
-time_length = floor((tf-ti+1)/ts_plot);
+time_length = floor((tf-ti)/ts_plot+1);
 ts_output=ts_plot/dt;
 
-loops = time_length;
-F(loops) = struct('cdata',[],'colormap',[]);
+F(time_length) = struct('cdata',[],'colormap',[]);
 
 
 if any(~isnan(var_overlay(:)))
@@ -26,17 +25,21 @@ end
 tl=tiledlayout('flow');
 nexttile(1)
 iframe = 1;
-for itime = ti:ts_plot:tf
-   it_output = int32(itime*dt);
+iti = int32(ti/dt);
+itf = int32(tf/dt);
+istep = int32(ts_plot/dt);
+
+for itime = iti:istep:itf
+   real_time = double(itime)*double(dt);
 
    switch pltflag
       case {'mass','mass_diff','mass_adv'}
-         DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:));
+         DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:));
       case {'number','number_diff'}
          if bintype{its}=="tau"
-            DSD_prof_is=squeeze(DSDprof_mphys(it_output,:,:))/1e6;
+            DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:))/1e6;
          else
-            DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(it_output,:,:)),binmean)/1e6;
+            DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(itime,:,:)),binmean)/1e6;
          end
    end
    
@@ -48,7 +51,11 @@ for itime = ti:ts_plot:tf
    set(gca,'XScale','log')
    set(gca,'YDir','normal')
    
-   xlim([min(binmean) max(binmean)])
+   if any(~isnan(var_overlay(:)))
+      xlim([1e-7 max(var_overlay(:))])
+   else
+      xlim([min(binmean) max(binmean)])
+   end
    %     ylim([0 3000])
    colormap(c_map)
    cbar = colorbar;
@@ -77,37 +84,25 @@ for itime = ti:ts_plot:tf
    ylabel('Altitude [m]')
    
    if any(~isnan(var_overlay(:)))
-   %   hold on
-   %   plot(var_overlay(itime,:),z,'color',color_order{2},'linewidth',2)
-   %   hold off
-   %   ax1 = gca;
-   %   ax1_pos = ax1.Position;
-   %   ax2 = axes('Position',[0.1198 0.1100 0.7141 0.8150],...
-   %      'XAxisLocation','top',...
-   %      'YAxisLocation','left',...
-   %      'Color','none');
-   %   
-   %   line(var_overlay(itime,:),z,'Parent',ax2,'linewidth',2,'color','g')
-   %   set(gca,'YColor','none')
-   %   %         xlim([30 110])
-   %   %xlim([-1e-5 1e-5])
-   %   xlim([min(binmean) max(binmean)])
-   %   %         xline(0,'color','r')
-      nexttile(2)
-      plot(var_overlay(itime,:),z,'linewidth',2)
-      xlabel('RH')
-      xlim([min(var_overlay(:)) max(var_overlay(:))])
+
+      hold on
+      % nexttile(2)
+      plot(var_overlay(itime,:,1),z,'linewidth',1,'color',color_order{1})
+      plot(var_overlay(itime,:,2),z,'linewidth',1,'color',color_order{2})
+      xlabel('Dn_c, Dn_r')
+      set(gca,'XScale','log')
+      hold off
 
    end
    
 
    annotation('textbox',[.7 .7 .2 .2],'String',...
-      sprintf('t = %.1f s', itime),'FitBoxToText','on')
-   %     title(sprintf('t = %.0f s', itime))
+      sprintf('t = %.1f s', real_time),'FitBoxToText','on')
+   %     title(sprintf('t = %.0f s', real_time))
    cdata = print('-RGBImage','-r144');
    F(iframe) = im2frame(cdata);
-   %F(itime) = getframe(gcf);
-   ['time=' num2str(itime)]
+   %F(real_time) = getframe(gcf);
+   disp(['time=' num2str(real_time)])
 
    iframe = iframe + 1;
    
@@ -120,7 +115,7 @@ end
 
 saveVid(F,['DSD', pltflag, ' ',...
    var1_str{ivar1} ' ' var2_str{ivar2} ' ' fn,...
-   'profile'], 24)
+   'profile ' num2str(ti) '-', num2str(tf)], 24)
 %v = VideoWriter(['vids/time progress in DSD', pltflag, ' ',...
 %   var1_str{ivar1} ' ' var2_str{ivar2} ' ' fn,...
 %   'profile.mp4'],'MPEG-4');

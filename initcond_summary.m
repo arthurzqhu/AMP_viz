@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -8,12 +8,13 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'lower_thres', 'orig_thres'};
-doplot = 0
+nikkis = {'2022-10-05'};
+doplot = 1
 doload = 0
 
 for ink = 1:length(nikkis)
-   nikki = nikkis{ink}
+   nikki = nikkis{ink};
+   disp(nikki)
    global_var
 
    % get the list of configs. cant put it into globar_var
@@ -21,22 +22,23 @@ for ink = 1:length(nikkis)
 
    %%
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf = 4%length(mconfig_ls)
-      mconfig = mconfig_ls{iconf}
+   for iconf = 1%length(mconfig_ls)
+      mconfig = mconfig_ls{iconf};
+      disp(mconfig)
       % get_var_comp
       % get_var_comp([1 3 6])
       % get_var_comp([3:7 16])
-      get_var_comp([3:7])
+      get_var_comp([3:7 16])
       % get_var_comp([3:7 10 8])
+      case_dep_var
       if ~doload
       pfm = struct;
-      case_dep_var
       for its = 1:length(bintype)
          for ivar1 = 1:length(var1_str)
             for ivar2 = 1:length(var2_str)
-               [its,ivar1, ivar2]
-               amp_struct = loadnc('amp');
-               bin_struct = loadnc('bin');
+               disp([its, ivar1, ivar2])
+               amp_struct = loadnc('amp', indvar_name_set);
+               bin_struct = loadnc('bin', indvar_name_set);
 
                % indices of vars to compare
                vars = 1;
@@ -68,9 +70,8 @@ for ink = 1:length(nikkis)
                   weight = var_bin_flt(vidx)/sum(var_bin_flt(vidx));
                   weight_log = log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
 
-                  [mr, rsq, er, maxr, md, serr, msd_amp, msd_bin, ...
-                     mval_amp, mval_bin, sval_amp, sval_bin] = ...
-                     wrsq(var_amp_flt, var_bin_flt, weight);
+                  [mr, rsq, mval_amp, mval_bin, er, maxr, md, serr, msd_amp, msd_bin, ...
+                     sval_amp, sval_bin] = wrsq(var_amp_flt, var_bin_flt, weight);
 
                   if indvar_name{ivar} == "mean_surface_ppt"
                      mval_bin(mval_bin < sppt_th(1)) = 0;
@@ -89,9 +90,7 @@ for ink = 1:length(nikkis)
                   pfm.(indvar_name{ivar}).(bintype{its}).msd_bin(ivar1, ivar2) = msd_bin;
                   pfm.(indvar_name{ivar}).(bintype{its}).sval_amp(ivar1, ivar2) = sval_amp;
                   pfm.(indvar_name{ivar}).(bintype{its}).sval_bin(ivar1, ivar2) = sval_bin;
-
                end % ivar
-
             end % ivar2
          end % ivar1
       end % its
@@ -99,7 +98,14 @@ for ink = 1:length(nikkis)
       pfm.misc.var2_str = var2_str;
       save(['pfm_summary/' nikki '_' mconfig '_pfm.mat'],'pfm')
       else
-      load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
+         its = 1;
+         load(['pfm_summary/' nikki '_' mconfig '_pfm.mat'])
+         fldnms = fieldnames(pfm(1));
+         fldnms = fldnms(1:end-1);
+         indvar_name = intersect(indvar_name_set, fldnms, 'stable');
+         vidx = ismember(indvar_name_set, indvar_name);
+         indvar_ename=indvar_ename_set(vidx);
+         indvar_units=indvar_units_set(vidx);
       end % doload
 
 
@@ -141,7 +147,7 @@ for ink = 1:length(nikkis)
                set(gca,'FontSize',16)
 
                if strcmp(fldnms{ifn},'mr')
-                  colormap(BrBG)
+                  colormap(cmaps.BrBG)
                   set(gca,'ColorScale','log')
                   caxis([.5 2])
    %                cb.Ticks = [.25 .5 1 2 4];
@@ -154,7 +160,7 @@ for ink = 1:length(nikkis)
                      for ivar2 = 1:length(var2_str)
 
                         % ----- get text color -----
-                        ngrads = size(coolwarm_r,1);
+                        ngrads = size(cmaps.coolwarm_r,1);
                         clr_idx = roundfrac(pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2),1/ngrads)*ngrads;
                         clr_idx = round(clr_idx); % in case prev line outputs double
                         if contains(indvar_name{ivar},'half_life_c')
@@ -170,20 +176,20 @@ for ink = 1:length(nikkis)
 
                         text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1, ivar2},'FontSize',15,...
                            'HorizontalAlignment','center',...
-                           'Color',coolwarm_r11(clr_idx,:)*.1,'FontName','Menlo')
+                           'Color',cmaps.coolwarm_r11(clr_idx,:)*.1,'FontName','Menlo')
                         text(ivar2,ivar1,mpath_bin_str{ivar1, ivar2},'FontSize',15,...
                            'HorizontalAlignment','center',...
-                           'Color',coolwarm_r11(clr_idx,:),'FontName','Menlo')
+                           'Color',cmaps.coolwarm_r11(clr_idx,:),'FontName','Menlo')
 
 
                      end
                   end
    %             elseif strcmp(fldnms{ifn},'rsq')
-   %                colormap(coolwarm_r)
+   %                colormap(cmaps.coolwarm_r)
    %                set(gca,'ColorScale','lin')
    %                caxis([0 1])
    %             elseif strcmp(fldnms{ifn},'mrsq')
-   %                colormap(coolwarm_r)
+   %                colormap(cmaps.coolwarm_r)
    %                set(gca,'ColorScale','lin')
    %                caxis([-1 1])
                end
@@ -196,7 +202,7 @@ for ink = 1:length(nikkis)
             set(gca,'XColor','none')
             set(gca,'YColor','none')
    %          ax = gca;
-            colormap(gca,coolwarm_r)
+            colormap(gca,cmaps.coolwarm_r)
             cb = colorbar('southoutside');
             cb.Label.String = 'R^2';
             cb.Label.Position = [0.5000 3.3 0];

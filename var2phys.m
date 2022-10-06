@@ -34,12 +34,14 @@ iscloud=0;
 
 var_raw(var_raw==-999)=nan;
 
-if contains(var_name,{'dm_','dn_','diag', 'Dm','RH','gs_','reldisp','flag','ss_w','temperature','ss_wpremphys'})
+if contains(var_name,{'adv','mphys','dm_','dn_','diag', ...
+      'Dm','RH','gs_','reldisp','flag','ss_w','temperature',...
+      'ss_wpremphys', 'Dn_c', 'Dn_r','nu_','coll','sed'})
    isprof=1;
 elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
    ispath=1;
-elseif contains(var_name,{'adv','coll','sed','mphys'})
-   isproc=1;
+% elseif contains(var_name,{'coll','sed'})
+%    isproc=1;
 end
 
 if contains(var_name,'rain')
@@ -83,7 +85,7 @@ switch var_name
       threshold = rain_n_th(1);
       note = 'log';
       unit_conv = 'self';
-      range = [1e-3 1e1];
+      range = [1e2 1e6];
    case {'diagM3_cloud'}
       physquant = var_raw*pi/6*1000;
       threshold = cloud_mr_th(1);
@@ -101,17 +103,21 @@ switch var_name
       threshold = meanD_th(1);
       note = 'log';
       unit_conv = 'self';
-   case {'cloud_M1_adv','cloud_M1_mphys'}
+   case {'cloud_M1_adv','cloud_M1_mphys','cloud_M2_adv','cloud_M2_mphys',...
+         'cloud_M3_adv','cloud_M3_mphys','cloud_M4_adv','cloud_M4_mphys',...
+         'cloud_M1_force','cloud_M2_force','cloud_M3_force','cloud_M4_force'}
       physquant = var_raw;
-      bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
+      bound=10^(ceil(log10(max(abs(physquant(2:end,:)),[],'all'))*2)/2);
       range = [-bound bound];
       %         threshold = cloud_mr_th(1); % the cloud and rain has the same threshold for now
       note = 'lin';
       unit_conv = 'self'; % use cloud mass as threshold
-   case {'rain_M1_adv','rain_M1_mphys'}
+   case {'rain_M1_adv','rain_M1_mphys','rain_M2_adv','rain_M2_mphys',...
+         'rain_M3_adv','rain_M3_mphys','rain_M4_adv','rain_M4_mphys',...
+         'rain_M1_force','rain_M2_force','rain_M3_force','rain_M4_force'}
       physquant = var_raw;
       %         threshold = rain_mr_th(1);
-      bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
+      bound=10^(ceil(log10(max(abs(physquant(2:end,:)),[],'all'))*2)/2);
       range = [-bound bound];
       note = 'lin';
       unit_conv = 'self';
@@ -166,6 +172,11 @@ switch var_name
       range = [30 100];
       unit_conv = 'self';
       note = 'lin';
+   case {'Dn_c', 'Dn_r'}
+      physquant = var_raw*1e6;
+      range = [min(physquant(physquant>0)) 1e5];
+      note = 'log';
+      unit_conv = 'self';
    case {'flagoobc', 'flagoobr'}
       physquant = var_raw;
       range = [1e-3 1e3];
@@ -197,6 +208,11 @@ switch var_name
    case {'ss_w', 'ss_wpremphys'}
       physquant = var_raw;
       range = [min(physquant(:)) max(physquant(:))];
+      unit_conv = 'self';
+      note = 'lin';
+   case {'nu_c','nu_r'}
+      physquant = var_raw;
+      range = [-10 40];
       unit_conv = 'self';
       note = 'lin';
    otherwise
