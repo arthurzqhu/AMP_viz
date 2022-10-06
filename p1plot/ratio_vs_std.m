@@ -1,22 +1,22 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
 global ivar1 ivar2 its nikki mconfig output_dir vnum ...
    bintype var1_str var2_str
 
-doload = 1;
+doload = 0;
 
 global_var
 
 if ~doload
 
-collonly_pfm_nt = load('pfm_summary/2022-06-15_collonly_pfm.mat');
-fullmp_pfm_nt = load('pfm_summary/2022-06-15_fullmic_pfm.mat');
+collonly_pfm_nt = load('pfm_summary/orig_thres_collonly_pfm.mat');
+fullmp_pfm_nt = load('pfm_summary/orig_thres_fullmic_pfm.mat');
 collonly_pfm_lt = load('pfm_summary/lower_threshold_collonly_pfm.mat');
 fullmp_pfm_lt = load('pfm_summary/lower_threshold_fullmic_pfm.mat');
 
-nikki = '2022-06-15';
+nikki = 'orig_thres';
 mconfig = 'collonly';
 case_dep_var
 for its = 1:length(bintype)
@@ -35,8 +35,8 @@ for its = 1:length(bintype)
          z = bin_struct.z;
          lwcprof_tstd = bin_struct.diagM3_liq(1, :);
          collonly_pfm_nt.pfm.stdtab_bin.(bintype{its})(ivar1, ivar2) = ...
-            wmean(arrayfun(@(x) nanstd(binmean, ...
-            bin_struct.mass_dist(1, 1:nkr, x))*1e6, 1:120), lwcprof_tstd);
+            wmean(arrayfun(@(x) exp(nanstd(log(binmean), ...
+            bin_struct.mass_dist(1, 1:nkr, x))), 1:120), lwcprof_tstd);
       end
    end
 end
@@ -60,13 +60,13 @@ for its = 1:length(bintype)
          tstd = time(end) / 4;
          lwcprof_tstd = bin_struct.diagM3_liq(tstd, :);
          fullmp_pfm_nt.pfm.stdtab_bin.(bintype{its})(ivar1, ivar2) = ...
-            wmean(arrayfun(@(x) nanstd(binmean, ...
-            bin_struct.mass_dist(tstd, 1:nkr, x))*1e6, 1:120), lwcprof_tstd);
+            wmean(arrayfun(@(x) exp(nanstd(log(binmean), ...
+            bin_struct.mass_dist(tstd, 1:nkr, x))), 1:120), lwcprof_tstd);
       end
    end
 end
 
-nikki = 'lower_threshold';
+nikki = 'lower_thres';
 mconfig = 'collonly';
 case_dep_var
 for its = 1:length(bintype)
@@ -85,8 +85,8 @@ for its = 1:length(bintype)
          z = bin_struct.z;
          lwcprof_tstd = bin_struct.diagM3_liq(1, :);
          collonly_pfm_lt.pfm.stdtab_bin.(bintype{its})(ivar1, ivar2) = ...
-            wmean(arrayfun(@(x) nanstd(binmean, ...
-            bin_struct.mass_dist(1, 1:nkr, x))*1e6, 1:120), lwcprof_tstd);
+            wmean(arrayfun(@(x) exp(nanstd(log(binmean), ...
+            bin_struct.mass_dist(1, 1:nkr, x))), 1:120), lwcprof_tstd);
       end
    end
 end
@@ -110,22 +110,22 @@ for its = 1:length(bintype)
          tstd = time(end) / 4;
          lwcprof_tstd = bin_struct.diagM3_liq(tstd, :);
          fullmp_pfm_lt.pfm.stdtab_bin.(bintype{its})(ivar1, ivar2) = ...
-            wmean(arrayfun(@(x) nanstd(binmean, ...
-            bin_struct.mass_dist(tstd, 1:nkr, x))*1e6, 1:120), lwcprof_tstd);
+            wmean(arrayfun(@(x) exp(nanstd(log(binmean), ...
+            bin_struct.mass_dist(tstd, 1:nkr, x))), 1:120), lwcprof_tstd);
       end
    end
 end
 
-save('pfm_summary/collonly_pfm_nt.mat','collonly_pfm_nt')
-save('pfm_summary/collonly_pfm_lt.mat','collonly_pfm_lt')
-save('pfm_summary/fullmp_pfm_nt.mat','fullmp_pfm_nt')
-save('pfm_summary/fullmp_pfm_lt.mat','fullmp_pfm_lt')
+save('pfm_summary/collonly_pfm_nt_gs.mat','collonly_pfm_nt')
+save('pfm_summary/collonly_pfm_lt_gs.mat','collonly_pfm_lt')
+save('pfm_summary/fullmp_pfm_nt_gs.mat','fullmp_pfm_nt')
+save('pfm_summary/fullmp_pfm_lt_gs.mat','fullmp_pfm_lt')
 
 else
-load('pfm_summary/collonly_pfm_nt.mat')
-load('pfm_summary/collonly_pfm_lt.mat')
-load('pfm_summary/fullmp_pfm_nt.mat')
-load('pfm_summary/fullmp_pfm_lt.mat')
+load('pfm_summary/collonly_pfm_nt_gs.mat')
+load('pfm_summary/collonly_pfm_lt_gs.mat')
+load('pfm_summary/fullmp_pfm_nt_gs.mat')
+load('pfm_summary/fullmp_pfm_lt_gs.mat')
 end
 
 fm_sppt_err_sbm_nt = fullmp_pfm_nt.pfm.mean_surface_ppt.sbm.mr;
@@ -168,7 +168,7 @@ scatter(co_stdtab_sbm_nt(:), co_rwp_err_sbm_nt(:), sz(:), clr(:), 'filled')
 scatter(co_stdtab_sbm_nt(:), co_rwp_err_sbm_nt(:), sz(:), color_order{1}, 'linewidth', 1.5)
 scatter(co_stdtab_tau_nt(:), co_rwp_err_tau_nt(:), sz(:), clr(:), 'filled')
 scatter(co_stdtab_tau_nt(:), co_rwp_err_tau_nt(:), sz(:), color_order{2}, 'linewidth', 1.5)
-xlim([0 40])
+% xlim([0 40])
 ylim([0 1])
 
 % --- annotate scatter size --- 
@@ -193,7 +193,7 @@ text(annt_x1(1)*1.06, annt_y1(1), '15')
 % --- finish annotating ... except box ---
 
 cb=colorbar;
-colormap(ax1, BrBG5)
+colormap(ax1, cmaps.BrBG5)
 cb.Ticks=[1.4:0.8:4.6];
 cb.TickLabels={'1', '3', '5', '7', '9'};
 cb.Label.String='shape parameter';
@@ -221,7 +221,7 @@ scatter(fm_stdtab_sbm_nt(:), fm_sppt_err_sbm_nt(:), sz(:), clr(:), 'filled')
 scatter(fm_stdtab_sbm_nt(:), fm_sppt_err_sbm_nt(:), sz(:), color_order{1}, 'linewidth', 1.5)
 scatter(fm_stdtab_tau_nt(:), fm_sppt_err_tau_nt(:), sz(:), clr(:), 'filled')
 scatter(fm_stdtab_tau_nt(:), fm_sppt_err_tau_nt(:), sz(:), color_order{2}, 'linewidth', 1.5)
-xlim([0 40])
+% xlim([0 40])
 ylim([0 1])
 
 % --- annotate scatter size --- 
@@ -245,7 +245,7 @@ text(annt_x2(1)*1.035, annt_y2(1), '1600')
 % --- finish annotating ... except text ---
 
 cb=colorbar;
-colormap(ax2, coolwarm5)
+colormap(ax2, cmaps.coolwarm5)
 cb.Ticks=[1.4 2.2 3 3.8 4.6];
 cb.TickLabels={'1', '2', '4', '8', '16'};
 cb.Label.String='w [m/s]';
@@ -272,7 +272,7 @@ scatter(co_stdtab_sbm_lt(:), co_rwp_err_sbm_lt(:), sz(:), clr(:), 'filled')
 scatter(co_stdtab_sbm_lt(:), co_rwp_err_sbm_lt(:), sz(:), color_order{1}, 'linewidth', 1.5)
 scatter(co_stdtab_tau_lt(:), co_rwp_err_tau_lt(:), sz(:), clr(:), 'filled')
 scatter(co_stdtab_tau_lt(:), co_rwp_err_tau_lt(:), sz(:), color_order{2}, 'linewidth', 1.5)
-xlim([0 40])
+% xlim([0 40])
 ylim([0 1])
 
 % --- annotate scatter size --- 
@@ -297,7 +297,7 @@ text(annt_x1(1)*1.06, annt_y1(1), '15')
 % --- finish annotating ... except box ---
 
 cb=colorbar;
-colormap(ax3, BrBG5)
+colormap(ax3, cmaps.BrBG5)
 cb.Ticks=[1.4:0.8:4.6];
 cb.TickLabels={'1', '3', '5', '7', '9'};
 cb.Label.String='shape parameter';
@@ -325,7 +325,7 @@ scatter(fm_stdtab_sbm_lt(:), fm_sppt_err_sbm_lt(:), sz(:), clr(:), 'filled')
 scatter(fm_stdtab_sbm_lt(:), fm_sppt_err_sbm_lt(:), sz(:), color_order{1}, 'linewidth', 1.5)
 scatter(fm_stdtab_tau_lt(:), fm_sppt_err_tau_lt(:), sz(:), clr(:), 'filled')
 scatter(fm_stdtab_tau_lt(:), fm_sppt_err_tau_lt(:), sz(:), color_order{2}, 'linewidth', 1.5)
-xlim([0 40])
+% xlim([0 40])
 ylim([0 1])
 
 % --- annotate scatter size --- 
@@ -349,7 +349,7 @@ text(annt_x2(1)*1.035, annt_y2(1), '1600')
 % --- finish annotating ... except text ---
 
 cb=colorbar;
-colormap(ax4, coolwarm5)
+colormap(ax4, cmaps.coolwarm5)
 cb.Ticks=[1.4 2.2 3 3.8 4.6];
 cb.TickLabels={'1', '2', '4', '8', '16'};
 cb.Label.String='w [m/s]';
@@ -386,4 +386,4 @@ annotation('rectangle', [xa, ya, dx, dy])
 % --- finishing annotating ---
 
 xlabel(tl, 'Standard deviation [\mum]', 'FontSize', 16)
-exportgraphics(gcf, 'plots/p1/error_std_corr.png', 'resolution', 300)
+exportgraphics(gcf, 'plots/p1/error_std_corr_gstd.png', 'resolution', 300)

@@ -13,7 +13,7 @@ shade_color_rgb = [.8 .8 .8];
 textclr_rgb = num2str(hex2rgb(textclr));
 wrapper_color = {'#16E8CF', '#FBE232'};
 tau_color = '#0072BD';
-sbm_color = '#FF7439';
+sbm_color = '#A94D26';
 bintype_color = {tau_color, sbm_color};
 
 
