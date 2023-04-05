@@ -27,8 +27,8 @@ if all(ya == 0) || all(yb == 0) || isempty(vidxn)
 end
 
 % ---------------------------------------------------
-MVAL_AMP = mean(ya(vidxn));
-MVAL_BIN = mean(yb(vidxn));
+MVAL_AMP = nanmean(ya);
+MVAL_BIN = nanmean(yb);
 MR = MVAL_AMP / MVAL_BIN;
 MD = MVAL_AMP - MVAL_BIN;
 ER = ya(vidxn(end)) / yb(vidxn(end));
@@ -40,12 +40,15 @@ SVAL_AMP = ya(vidxn(1));
 SVAL_BIN = yb(vidxn(1));
 
 % ---------------------------------------------------
-if length(ya) > 1
-   mdl = fitlm(ya, yb);
-   RSQ = mdl.Rsquared.Ordinary;
-else
-   RSQ = nan;
-end
+
+% if length(ya) > 1
+%    mdl = fitlm(ya, yb, 'intercept', false);
+%    RSQ = mdl.Rsquared.Ordinary;
+% else
+%    RSQ = nan;
+% end
+
+RSQ = 1-nansum((ya-yb).^2)/nansum((yb-nanmean(yb)).^2);
 
 % ---------------------------------------------------
 
