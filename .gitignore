@@ -12,3 +12,4 @@ cases for plot/*
 *.png
 Session.vim
 rams_ml_dataset/*
+pfm_summary/*

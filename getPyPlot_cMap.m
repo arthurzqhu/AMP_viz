@@ -112,6 +112,7 @@ else
     end
 end
 
+disp([nam, num2str(n), ' loaded'])
 
 % delete temp-file
 delete(tmpf);

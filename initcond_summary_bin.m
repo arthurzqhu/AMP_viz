@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th
 
 vnum='0001';
-nikki='orig_thres';
+nikki='Dt80';
 
 global_var
 
@@ -19,7 +19,7 @@ mconfig_ls = get_mconfig_list(output_dir,nikki);
 
 % creating structures for performance analysis based on Rsq and ratio
 
-for iconf = 1:length(mconfig_ls)
+for iconf = 4%1:length(mconfig_ls)
    mconfig=mconfig_ls{iconf}
    get_var_comp
    case_dep_var
@@ -53,10 +53,8 @@ for iconf = 1:length(mconfig_ls)
             
             weight=var_sbm_flt(vidx)/sum(var_sbm_flt(vidx));
             weight_log=log(var_sbm_flt(vidx))/sum(log(var_sbm_flt(vidx)));
-            
-            [mr, rsq, er, maxr, md, serr, msd_tau, msd_sbm, ...
-               mval_tau, mval_sbm, sval_tau, sval_sbm] = ...
-               wrsq(var_tau_flt,var_sbm_flt,weight);
+            [mr, rsq, mval_tau, mval_sbm, er, maxr, md, serr, msd_tau, msd_sbm, ...
+               sval_tau, sval_sbm] = wrsq(var_tau_flt, var_sbm_flt, weight);
             
             pfm.(indvar_name{ivar}).mr(ivar1,ivar2)=mr;
             pfm.(indvar_name{ivar}).rsq(ivar1,ivar2)=rsq;

@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its nikki output_dir vnum ...
    israin indvar_units_set indvar_units amp_only_var %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-10-05';
+nikki='2023-03-30';
 
 global_var
 
@@ -22,12 +22,12 @@ mconfig_ls = get_mconfig_list(output_dir, nikki);
 l_save=1; % set to 1 to save plots
 l_visible=0; % set to 0 for faster output
 
-fig_prof=figure('Position',[1553 458 1028 527]);
-fig_path=figure('Position',[1553 458 1028 527]);
-fig_proc=figure('Position',[1553 458 1028 527]);
-fig_profdiff=figure('Position',[1553 458 1028 527]);
-fig_pathdiff=figure('Position',[1553 458 1028 527]);
-fig_procdiff=figure('Position',[1553 458 1028 527]);
+fig_prof=figure('Position',[0 0 800 400]);
+fig_path=figure('Position',[0 0 800 400]);
+fig_proc=figure('Position',[0 0 800 400]);
+fig_profdiff=figure('Position',[0 0 800 400]);
+fig_pathdiff=figure('Position',[0 0 800 400]);
+fig_procdiff=figure('Position',[0 0 800 400]);
 
 %%
 
@@ -40,15 +40,22 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = 2%:length(mconfig_ls)
+for iconf = 1
    mconfig = mconfig_ls{iconf};
    disp(mconfig)
    case_dep_var
-   get_var_comp([1:4 6 7])
+   get_var_comp([10])
+   if isempty(var1_str)
+      var1_str = {''};
+      var2_str = {''};
+   end
 
-   for its = 2:length(bintype)
-      for ivar1 = length(var1_str)-1
-         for ivar2 = 1%:length(var2_str)
+   for its = 1:2
+      for ivar1 = 3%length(var1_str)
+         for ivar2 = 3%length(var2_str)
+            if ~isempty(var1_str{1}) && ~contains(var2_str{ivar2}, var2_str_asFuncOfVar1{ivar1})
+               continue
+            end
             disp([its ivar1 ivar2])
             bin_struct = loadnc('bin', indvar_name_set);
             amp_struct = loadnc('amp', indvar_name_set);
@@ -129,21 +136,21 @@ for iconf = 2%:length(mconfig_ls)
                         'fontsize',20,...
                         'FontWeight','bold')
 
-                  if israin
-                     % variable name in file name
-                     vnifn='liquid water path'; 
-                  else
-                     vnifn=indvar_ename{ivar};
-                  end
+                     if israin
+                        % variable name in file name
+                        vnifn='liquid water path'; 
+                     else
+                        vnifn=indvar_ename{ivar};
+                     end
 
-                  hold off
+                     hold off
 
-                  if l_save
-                     saveas(fig_path,[plot_dir,'/',...
-                        vnifn, ' ',...
-                        'amp vs bin-',bintype{its},' ',vnum,' ',...
-                        var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
-                  end
+                     if l_save
+                        saveas(fig_path,[plot_dir,'/',...
+                           vnifn, ' ',...
+                           'amp vs bin-',bintype{its},' ',vnum,' ',...
+                           var1_str{ivar1}, ' ', var2_str{ivar2},'.png'])
+                     end
                   end
 
                elseif isproc
@@ -217,7 +224,7 @@ for iconf = 2%:length(mconfig_ls)
                      elseif contains(indvar_name{ivar},'nu_')
                         colormap(cmaps.rainbow)
                      else
-                        colormap(cmaps.Blues_s)
+                        colormap(cmaps.Blues)
                      end
                      set(gca,'ColorScale',linORlog)
                      caxis(range)

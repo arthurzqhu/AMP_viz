@@ -34,12 +34,14 @@ iscloud=0;
 
 var_raw(var_raw==-999)=nan;
 
-if contains(var_name,{'adv','mphys','dm_','dn_','diag', ...
-      'Dm','RH','gs_','reldisp','flag','ss_w','temperature',...
-      'ss_wpremphys', 'Dn_c', 'Dn_r','nu_','coll','sed'})
-   isprof=1;
-elseif contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
+% if contains(var_name,{'adv','mphys','dm_','dn_','diag', ...
+%       'Dm','RH','gs_','reldisp','flag','ss_w','temperature',...
+%       'ss_wpremphys', 'Dn_c', 'Dn_r','nu_','coll','sed'})
+%    isprof=1;
+if contains(var_name,{'path','albedo','mean_surface_ppt','opt_dep'})
    ispath=1;
+else
+   isprof=1;
 % elseif contains(var_name,{'coll','sed'})
 %    isproc=1;
 end
@@ -74,7 +76,7 @@ switch var_name
       note = 'log';
       unit_conv = 'self';
       range = [1 3e3];
-   case {'diagM0_cloud'}
+   case {'diagM0_cloud', 'diagM0_liq'}
       physquant = var_raw/1e6;
       threshold = cloud_n_th(1);
       note = 'log';
@@ -121,7 +123,7 @@ switch var_name
       range = [-bound bound];
       note = 'lin';
       unit_conv = 'self';
-   case {'cloud_M1_path','mean_cloud_M1_path'}
+   case {'cloud_M1_path','mean_cloud_M1_path','liq_M1_path'}
       physquant = var_raw*pi/6*1000;
       threshold = cwp_th(1);
       bound=10^(ceil(log10(max(abs(physquant(:))))*2)/2);
@@ -219,7 +221,7 @@ switch var_name
       physquant = var_raw;
       note = 'log';
       unit_conv = 'self';
-      range = [min(physquant(:)) max(physquant(:))];
+      range = [max(physquant(:))/1e6 max(physquant(:))];
 end
 
 if setOOBasNaN
