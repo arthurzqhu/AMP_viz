@@ -1,7 +1,7 @@
 function DSDprof_timeprog(ti, tf, ts_plot, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
-global its bintype dt fn var1_str var2_str ivar1 ivar2 color_order %#ok<NUSED>
+global its bintype dt fn var1_str var2_str ivar1 ivar2 color_order test
 
 close all
 c_map = getPyPlot_cMap(Cmap,20);
@@ -13,7 +13,7 @@ end
 time_length = floor((tf-ti)/ts_plot+1);
 ts_output=ts_plot/dt;
 
-F(time_length) = struct('cdata',[],'colormap',[]);
+F(time_length-1) = struct('cdata',[],'colormap',[]);
 
 
 if any(~isnan(var_overlay(:)))
@@ -24,30 +24,34 @@ end
 
 tl=tiledlayout('flow');
 nexttile(1)
-iframe = 1;
 iti = int32(ti/dt);
 itf = int32(tf/dt);
 istep = int32(ts_plot/dt);
+time_series=iti:istep:itf;
 
-for itime = iti:istep:itf
+parfor iframe = 1:length(time_series)
+   itime = time_series(iframe);
+   if itime<=0
+      itime = 1;
+   end
    real_time = double(itime)*double(dt);
 
-   switch pltflag
-      case {'mass','mass_diff','mass_adv'}
-         DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:));
-      case {'number','number_diff'}
-         if bintype{its}=="tau"
-            DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:))/1e6;
-         else
-            DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(itime,:,:)),binmean)/1e6;
-         end
-   end
+   % switch pltflag
+   %    case {'mass','mass_diff','mass_adv'}
+   %       DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:));
+   %    case {'number','number_diff'}
+   %       if bintype{its}=="tau"
+   %          DSD_prof_is=squeeze(DSDprof_mphys(itime,:,:))/1e6;
+   %       else
+   %          DSD_prof_is=mass2conc(squeeze(DSDprof_mphys(itime,:,:)),binmean)/1e6;
+   %       end
+   % end
    
-   if length(binmean)<size(DSD_prof_is,1)
-      DSD_prof_is = DSD_prof_is(1:length(binmean),:);
-   end
+   % if length(binmean)<size(DSD_prof_is,1)
+   %    DSD_prof_is = DSD_prof_is(1:length(binmean),:);
+   % end
    
-   nanimagesc(binmean,z,DSD_prof_is')
+   nanimagesc(binmean,z,squeeze(DSDprof_mphys(itime,1:length(binmean),:))')
    set(gca,'XScale','log')
    set(gca,'YDir','normal')
    
@@ -104,18 +108,22 @@ for itime = iti:istep:itf
    %F(real_time) = getframe(gcf);
    disp(['time=' num2str(real_time)])
 
-   iframe = iframe + 1;
-   
    delete(findall(gcf,'type','annotation'))
    
    %     title('')
 end
 
 % tic
+test = F;
 
-saveVid(F,['DSD', pltflag, ' ',...
-   var1_str{ivar1} ' ' var2_str{ivar2} ' ' fn,...
-   'profile ' num2str(ti) '-', num2str(tf)], 24)
+if isempty(var1_str)
+   saveVid(F,[fn, 'DSD', pltflag, ' ',...
+      num2str(ti) '-', num2str(tf)], 10)
+else
+   saveVid(F,[fn, 'DSD', pltflag, ' ',...
+      var1_str{ivar1} ' ' var2_str{ivar2}, ...
+      ' ', num2str(ti) '-', num2str(tf)], 10)
+end
 %v = VideoWriter(['vids/time progress in DSD', pltflag, ' ',...
 %   var1_str{ivar1} ' ' var2_str{ivar2} ' ' fn,...
 %   'profile.mp4'],'MPEG-4');

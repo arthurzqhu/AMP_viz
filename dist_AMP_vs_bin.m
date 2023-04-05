@@ -3,12 +3,12 @@ clear global
 close all
 
 global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
-   bintype var1_str var2_str dt l_amp fn cloud_mr_th %#ok<*NUSED>
+   bintype var1_str var2_str dt l_amp fn cloud_mr_th test
 
 % l_amp = 0 for bin, 1 for amp, 2 for both
 l_amp=1; 
 
-nikki='2022-10-04';
+nikki='2023-04-04';
 vnum='0001';
 global_var
 mconfig_ls = get_mconfig_list(output_dir, nikki);
@@ -23,14 +23,14 @@ elseif contains(pltflag, {'mass_diff','number_diff'})
 end
 
 %%
-for iconf = 2%:length(mconfig_ls)
+for iconf = [2]%:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    disp(mconfig)
    case_dep_var
    for its = 1:length(bintype)
-      for ivar1 = 1%length(var1_str)
+      for ivar1 = 2%length(var1_str)
          %% read files
-         for ivar2 = 1%length(var2_str)
+         for ivar2 = 3%:length(var2_str)
 
             if l_amp % load when == 1 or 2
                amp_struct = loadnc('amp');
@@ -95,16 +95,16 @@ for iconf = 2%:length(mconfig_ls)
                   end
                end
 
-               fn = [ampORbin{iab}, '-', bintype{its}, ' ', ...
-                  mconfig, '-', vnum, ' '];
+               fn = [mconfig, ' ', ampORbin{iab}, '-', bintype{its}, ...
+                  ' ', vnum, ' '];
 
-               ti = 1;
+               ti = 0;
                tf = max(time);
                time_step=20;
 
-               % ti = 750;
-               % tf = 850;
-               % time_step = dt;
+               % ti = 620;
+               % tf = 650;
+               % time_step = 1;
 
                % Dns(:,:,1) = amp_struct.Dn_c;
                % Dns(:,:,2) = amp_struct.Dn_r;

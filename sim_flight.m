@@ -1,14 +1,13 @@
 clear
 clear global
+close all
 
 global nfile outdir runs mpdat mp_list imp deltaz z
-close all
 
 cabin=load('VOCALS_CABIN/081019.mat');
 
 nikki='2022-04-22'
-run rglobal_var
-mp_list={'bin_sbm' 'amp_sbm' 'bin_tau' 'amp_tau'};
+rglobal_var
 
 mconfig_ls_dir=dir([output_dir,nikki,'/']);
 mconfig_ls_dir_flags=[mconfig_ls_dir.isdir];

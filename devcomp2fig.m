@@ -31,7 +31,7 @@ Xc(contains(Xc,'cloud water path'))={'CWP'};
 Xc(contains(Xc,'rain water path'))={'RWP'};
 Xc(contains(Xc,'cloud number'))={'N_c'};
 Xc(contains(Xc,'rain number'))={'N_r'};
-Xc(contains(Xc,'mean surface pcpt.'))={'MSP'};
+Xc(contains(Xc,'surface pcpt. rate'))={'MSP'};
 Xc(contains(Xc,'liquid water path'))={'LWP'};
 Xc(contains(Xc,'cloud half-life'))={'t_{1/2,c}'};
 
@@ -89,9 +89,9 @@ erb.LineStyle = 'none';
 hold off
 
 set(gca,'YScale','log')
-ylim([0.4 2])
-yticks([0.50 0.67 0.8 1 1.25 1.5 2])
-yticklabels({'-50','-33','-20','0','+25','+50','+100'})
+ylim([0.3 3])
+yticks([.3 0.50 0.8 1 1.5 2 3])
+yticklabels({'-70', '-50','-20','0','+50','+100', '+200'})
 box on
 
 grid()
