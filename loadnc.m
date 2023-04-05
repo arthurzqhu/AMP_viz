@@ -11,10 +11,20 @@ if isempty(vnum)
    vnum = '0001';
 end
 
-filedir=[output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
-   upper(bintype{its}),'/',var1_str{ivar1},...
-   '/', var2_str{ivar2},'/KiD_m-amp_b-',lower(mp_in),'+',...
-   bintype{its},'_u-Adele_c-0*_v-',vnum,'.nc'];
+if isempty(var1_str)
+   filedir=[output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
+      upper(bintype{its}),'/KiD_m-amp_b-',lower(mp_in),'+',...
+      bintype{its},'_u-Adele_c-0*_v-',vnum,'.nc'];
+else
+   filedir=[output_dir,nikki,'/',mconfig,'/',upper(mp_in),'_',...
+      upper(bintype{its}),'/',var1_str{ivar1},...
+      '/', var2_str{ivar2},'/KiD_m-amp_b-',lower(mp_in),'+',...
+      bintype{its},'_u-Adele_c-0*_v-',vnum,'.nc'];
+% else
+%    filedir=[output_dir,nikki,'/',mconfig,'/',mp_in,...
+%       '/',var1_str{ivar1},'/', var2_str{ivar2},'/KiD_m-',mp_in,'_b-','+',...
+%       '_u-Adele_c-0*_v-',vnum,'.nc'];
+end
 
 filemeta = dir(filedir);
 filename = [filemeta.folder, '/', filemeta.name];
@@ -48,7 +58,7 @@ else
          stct.(varargin{1}{ivar})(stct.(varargin{1}{ivar}) == -999) = nan;
       catch
          if ~contains(varargin{1}{ivar}, {'liq','half_life_c'})
-            warning(['Variable ' varargin{1}{ivar} ' does not exist. Skipping...'])
+            % warning(['Variable ' varargin{1}{ivar} ' does not exist. Skipping...'])
          end
       end
    end
