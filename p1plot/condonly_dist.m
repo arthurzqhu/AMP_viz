@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -21,8 +21,8 @@ its = 2;
 ivar1 = 3;
 ivar2 = 3;
 
-[bin_struct, bin_maskc, bin_maskr, bin_maskl] = loadnc('bin');
-[amp_struct, amp_maskc, amp_maskr, amp_maskl] = loadnc('amp');
+bin_struct = loadnc('bin');
+amp_struct = loadnc('amp');
 time = amp_struct.time;
 z = amp_struct.z;
 dt = time(2) - time(1);
@@ -44,8 +44,8 @@ xticks([1:4])
 xlabel('Bin number')
 ylabel('Mass conc. [kg/kg/dlogD]')
 legend('AMP-SBM', 'bin-SBM')
-title('   (a) PSD')
 set(gca, 'FontSize', 18)
+title('   (a) PSD','fontsize', 16)
 
 nexttile([1 3])
 nanimagesc(time(1:9000), z, amp_struct.oflagc(1:9000,:)')
@@ -55,7 +55,7 @@ set(gca, 'YDir', 'normal')
 cbar = colorbar;
 cbar.Ticks = [-2/3 0 2/3];
 cbar.TickLabels = {'No cloud', 'Success', 'Failure'}; 
-colormap(flag3)
+colormap(cmaps.flag3)
 set(gca, 'FontSize', 18)
 annotation('ellipse', [.470 .220 .025 .050], 'LineWidth', 2, ...
    'color', [.6 .6 .6])
@@ -63,6 +63,6 @@ annotation('line', [.4910 .356], [.264 .907], 'LineWidth', 2, ...
    'LineStyle', '--', 'color', [.6 .6 .6])
 annotation('line', [.4825 .356], [.220 .152], 'LineWidth', 2, ...
    'LineStyle', '--', 'color', [.6 .6 .6])
-title('(b) Number conc. conservation flags')
+title('(b) # conc. conservation flags','fontsize', 16)
 exportgraphics(gcf,['plots/p1/condonly_dist.png'],'Resolution',300)
 % print(gcf,'plots/p1/condonly_dist.png','-dpng','-r300')

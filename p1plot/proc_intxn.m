@@ -1,12 +1,12 @@
-clear
+clearvars -except cmaps
 close all
 clear global
 global indvar_name_set indvar_name_all indvar_ename_set indvar_ename_all ...
    indvar_units_set indvar_units_all 
 
-condcoll_dev = devfun(load('pfm_summary/2022-06-15_condcoll_pfm.mat').pfm);
-condcollsed_dev = devfun(load('pfm_summary/2022-06-15_condcollsed_pfm.mat').pfm);
-fullmic_dev = devfun(load('pfm_summary/2022-06-15_fullmic_pfm.mat').pfm);
+condcoll_dev = devfun(load('pfm_summary/orig_thres_condcoll_pfm.mat').pfm);
+condcollsed_dev = devfun(load('pfm_summary/orig_thres_condcollsed_pfm.mat').pfm);
+fullmic_dev = devfun(load('pfm_summary/orig_thres_fullmic_pfm.mat').pfm);
 
 global_var
 get_var_comp([3:7 10])
@@ -17,12 +17,12 @@ tl = tiledlayout('flow', 'TileSpacing', 'compact');
 % ccs - cc
 nexttile
 devdiff2fig(condcoll_dev, condcollsed_dev)
-title('(1): (b) - (c) effect of Sed.')
+title('(a) Case b-c (effect of Sed.)')
 
 % fullmic - ccs
 nexttile
 devdiff2fig(condcollsed_dev, fullmic_dev)
-title('(2): (a) - (b) effect of Evap.')
+title('(b) Case a-b (effect of Evap.)')
 ylabel('Change in standard dev.')
 
 title(tl, 'Interaction effect on AMP-bin difference', 'fontweight', 'bold', 'fontsize', 20)

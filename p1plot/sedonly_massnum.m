@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -7,13 +7,13 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-06-15';
+nikki='orig_thres';
 
 global_var
 
 % get the list of configs. cant put it into globar_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
-load('pfm_summary/2022-06-15_sedonly_pfm.mat');
+load(['pfm_summary/' nikki '_' mconfig '_pfm_bincomp.mat'])
 get_var_comp
 
 

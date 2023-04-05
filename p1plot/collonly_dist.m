@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -6,13 +6,15 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str 
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-06-15';
+nikki='orig_thres';
 global_var
 mconfig = 'collonly';
 case_dep_var
 
 figure('Position',[1000 491 1000 486])
 tl=tiledlayout(2,2,'TileSpacing','compact');
+ifig = 0;
+fig_order = [1 3 2 4];
 %% read files
 for its = 1:length(bintype)
    if its==2
@@ -48,6 +50,7 @@ for its = 1:length(bintype)
          amp_dist_t3=amp_struct.mass_dist_init(t3+1,1:nkr,24);
          
          nexttile
+         ifig = ifig + 1;
          hold on
 
          %shaded region
@@ -63,7 +66,7 @@ for its = 1:length(bintype)
             'LineWidth',2,'LineStyle',':')
          hold off
 
-         title(['AMP-' upper(bintype{its})])
+         title(['(',char(fig_order(ifig)+96),') ','AMP-' upper(bintype{its})])
          lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';
@@ -77,6 +80,7 @@ for its = 1:length(bintype)
          grid
          
          nexttile(2+its)
+         ifig = ifig + 1;
          hold on
          %shaded region
          xx=binmean(10:krdrop+4)';
@@ -96,7 +100,7 @@ for its = 1:length(bintype)
          set(gca,'XScale','log')
          hold off
          
-         title(['bin-' upper(bintype{its})])
+         title(['(',char(fig_order(ifig)+96),') ','bin-' upper(bintype{its})])
          lg=legend('t = 0 min','t = 6 min','t = 12 min',...
             'Location','northeast','AutoUpdate','off');
          lg.FontWeight='bold';

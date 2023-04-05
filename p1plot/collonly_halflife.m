@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -7,7 +7,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-06-15';
+nikki='orig_thres';
 global_var
 get_var_comp([3:7 16])
 
@@ -36,7 +36,7 @@ for its=1:length(bintype)
    nanimagesc(pfm.(indvar_name_set{ivar}).(bintype{its}).(fldnms{ifn}))
    cb=colorbar;
    if its==length(bintype), cb.Label.String='AMP/bin ratio'; end
-   title(upper(bintype{its}),'FontWeight','normal')
+   title(['(',char(96+its),') ',upper(bintype{its})],'FontWeight','normal')
    xticks(1:length(var2_str))
    yticks(1:length(var1_str))
    xticklabels(extractAfter(var2_str,lettersPattern))
@@ -44,7 +44,7 @@ for its=1:length(bintype)
    set(gca,'FontSize',16)
 
    if strcmp(fldnms{ifn},'mr')
-      colormap(BrBG)
+      colormap(cmaps.BrBG)
       set(gca,'ColorScale','log')
       caxis([.5 2])
 
@@ -64,10 +64,10 @@ for its=1:length(bintype)
             if vidx(ivar1,ivar2)==1
                text(ivar2+0.015,ivar1-0.015,mpath_bin_str{ivar1,ivar2},...
                   'FontSize',15,'HorizontalAlignment','center',...
-                  'Color',coolwarm_r11(9,:)*.1,'FontName','Menlo')
+                  'Color',cmaps.coolwarm_r11(9,:)*.1,'FontName','Menlo')
                text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
                   'HorizontalAlignment','center',...
-                  'Color',coolwarm_r11(9,:),'FontName','Menlo')
+                  'Color',cmaps.coolwarm_r11(9,:),'FontName','Menlo')
             end
          end
       end

@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -6,7 +6,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str 
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-06-15';
+nikki='orig_thres';
 global_var
 mconfig = 'sedonly';
 case_dep_var
@@ -74,7 +74,7 @@ for its = 1:length(bintype)
             'LineWidth',2,'LineStyle',':')
          hold off
 
-         title([upper(bintype{its})])
+         title(['(',char(its+96),') ', upper(bintype{its})])
          lg=legend('t = 0 min','t = 1 min (bin)','t = 1 min (AMP)',...
                    't = 2 min (bin)','t = 2 min (AMP)',...
                    'Location','northeast','AutoUpdate','off');

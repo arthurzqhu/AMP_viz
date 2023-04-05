@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -6,7 +6,7 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-06-15';
+nikki='orig_thres';
 global_var
 mconfig = 'evaponly';
 get_var_comp
@@ -15,7 +15,7 @@ case_dep_var
 figure('Position',[1000 491 1000 280])
 tl=tiledlayout(1,2,'TileSpacing','compact');
 %% read files
-for its = length(bintype)
+for its = 1%length(bintype)
    if its==2
       binmean = load('diamg_sbm.txt')*1e6;
       nkr=33;
@@ -65,7 +65,7 @@ for its = length(bintype)
             'LineWidth',2,'LineStyle',':')
          hold off
 
-         title(['AMP-' upper(bintype{its})])
+         title(['(a) AMP-' upper(bintype{its})])
          l = legend('t = 1 s','t = 10 s','t = 20 s',...
             'Location','best');
          l.FontWeight='bold';
@@ -96,7 +96,7 @@ for its = length(bintype)
          set(gca,'YScale','log')
          hold off
 
-         title(['bin-' upper(bintype{its})])
+         title(['(b) bin-' upper(bintype{its})])
          l = legend('t = 1 s','t = 10 s','t = 20 s',...
             'Location','best');
          l.FontWeight='bold';
@@ -106,11 +106,11 @@ for its = length(bintype)
          ylabel(tl,'Mass conc. [kg/kg/dlogD]    ','fontsize',18)
          set(gca,'fontsize',16)
          grid
-         exportgraphics(gcf,['plots/p1/evaponly_dist.jpg'],'Resolution',300)
+         % exportgraphics(gcf,['plots/p1/evaponly_dist.jpg'],'Resolution',300)
       end
    end
 end
 
 % annotation('line',[0.485 0.485], [0.17 0.926], 'color',[.5 .5 .5 .8], 'linewidth', 1,'linestyle',':')
-exportgraphics(gcf,['plots/p1/evaponly_dist.png'],'Resolution',300)
+exportgraphics(gcf,['plots/p1/evaponly_dist_TAU.png'],'Resolution',300)
 % print('plots/p1/evaponly_dist.png','-dpng','-r300')

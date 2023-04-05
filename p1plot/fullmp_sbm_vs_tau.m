@@ -1,4 +1,4 @@
-clear
+clearvars -except cmaps
 clear global
 close all
 
@@ -7,11 +7,11 @@ global mconfig ivar2 ivar1 its ici nikki output_dir case_list_str vnum ...
    indvar_ename indvar_ename_set indvar_units indvar_units_set %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='2022-06-15';
+nikki='orig_thres';
 global_var
-get_var_comp
 
 mconfig='fullmic';
+get_var_comp
 
 load(['pfm_summary/' nikki '_' mconfig '_pfm_bincomp.mat'])
 case_dep_var
@@ -24,8 +24,8 @@ close all
 
 plot_var={'cloud_M1_path','mean_surface_ppt'};
 
-figure('position',[1331 587 1250 390])
-tl=tiledlayout(4,4);
+figure('position',[0 0 1250 750])
+tl=tiledlayout(7,4);
 for ipvar=1:length(plot_var)
 alb_idx=find(contains(indvar_name_set,plot_var{ipvar}));
 ivar=alb_idx;
@@ -36,7 +36,7 @@ mr=pfm.(indvar_name_set{ivar}).(fldnms{ifn});
 nanimagesc(mr)
 cb=colorbar;
 if ipvar==length(bintype), cb.Label.String='TAU/SBM ratio'; end
-title([indvar_ename_set{ivar} indvar_units_set{ivar}],'FontWeight','normal')
+title(['(',char(ipvar+96),') ',indvar_ename_set{ivar} indvar_units_set{ivar}],'FontWeight','normal')
 xticks(1:length(var2_str))
 yticks(1:length(var1_str))
 xticklabels(extractAfter(var2_str,lettersPattern))
@@ -44,7 +44,7 @@ yticklabels(extractAfter(var1_str,lettersPattern))
 set(gca,'FontSize',16)
 
 if strcmp(fldnms{ifn},'mr')
-   colormap(BrBG)
+   colormap(cmaps.BrBG)
    set(gca,'ColorScale','log')
    caxis([.5 2])
 
@@ -56,7 +56,7 @@ if strcmp(fldnms{ifn},'mr')
       for ivar2=1:length(var2_str)
 
          % ----- get text color -----
-         ngrads=size(coolwarm_r,1);
+         ngrads=size(cmaps.coolwarm_r,1);
          clr_idx=roundfrac(pfm.(indvar_name_set{ivar}).rsq(ivar1,ivar2),1/ngrads)*ngrads;
          clr_idx=round(clr_idx); % in case prev line outputs double
          % ----- got text color -----
@@ -66,10 +66,10 @@ if strcmp(fldnms{ifn},'mr')
 
          text(ivar2+0.02,ivar1-0.02,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
             'HorizontalAlignment','center',...
-            'Color',coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
+            'Color',cmaps.coolwarm_r(clr_idx,:)*.1,'FontName','Menlo')
          text(ivar2,ivar1,mpath_bin_str{ivar1,ivar2},'FontSize',15,...
             'HorizontalAlignment','center',...
-            'Color',coolwarm_r(clr_idx,:),'FontName','Menlo')
+            'Color',cmaps.coolwarm_r(clr_idx,:),'FontName','Menlo')
 
 
       end
@@ -81,7 +81,7 @@ nexttile(2,[1,2])
 set(gca,'Color','none')
 set(gca,'XColor','none')
 set(gca,'YColor','none')
-colormap(gca,coolwarm_r)
+colormap(gca,cmaps.coolwarm_r)
 cb=colorbar('southoutside');
 cb.Label.String='R^2';
 cb.Label.Position=[0.5000 3.3 0];
@@ -93,7 +93,6 @@ xlab=[initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
 ylab=[initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
 xlabel(tl,xlab,'fontsize',16)
 ylabel(tl,ylab,'fontsize',16)
-
 end
 
 title(tl,'Full microphysics - TAU vs SBM','fontsize',20,'fontweight','bold')
