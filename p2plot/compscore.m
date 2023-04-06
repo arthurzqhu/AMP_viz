@@ -4,7 +4,7 @@ close all
 
 global mconfig
 
-nikki = 'conftest_nodown';
+nikki = 'conftest_diffsp';
 global_var
 
 % as opposed to mean ratio. should be set between 0 and 1. 0.5 means rsq and mr are equally important
@@ -60,12 +60,12 @@ end
 
 for ivar = vars2plot
    figure(1)
-   set(gcf,'position',[0 0 1000 480])
-   tl = tiledlayout(2,1);
+   set(gcf,'position',[0 0 1200 400])
+   tl = tiledlayout(1,2);
    for its = 1:2
       nexttile
       score_lump_stretch = exp(score_lump.(bintype{its}).(indvar_name{ivar}));
-      nanimagesc(score_lump_stretch')
+      nanimagesc(score_lump_stretch)
 
       % get the ranking from score_lump_stretch
       sorted_score = sort(score_lump_stretch(:), 'descend', 'MissingPlacement','last');
@@ -79,9 +79,9 @@ for ivar = vars2plot
             if ranking(ivar1, ivar2)>10 || ranking(ivar1, ivar2)==0
                continue
             end
-            text(ivar1+.03,ivar2-.03,ranking_str{ivar1,ivar2},...
+            text(ivar2+.03,ivar1-.03,ranking_str{ivar1,ivar2},...
                'HorizontalAlignment','center','color',[0 0 0])
-            text(ivar1,ivar2,ranking_str{ivar1,ivar2},...
+            text(ivar2,ivar1,ranking_str{ivar1,ivar2},...
                'HorizontalAlignment','center','color',[1 1 1])
          end
       end
@@ -90,11 +90,12 @@ for ivar = vars2plot
       cb.Label.String = 'Composite score';
       colormap(gca,cmaps.magma_r)
       title(['(',Alphabet(its),') ',upper(bintype{its})],'FontWeight','normal')
-      xticks(1:nvar1)
-      xticklabels(momcombo_trimmed)
-      yticklabels(extractAfter(var2_str,lettersPattern))
-      xlab_key = extractBefore(var1_str,digitsPattern);
-      ylab_key = extractBefore(var2_str,digitsPattern);
+      xticks(1:nvar2)
+      xticklabels(sp_combo_str)
+      yticks(1:nvar1)
+      yticklabels(momcombo_trimmed)
+      xlab_key = extractBefore(var2_str,digitsPattern);
+      ylab_key = extractBefore(var1_str,digitsPattern);
       xlab = [initVarName_dict(xlab_key{1}) initVarUnit_dict(xlab_key{1})];
       ylab = [initVarName_dict(ylab_key{1}) initVarUnit_dict(ylab_key{1})];
       xlabel(tl,xlab,'fontsize',16)

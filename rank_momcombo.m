@@ -4,7 +4,7 @@ close all
 
 global mconfig
 
-nikki = 'conftest_nodown';
+nikki = 'conftest_diffsp';
 global_var
 
 % as opposed to mean ratio. should be set between 0 and 1. 0.5 means rsq and mr are equally important

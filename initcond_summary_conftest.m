@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th filename
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'conftest_nodown'};
+nikkis = {'conftest_diffsp'};
 doplot = 0
 doload = 0
 

@@ -89,16 +89,17 @@ if ~exist('cmaps','var')
 end
 
 %% initial variables key-values
-initvarSet = {'a','w','dm','rh','sp','mc','cm','dmr','pmomx','pmomy','spc','spr','pmomxy','dz','Na'};
+initvarSet = {'a','w','dm','rh','sp','mc','cm','dmr','pmomx','pmomy','spc','spr','pmomxy','dz','Na','spcr'};
 fullnameSet = {'Aerosol concentration', 'Maximum vertical velocity',...
    'Mean mass diameter', 'Relative humidity', 'Shape parameter (\nu)', ...
    'Initial mass content','Cloud mass','Mean mass diameter (rain)',...
    'Predicted Moment X', 'Predicted Moment Y','Shape parameter (L1)', ...
-   'Shape parameter (L2)','Predicted Moments','Cloud thickness','Aerosol Concentration'};
+   'Shape parameter (L2)','Predicted Moments','Cloud thickness','Aerosol Concentration',...
+   'Shape parameter (L1-L2)'};
 symbolSet = {'N_a', 'w_{max}', 'D_m', 'RH', '\nu', 'm_i', 'm_c', 'D_mr','M^p_x',...
-   'M^p_y','\nu_c','\nu_r','M^p_{xy}','\Deltaz cloud','N_a'};
+   'M^p_y','\nu_c','\nu_r','M^p_{xy}','\Deltaz cloud','N_a','nu_1-nu_2'};
 unitSet = {' [/mg]', ' [m/s]', ' [\mum]', ' [%]', '', ' [g/kg]', ' [g/kg]', ...
-   ' [\mum]', '', '','','','',' [m]',' [/mg]'};
+   ' [\mum]', '', '','','','',' [m]',' [/mg]',''};
 initVarName_dict = containers.Map(initvarSet, fullnameSet);
 initVarSymb_dict = containers.Map(initvarSet, symbolSet);
 initVarUnit_dict = containers.Map(initvarSet, unitSet);
@@ -273,6 +274,26 @@ for imomx = 1:length(momx)
       momcombo_trimmed{imc} = [num2str(momx(imomx)), '-', num2str(momy(imomy))];
    end
 end
+
+sp_combo=readmatrix('~/github/KiD_repo/KiD_1mode_gam/sp_combo.csv');
+
+% Convert the matrix to a cell of sp_combo_str
+sp_combo_str = cellstr(num2str(sp_combo, '%g '));
+% Remove leading spaces and replace spaces with a dash
+for i = 1:length(sp_combo_str)
+   % Remove leading and trailing spaces
+    sp_combo_str{i} = strtrim(sp_combo_str{i});
+
+    % Replace one or more spaces with a dash
+    sp_combo_str{i} = regexprep(sp_combo_str{i}, '\s+', '-');
+end
+
+% for i = 1:size(sp_combo,1)
+%     for j = 1:size(sp_combo,2)
+%         sp_combo_str{i,j} = num2str(sp_combo(i,j));
+%     end
+% end
+
 
 Alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
