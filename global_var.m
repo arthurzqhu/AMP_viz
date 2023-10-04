@@ -2,7 +2,8 @@ global cloud_n_th rain_n_th cloud_mr_th rain_mr_th meanD_th ...
    l_amp l_sbm indvar_name_set indvar_ename_set indvar_units_set ...
    cwp_th rwp_th sppt_th indvar2D_name_set indvar2D_ename_set indvar2D_units_set ...
    color_order indvar_name_all indvar_ename_all indvar_units_all ...
-   split_bins col amp_only_var mconfigSet indvaridx
+   split_bins col amp_only_var mconfigSet indvaridx cmaps script_name islink ...
+   summ_dir
 
 indvar_name_set = {};
 indvar_ename_set = {};
@@ -20,16 +21,23 @@ col = log(2)/3;
 ampORbin = {'amp' 'bin'};
 bintype = {'tau' 'sbm'};
 
+%% determine if the file is linked
+islink = ~unix(['test -L ',script_name,'.m']);
 
 %% dir of the model output
 if strcmp(computer('arch'),'maci64')
    output_dir='/Volumes/ESSD/AMP output/';
 elseif strcmp(computer('arch'),'glnxa64')
-   output_dir='../github/KiD_repo/KiD_1mode_gam/output/';
-   % output_dir='/group/aigelgrp2/arthurhu/KiD/';
+   if islink % if the script running is a symlink, then it's probably in a shared folder
+      output_dir='../UvsS_KiD/';
+      summ_dir='../summary_mat/';
+      score_dir='../summary_mat/';
+   else
+      output_dir='/group/aigelgrp2/arthurhu/KiD/';
+      summ_dir='pfm_summary/';
+      score_dir='score_summary/';
+   end
 end
-% output_dir='/Volumes/PESSD/AMP output/';
-% output_dir='../output/';
 
 
 %% KiD cases
@@ -58,48 +66,49 @@ end
 
 %% load these python colormap
 ngrad=21;
-if ~exist('cmaps','var')
-   disp('loading matplotlib colormaps...')
-   cmaps.Blues = getPyPlot_cMap('Blues',10);
-   cmaps.Blues_s = getPyPlot_cMap('Blues');
-   cmaps.cool5 = getPyPlot_cMap('cool',5);
-   cmaps.rainbow = getPyPlot_cMap('rainbow',20);
-   cmaps.coolwarm_s = getPyPlot_cMap('coolwarm');
-   cmaps.coolwarm = getPyPlot_cMap('coolwarm',10);
-   cmaps.coolwarm5 = getPyPlot_cMap('coolwarm',5);
-   cmaps.coolwarm3 = getPyPlot_cMap('coolwarm',3);
-   cmaps.coolwarm_r = getPyPlot_cMap('coolwarm_r',10);
-   cmaps.coolwarm_r11 = getPyPlot_cMap('coolwarm_r',11);
-   cmaps.coolwarm_rs = getPyPlot_cMap('coolwarm_r');
-   cmaps.flag3(1,:) = [1, 1, 1];
-   cmaps.flag3 = cmaps.coolwarm_r11([6 9 2],:);
-   cmaps.BrBG_s = getPyPlot_cMap('BrBG');
-   cmaps.BrBG5 = getPyPlot_cMap('BrBG',5);
-   cmaps.BrBG3 = getPyPlot_cMap('BrBG',3);
-   cmaps.BrBG20 = getPyPlot_cMap('BrBG',21);
-   cmaps.BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
-   cmaps.BrBG = repelem(cmaps.BrBG,floor(256/ngrad),1); 
-   cmaps.magma = getPyPlot_cMap('magma');
-   cmaps.magma10 = getPyPlot_cMap('magma',10);
-   cmaps.magma_r = getPyPlot_cMap('magma_r');
-   cmaps.magma_r10 = getPyPlot_cMap('magma_r',10);
-   cmaps.viridis = getPyPlot_cMap('viridis');
-   cmaps.copper_r = getPyPlot_cMap('copper_r');
-   disp('matplotlib colormaps loaded')
+if ~exist('cmaps','var') || isempty(cmaps)
+   load('cmaps.mat')
+   % cmaps.Blues = getPyPlot_cMap('Blues',10);
+   % cmaps.Blues_s = getPyPlot_cMap('Blues');
+   % cmaps.cool5 = getPyPlot_cMap('cool',5);
+   % cmaps.rainbow = getPyPlot_cMap('rainbow',20);
+   % cmaps.coolwarm_s = getPyPlot_cMap('coolwarm');
+   % cmaps.coolwarm = getPyPlot_cMap('coolwarm',10);
+   % cmaps.coolwarm5 = getPyPlot_cMap('coolwarm',5);
+   % cmaps.coolwarm3 = getPyPlot_cMap('coolwarm',3);
+   % cmaps.coolwarm_r = getPyPlot_cMap('coolwarm_r',10);
+   % cmaps.coolwarm_r11 = getPyPlot_cMap('coolwarm_r',11);
+   % cmaps.coolwarm_rs = getPyPlot_cMap('coolwarm_r');
+   % cmaps.flag3(1,:) = [1, 1, 1];
+   % cmaps.flag3 = cmaps.coolwarm_r11([6 9 2],:);
+   % cmaps.flag5 = getPyPlot_cMap('coolwarm',5);
+   % cmaps.BrBG_s = getPyPlot_cMap('BrBG');
+   % cmaps.BrBG5 = getPyPlot_cMap('BrBG',5);
+   % cmaps.BrBG3 = getPyPlot_cMap('BrBG',3);
+   % cmaps.BrBG20 = getPyPlot_cMap('BrBG',21);
+   % cmaps.BrBG = getPyPlot_cMap('BrBG',ngrad)*.9;
+   % cmaps.BrBG = repelem(cmaps.BrBG,floor(256/ngrad),1); 
+   % cmaps.magma = getPyPlot_cMap('magma');
+   % cmaps.magma10 = getPyPlot_cMap('magma',10);
+   % cmaps.magma_r = getPyPlot_cMap('magma_r');
+   % cmaps.magma_r10 = getPyPlot_cMap('magma_r',10);
+   % cmaps.viridis = getPyPlot_cMap('viridis');
+   % cmaps.copper_r = getPyPlot_cMap('copper_r');
 end
 
 %% initial variables key-values
-initvarSet = {'a','w','dm','rh','sp','mc','cm','dmr','pmomx','pmomy','spc','spr','pmomxy','dz','Na','spcr'};
+initvarSet = {'a','w','dm','rh','sp','mc','cm','dmr','pmomx','pmomy','spc','spr',...
+   'pmomxy','dz','Na','spcr','sprc'};
 fullnameSet = {'Aerosol concentration', 'Maximum vertical velocity',...
    'Mean mass diameter', 'Relative humidity', 'Shape parameter (\nu)', ...
    'Initial mass content','Cloud mass','Mean mass diameter (rain)',...
    'Predicted Moment X', 'Predicted Moment Y','Shape parameter (L1)', ...
-   'Shape parameter (L2)','Predicted Moments','Cloud thickness','Aerosol Concentration',...
-   'Shape parameter (L1-L2)'};
+   'Shape parameter (L2)','Predicted Moments M_x-M_y','Cloud thickness','Aerosol Concentration',...
+   'Assumed Shape Parameter \nu_1-\nu_2','Shape parameter \nu_2-\nu_1'};
 symbolSet = {'N_a', 'w_{max}', 'D_m', 'RH', '\nu', 'm_i', 'm_c', 'D_mr','M^p_x',...
-   'M^p_y','\nu_c','\nu_r','M^p_{xy}','\Deltaz cloud','N_a','nu_1-nu_2'};
+   'M^p_y','\nu_c','\nu_r','M^p_{xy}','\Deltaz cloud','N_a','nu_1-nu_2','nu_2-nu_1'};
 unitSet = {' [/mg]', ' [m/s]', ' [\mum]', ' [%]', '', ' [g/kg]', ' [g/kg]', ...
-   ' [\mum]', '', '','','','',' [m]',' [/mg]',''};
+   ' [\mum]', '', '','','','',' [m]',' [/mg]','',''};
 initVarName_dict = containers.Map(initvarSet, fullnameSet);
 initVarSymb_dict = containers.Map(initvarSet, symbolSet);
 initVarUnit_dict = containers.Map(initvarSet, unitSet);
@@ -109,11 +118,12 @@ mconfigSet = {'condnuc', 'condonly', 'collonly', 'sedonly', 'evaponly', ...
               'condcoll', 'collsed', 'evapsed', 'condcollsed', ...
               'collsedevap', 'fullmic',...
               };
-indvaridx = {[3 6], [3 6], [4], [4 5 7 10], [3 4], ...
+indvaridx = {[3 6], [3 6], [4 21 40 41], [4 5 7 10], [3 4], ...
              [3 4], [3 4 10], [3:7 10], [3 4 10], ...
-             [3 4 5 10], [3 4 5 10 21],...
+             [3 4 5 10], [3 4 5 10 18],...
              };
 
+% ok perhaps better combines these three variables into an object but too much work for now...
 %% compare these vars
 indvar_name_all = {'diagM3_cloud','diagM3_rain',...
    'cloud_M1_path','rain_M1_path','liq_M1_path',...
@@ -143,17 +153,17 @@ indvar_name_all = {'diagM3_cloud','diagM3_rain',...
    'rain_M1_adv', 'rain_M2_adv', 'rain_M3_adv', 'rain_M4_adv', ...
    'rain_M1_force', 'rain_M2_force', 'rain_M3_force', 'rain_M4_force', ...
    'nu_c', 'nu_r', ...
-   'diagM0_liq', ...
+   'diagM0_liq', 'diagM3_liq',...
    };
 
-indvar_ename_all = {'cloud mass','rain mass',... 2
-   'cloud water path','rain water path','liquid water path',... 5
+indvar_ename_all = {'CWC','RWC',... 2
+   'CWP','RWP','LWP',... 5
    'cloud number','rain number',... 7
    'albedo','optical depth','surface pcpt. rate','RH'... 11
    'GS delta (c)','GS skewness (c)',... 13 
    'GS delta (r)','GS skewness (r)',... 15
    'cloud half-life',... 16
-   'Dm_c','Dm_r','Dm_w'... 19
+   'mean cloud droplet size','mean raindrop size','D_{m,w}'... 19
    'dm cloud by coll','dm_{r,coll}','dm by sed',... 22
    'dm cloud by CE','dm rain by CE', 'dm liq by CE'... 25
    'dn cloud by CE','dn rain by CE', 'dn liq by CE'... 28
@@ -174,7 +184,7 @@ indvar_ename_all = {'cloud mass','rain mass',... 2
    'rain mass adv', 'rain number adv', 'rain M3 adv', 'rain M4 adv', ... 75
    'rain mass force', 'rain number force', 'rain M3 force', 'rain M4 force', ... 79
    'nu_c', 'nu_r', ... 81
-   'liquid number', ... 82
+   'liquid number', 'LWC'... 83
    };
 
 indvar_units_all = {' [kg/kg]',' [kg/kg]',...
@@ -205,7 +215,7 @@ indvar_units_all = {' [kg/kg]',' [kg/kg]',...
    '', '', '', '', ...
    '', '', '', '', ...
    '','',...
-   ' [1/cc]', ...
+   ' [1/cc]', ' [kg/kg]'...
    };
 
 
@@ -265,7 +275,7 @@ end
 
 momcombo_trimmed = {};
 momx = [1 2 4 5 6 7 8 9];
-momy = momx;
+momy = [1 2 4 5 6 7 8 9];
 imc = 0;
 
 for imomx = 1:length(momx)

@@ -8,9 +8,9 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th filename
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'2023-04-04'};
-doplot = 1
-doload = 0
+nikkis = {'fullmic'};
+doplot = 0;
+doload = 0;
 
 for ink = 1:length(nikkis)
    nikki = nikkis{ink};
@@ -22,7 +22,7 @@ for ink = 1:length(nikkis)
 
    %%
    % creating structures for performance analysis based on Rsq and ratio
-   for iconf = 2%length(mconfig_ls)
+   for iconf = 1:length(mconfig_ls)
       mconfig = mconfig_ls{iconf};
       disp(mconfig)
       get_var_comp() % sedonly
@@ -66,13 +66,13 @@ for ink = 1:length(nikkis)
                   var_bin_flt = var2phys(var_comp_raw_bin,ivar,1,1,1);
 
                   % get the non-nan indices for both bin and amp
-                  vidx = ~isnan(var_amp_flt+var_bin_flt);
-                  nzidx = var_amp_flt.*var_bin_flt>0;
+                     vidx = ~isnan(var_amp_flt+var_bin_flt) & ~isinf(var_amp_flt+var_bin_flt);
+                     nonzero_idx = var_amp_flt.*var_bin_flt>0;
 
                   weight = var_bin_flt(vidx)/sum(var_bin_flt(vidx));
 
                   [mr, rsq, mval_amp, mval_bin, er, maxr, md, serr, msd_amp, msd_bin, ...
-                     sval_amp, sval_bin] = wrsq(var_amp_flt, var_bin_flt, weight);
+                     sval_amp, sval_bin] = wrsq(var_amp_flt(vidx), var_bin_flt(vidx), weight);
 
                   if indvar_name{ivar} == "mean_surface_ppt"
                      mval_bin(mval_bin < sppt_th(1)) = 0;
@@ -196,7 +196,7 @@ for ink = 1:length(nikkis)
             set(gca,'FontSize',16)
 
             colormap(cmaps.magma_r)
-            set(gca,'ColorScale','log')
+            % set(gca,'ColorScale','log')
             caxis([0 1])
             %                cb.Ticks = [.25 .5 1 2 4];
 

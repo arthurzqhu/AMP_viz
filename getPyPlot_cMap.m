@@ -74,7 +74,7 @@ if ~exist('keepAlpha','var') || isempty(keepAlpha)
     keepAlpha = 0;
 end
 if ~exist('pyCmd','var') || isempty(pyCmd)
-    pyCmd = 'python';
+    pyCmd = 'python3';
 end
 
 
@@ -86,7 +86,7 @@ assert(~isempty(pyScript), 'getPyPlot_cMap:PyScriptNotFound', ...
 tmpf = tempname;
 
 % call python script
-comd = sprintf('%s "%s" %s -o "%s" -n %d', pyCmd, pyScript, nam, tmpf, n);
+comd = sprintf('%s "%s" %s -o "%s" -n %d', pyCmd, pyScript, nam, tmpf, n)
 [s,m] = system(comd);
 
 % check if system command ran w/o error

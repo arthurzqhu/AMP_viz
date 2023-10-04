@@ -18,7 +18,7 @@ yb = double(yb);
 wgt = double(wgt);
 
 % ---------------------------------------------------
-vidxn = find(~isnan(ya + yb) & (ya ~= -999) & (yb ~= -999));
+vidxn = find(~isnan(ya + yb) & (ya ~= -999) & (yb ~= -999) & ~isinf(ya+yb));
 
 if all(ya == 0) || all(yb == 0) || isempty(vidxn)
    [MRSQ, MR, RSQ, ER, MAXR, MD, SERR, MSD_AMP, MSD_BIN, ...

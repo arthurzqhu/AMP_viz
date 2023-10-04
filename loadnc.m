@@ -33,6 +33,7 @@ casenum=str2num(extractBetween(string(filemeta.name),'c-0','_v-'));
 
 stct.time = ncread(filename, 'time');
 stct.z = ncread(filename, 'z');
+diam_var = {'diagM0_cloud','diagM0_rain','diagM3_cloud','diagM3_rain'};
 
 if isempty(varargin)
    for ivar = 1:length(fileinfo.Variables)
@@ -47,6 +48,17 @@ else
          var_name{ivar,1} = indvar_name_set{ivar};
          stct.(var_name{ivar}) = ncread(filename, var_name{ivar});
          stct.(var_name{ivar})(stct.(var_name{ivar}) == -999) = nan;
+      catch
+      end
+   end
+
+   for ivar=1:4
+      try
+         var_name{length(indvar_name_set)+ivar,1} = diam_var{ivar};
+         varval = ncread(filename, diam_var{ivar});
+         varval(varval==-999) = nan;
+         varval(varval<0) = 0;
+         stct.(diam_var{ivar}) = varval;
       catch
       end
    end
@@ -88,17 +100,6 @@ if exist('var_name', 'var')
       end
    end
 
-   % % calculate supersaturation
-   % var_name=[var_name;'ss_w'];
-   % supsat = stct.RH - 100;
-   % supsat(supsat < 0) = nan;
-   % stct.ss_w = supsat;
-
-   % var_name=[var_name;'ss_wpremphys'];
-   % supsat = stct.RH_premphys - 100;
-   % supsat(supsat < 0) = nan;
-   % stct.ss_wpremphys = supsat;
-
    % calculate cloud half life
    if contains('half_life_c', indvar_name_set)
       var_name=[var_name;'half_life_c'];
@@ -118,32 +119,10 @@ if exist('var_name', 'var')
    end
 end
 
-% calculate relative dispersion of each grid
-%var_name=[var_name;'reldisp'];
-%
-%if mp_in=='amp'
-%   mdist=stct.mass_dist_init;
-%elseif mp_in=='bin'
-%   mdist=stct.mass_dist;
-%end
-%
-%if its==2
-%   binmean = load('diamg_sbm.txt');
-%   mdist=mdist(:,1:length(binmean),:);
-%elseif its==1
-%   binmean = load('diamg_tau.txt');
-%end
-%
-%mdist(mdist<0)=0;
-%
-%for itime=1:length(time)
-%   for iz=1:length(z)
-%      meanD = wmean(binmean,mdist(itime,:,iz));
-%      stdD = std(binmean,mdist(itime,:,iz));
-%      stct.reldisp(itime,iz) = stdD/meanD;
-%   end
-%end
-%stct.(var_name{ivaradd+1})
+% calculate Dm_c, Dm_r, Dm_w
+stct.Dm_c = (stct.diagM3_cloud./stct.diagM0_cloud).^(1/3);
+stct.Dm_r = (stct.diagM3_rain./stct.diagM0_rain).^(1/3);
+stct.Dm_w = (stct.diagM3_liq./stct.diagM0_liq).^(1/3);
 
 % only select the available vars as indvars
 if exist('var_name', 'var')

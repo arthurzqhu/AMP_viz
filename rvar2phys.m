@@ -1,4 +1,4 @@
-function mpdat = rvar2phys(var_interest, l_da_arr)
+function mpdat = rvar2phys(var_interest, l_da_arr, snap)
 
 global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
 
@@ -14,7 +14,11 @@ global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
    
    % load all the required variables
    var_req_uniq = unique(horzcat(var_interest.prereq_vars));
-   rams_hdf5c(var_req_uniq,istart-1:nfile-1,filedir)
+   if isempty(snap)
+      rams_hdf5c(var_req_uniq,istart-1:nfile-1,filedir)
+   else
+      rams_hdf5c(var_req_uniq,snap,filedir)
+   end
    
    if contains(bintype{its},'tau')
       binmean = load('tau_binmean.txt')*2;
@@ -25,7 +29,8 @@ global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
    % 
    loaded_varname = {}; % record what variables are already loaded
    loaded_var = struct;
-   density = rho(runs.THETA, runs.PI);
+   % density = rho(runs.THETA, runs.PI);
+   density = 1.1;
    
    mpdat.time=runs.time;
    for ivar = 1:length(var_interest)
@@ -45,12 +50,17 @@ global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
       elseif l_da == 2
          % only pick the center of domain for vars like DSD
          var_dim = size(loaded_var.(var_interest(ivar).var_name));
-         y_pick = 5;
-         x_pick = 45;
+         y_pick = 50;
+         x_pick = 50;
          % x_pick = ceil(var_dim(1)/2);
          % y_pick = ceil(var_dim(2)/2);
          mpdat.(var_interest(ivar).da_name) = ...
             squeeze(loaded_var.(var_interest(ivar).var_name)(x_pick, y_pick, :, :, :));
+      elseif l_da == 3
+         x_pick = 50;
+         mpdat.(var_interest(ivar).da_name) = ...
+            squeeze(loaded_var.(var_interest(ivar).var_name)(x_pick, :, :, :));
+            % squeeze(mean(loaded_var.(var_interest(ivar).var_name),1));
       else
          mpdat.(var_interest(ivar).var_name) = ...
             loaded_var.(var_interest(ivar).var_name);
@@ -62,7 +72,7 @@ end
 function [loaded_var, loaded_varname] = loadvar(varin_obj,loaded_var,loaded_varname)
 % update the loaded_var (struct) and loaded_varname (cell)
 global runs deltaz density binmean thhd
-   
+
    switch varin_obj.var_name
       case "LWP"
          var_to_read = {'CWP','RWP'};
@@ -78,7 +88,7 @@ global runs deltaz density binmean thhd
          % skip if already loaded
          continue
       end
-   
+
       switch varname
          case 'CWC'
             loaded_var.(varname) = 1e3*runs.RCP;
@@ -128,6 +138,8 @@ global runs deltaz density binmean thhd
             flagr = runs.GUESSR3;
             flagr(flagr<0) = nan;
             loaded_var.(varname) = flagr;
+         case 'SPR'
+            loaded_var.(varname) = squeeze(runs.PCPRR*3600);
          otherwise
             loaded_var.(varname) = runs.(varin_obj.prereq_vars{end});
       end

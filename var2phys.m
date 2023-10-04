@@ -88,7 +88,7 @@ switch var_name
       note = 'log';
       unit_conv = 'self';
       range = [1e2 1e6];
-   case {'diagM3_cloud'}
+   case {'diagM3_cloud', 'diagM3_liq'}
       physquant = var_raw*pi/6*1000;
       threshold = cloud_mr_th(1);
       range = [1e-8 1e-2];

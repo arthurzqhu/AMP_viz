@@ -3,7 +3,8 @@ classdef ramsvar
    properties
       var_name
       var_ename 
-      prereq_vars = {'THETA','PI'};
+      prereq_vars = {};
+      % prereq_vars = {'THETA','PI'};
       units
       range
       linORlog

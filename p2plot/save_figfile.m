@@ -1,0 +1,9 @@
+uamp_mech_p2
+time_height_lwp
+meanscore
+heatmap_schem
+compscore
+fullmic_rwpspr
+fullmic_cwplwp
+snapshot_fullmp
+snapshot_sedonly

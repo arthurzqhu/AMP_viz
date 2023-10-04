@@ -4,7 +4,6 @@ global var_name_set var_ename_set var_req_set var_unit_set var_range ...
 
 idx = 1;
 for ivar = int_idx
-
    if iab == 2 && contains(var_name_set{ivar}, 'flag')
       continue
    end

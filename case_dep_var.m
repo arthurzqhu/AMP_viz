@@ -1,4 +1,4 @@
-global mconfig
+global mconfig islink
 
 % configs of the model
 
@@ -37,7 +37,7 @@ for ivar1 = 1:length(var1_str_raw)
 end
 
 % sort var1 and var2 from low to high
-var1_val_unsorted = cellfun(@str2num,extractAfter(var1_str_raw,lettersPattern));
+var1_val_unsorted = extractAfter(var1_str_raw,lettersPattern);
 [var1_val,var1_idx] = sort(var1_val_unsorted);
 var1_str=var1_str_raw(var1_idx);
 
@@ -50,14 +50,19 @@ for ivar1 = 1:length(var1_str_raw)
       var2_str_union_unsorted = union(var2_str_raw{ivar1}(var2_idx),var2_str_raw{ivar1-1}(var2_idx));
       var2_val_union_unsorted = cellfun(@str2num,extractAfter(var2_str_union_unsorted,lettersPattern));
       [~, var2_union_idx] = sort(var2_val_union_unsorted);
-      var2_str = var2_str_union_unsorted(var2_union_idx);
+      % var2_str = var2_str_union_unsorted(var2_union_idx);
+      var2_str = var2_str_union_unsorted;
    end
+end
+
+if isempty(var2_str)
+   var2_str = var2_str_raw{ivar1};
 end
 
 % output dir for the figures
 plot_dir=['plots/' nikki '/' mconfig];
-if ~exist(['plots/' nikki '/' mconfig],'dir')
+if ~exist(['plots/' nikki '/' mconfig],'dir') && ~islink
     mkdir(['plots/' nikki '/' mconfig])
 end
 
-clear var1_str_raw var2_str_raw
+% clear var1_str_raw var2_str_raw

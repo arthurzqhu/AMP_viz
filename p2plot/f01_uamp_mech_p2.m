@@ -50,7 +50,7 @@ dist_after = dist_dicr.*(1+(rand(nkr,1)'-.5)*.7);
 
 
 
-hf=figure('Position',[1236 117 1345 860]);
+hf=figure('Position',[0 0 1345 860]);
 % grid
 
 annotation('arrow',[.2729 .3019],[.4711 .3767],'LineWidth',4,...
@@ -142,4 +142,5 @@ set(gca,'XColor','none')
 
 hold off
 
-exportgraphics(gcf,'plots/p2/uamp_mech.pdf')
+exportgraphics(gcf,'plots/p2/f01_uamp_mech.pdf')
+saveas(gcf,'plots/p2/f01_uamp_mech.fig')

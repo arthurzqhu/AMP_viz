@@ -1,10 +1,11 @@
 function DSDprof_timeprog(ti, tf, ts_plot, DSDprof_mphys,z,binmean,...
    Cmap,clr_linORlog,pltflag,var_overlay)
 
-global its bintype dt fn var1_str var2_str ivar1 ivar2 color_order test
+global its bintype dt fn var1_str var2_str ivar1 ivar2 color_order test cmaps
 
 close all
-c_map = getPyPlot_cMap(Cmap,20);
+
+c_map = cmaps.Blues_s;
 
 if ~exist('var_overlay','var') || isempty(var_overlay)
    var_overlay=nan;
@@ -110,7 +111,7 @@ parfor iframe = 1:length(time_series)
 
    delete(findall(gcf,'type','annotation'))
    
-   %     title('')
+   %     title('') cmaps
 end
 
 % tic
@@ -118,11 +119,11 @@ test = F;
 
 if isempty(var1_str)
    saveVid(F,[fn, 'DSD', pltflag, ' ',...
-      num2str(ti) '-', num2str(tf)], 10)
+      num2str(ti) '-', num2str(tf)], 30)
 else
    saveVid(F,[fn, 'DSD', pltflag, ' ',...
       var1_str{ivar1} ' ' var2_str{ivar2}, ...
-      ' ', num2str(ti) '-', num2str(tf)], 10)
+      ' ', num2str(ti) '-', num2str(tf)], 30)
 end
 %v = VideoWriter(['vids/time progress in DSD', pltflag, ' ',...
 %   var1_str{ivar1} ' ' var2_str{ivar2} ' ' fn,...
