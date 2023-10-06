@@ -3,9 +3,7 @@ function [stct, mask_c, mask_r, mask_l]=loadnc(mp_in,varargin)
 global ivar1 ivar2 its nikki mconfig output_dir vnum ...
    bintype var1_str var2_str indvar_name_set indvar_name ...
    indvar_units indvar_ename indvar_ename_set indvar_units_set ...
-   indvar2D_name indvar2D_units indvar2D_ename indvar2D_name_set ...
-   indvar2D_ename_set indvar2D_units_set casenum split_bins col ...
-   binmean cloud_mr_th rain_mr_th
+   casenum split_bins col binmean cloud_mr_th rain_mr_th
 
 if isempty(vnum)
    vnum = '0001';
@@ -131,10 +129,10 @@ if exist('var_name', 'var')
    indvar_ename=indvar_ename_set(vidx);
    indvar_units=indvar_units_set(vidx);
 
-   indvar2D_name=intersect(indvar2D_name_set,var_name,'stable');
-   vidx=ismember(indvar2D_name_set,indvar2D_name);
-   indvar2D_ename=indvar2D_ename_set(vidx);
-   indvar2D_units=indvar2D_units_set(vidx);
+   % indvar2D_name=intersect(indvar2D_name_set,var_name,'stable');
+   % vidx=ismember(indvar2D_name_set,indvar2D_name);
+   % indvar2D_ename=indvar2D_ename_set(vidx);
+   % indvar2D_units=indvar2D_units_set(vidx);
 else
    var_name = {};
 end
