@@ -61,6 +61,7 @@ case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num)
 %% thresholds to be considered as clouds 
 cloud_mr_th = [1e-7 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
 rain_mr_th = [1e-7 1e-2];
+lwc_mr_th = [1e-7 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
 rain_n_th = [1e2 inf]; % #/m2
 cwp_th = [1e-5 inf]; % kg/m2 cloud water path threshold

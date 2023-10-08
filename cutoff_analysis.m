@@ -30,11 +30,23 @@ for its = 1:2
    z=bin_struct{its}.z;
    time=bin_struct{its}.time;
 
+   lwc = bin_struct{its}.diagM3_liq;
+   cutoff_summ.(var1_str{ivar1}).(var2_str{ivar2}).(bintype{its}).time = time;
+   cutoff_summ.(var1_str{ivar1}).(var2_str{ivar2}).(bintype{its}).z = z;
+
    for itime=1:length(time)
       for iz=1:length(z)
          dsd_mass=bin_struct{its}.mass_dist(itime,1:nbins,iz);
-         % determine whether the distribution is bimodal
-         cutoff_summ{ivar1,ivar2,its}(itime,iz)=binmean(find_cutoff(dsd_mass));
+         bc = get_bimocoeff(dsd_mass,binmean);
+         % ignore dists that has too little water or are unimodal
+         if bc > 5/9 && lwc(itime,iz) > lwc_mr_th(1)
+            cutoff_summ.(var1_str{ivar1}).(var2_str{ivar2}).(bintype{its}).D_cutoff(itime,iz) = ...
+               binmean(find_cutoff(dsd_mass));
+            % cutoff_summ{ivar1,ivar2,its}(itime,iz)=binmean(find_cutoff(dsd_mass));
+         else
+            cutoff_summ.(var1_str{ivar1}).(var2_str{ivar2}).(bintype{its}).D_cutoff(itime,iz) = nan;
+            % cutoff_summ{ivar1,ivar2,its}(itime,iz)=nan;
+         end
       end
    end
 end
