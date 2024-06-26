@@ -4,7 +4,8 @@ global mconfig
 
 % this is assuming every case has the same set of initial conditions
 
-var1_dir = dir([output_dir,nikki,'/',mconfig,'/']);
+var1_dir = dir([output_dir,nikki,'/']);
+% var1_dir = dir([output_dir,nikki,'/',mconfig,'/']);
 % really stupid way to only look into the first directory
 circuit_breaker=0;
 for iitem = 1:size(var1_dir,1)

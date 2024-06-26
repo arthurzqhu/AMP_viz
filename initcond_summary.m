@@ -8,8 +8,8 @@ global mconfig ivar2 ivar1 its ici nikki output_dir vnum ...
    indvar_name_all indvar_ename_all indvar_units_all cwp_th filename
 
 vnum = '0001'; % last four characters of the model output file.
-nikkis = {'fullmic'};
-doplot = 0;
+nikkis = {'2024-05-26'};
+doplot = 1;
 doload = 0;
 
 for ink = 1:length(nikkis)
@@ -21,11 +21,11 @@ for ink = 1:length(nikkis)
    mconfig_ls = get_mconfig_list(output_dir,nikki);
 
    %%
-   % creating structures for performance analysis based on Rsq and ratio
-   for iconf = 1:length(mconfig_ls)
+   % creating structures for performance analysis based on simscore and ratio
+   for iconf = 2%length(mconfig_ls)
       mconfig = mconfig_ls{iconf};
       disp(mconfig)
-      get_var_comp() % sedonly
+      get_var_comp([3:5 10]) % sedonly
       case_dep_var
       if ~doload
       pfm = struct;
@@ -36,15 +36,17 @@ for ink = 1:length(nikkis)
                   continue
                end
                disp([its, ivar1, ivar2])
+               try
                amp_struct = loadnc('amp', indvar_name_set);
                bin_struct = loadnc('bin', indvar_name_set);
+
+               time = amp_struct.time;
+               z = amp_struct.z;
 
                % indices of vars to compare
                vars = 1;
                vare = length(indvar_name);
 
-               time = amp_struct.time;
-               z = amp_struct.z;
                for ivar = vars:vare
                   if strcmp(indvar_name{ivar},'mean_surface_ppt') && ~contains(mconfig,{'fullmic','sed'})
                      continue
@@ -57,7 +59,9 @@ for ink = 1:length(nikkis)
                   end
 
                   % filter the time where sppt > its threshold
-                  time_filt = bin_struct.mean_surface_ppt*3600>sppt_th(1);
+                  try 
+                     time_filt = bin_struct.mean_surface_ppt*3600>sppt_th(1);
+                  end
 
                   var_comp_raw_amp = amp_struct.(indvar_name{ivar});
                   var_amp_flt = var2phys(var_comp_raw_amp,ivar,1,1,1);
@@ -66,17 +70,23 @@ for ink = 1:length(nikkis)
                   var_bin_flt = var2phys(var_comp_raw_bin,ivar,1,1,1);
 
                   % get the non-nan indices for both bin and amp
-                     vidx = ~isnan(var_amp_flt+var_bin_flt) & ~isinf(var_amp_flt+var_bin_flt);
-                     nonzero_idx = var_amp_flt.*var_bin_flt>0;
+                  vidx = ~isnan(var_amp_flt+var_bin_flt) & ~isinf(var_amp_flt+var_bin_flt);
+                  nonzero_idx = var_amp_flt.*var_bin_flt>0;
 
                   weight = var_bin_flt(vidx)/sum(var_bin_flt(vidx));
 
-                  [mr, rsq, mval_amp, mval_bin, er, maxr, md, serr, msd_amp, msd_bin, ...
-                     sval_amp, sval_bin] = wrsq(var_amp_flt(vidx), var_bin_flt(vidx), weight);
+                  [mr, simscore, mval_amp, mval_bin, er, maxr, md, serr, msd_amp, msd_bin, ...
+                     sval_amp, sval_bin, rsq] = wrsq(var_amp_flt(vidx), var_bin_flt(vidx), weight);
 
                   if indvar_name{ivar} == "mean_surface_ppt"
                      mval_bin(mval_bin < sppt_th(1)) = 0;
                      mr(mval_bin < sppt_th(1)) = nan;
+                  end
+
+                  if indvar_name{ivar} == "half_life_c"
+                     mval_bin = bin_struct.half_life_c;
+                     mval_amp = amp_struct.half_life_c;
+                     simscore = 1-abs(log10(mr));
                   end
 
                   % if indvar_name{ivar} == "rain_M1_path"
@@ -90,7 +100,7 @@ for ink = 1:length(nikkis)
                   % end
 
                   pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1, ivar2) = mr;
-                  pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2) = rsq;
+                  pfm.(indvar_name{ivar}).(bintype{its}).simscore(ivar1, ivar2) = simscore;
                   pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1, ivar2) = mval_bin;
                   pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1, ivar2) = mval_amp;
                   pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1, ivar2) = er;
@@ -101,7 +111,30 @@ for ink = 1:length(nikkis)
                   pfm.(indvar_name{ivar}).(bintype{its}).msd_bin(ivar1, ivar2) = msd_bin;
                   pfm.(indvar_name{ivar}).(bintype{its}).sval_amp(ivar1, ivar2) = sval_amp;
                   pfm.(indvar_name{ivar}).(bintype{its}).sval_bin(ivar1, ivar2) = sval_bin;
+                  pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2) = rsq;
                end % ivar
+               catch
+                  % indices of vars to compare
+                  vars = 1;
+                  vare = length(indvar_name);
+
+                  for ivar = vars:vare
+                     sprintf('no output files for ivar1, ivar2: %d, %d', ivar1, ivar2)
+                     pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).simscore(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).maxr(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).md(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).serr(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).msd_amp(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).msd_bin(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).sval_amp(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).sval_bin(ivar1,ivar2) = nan;
+                     pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1,ivar2) = nan;
+                  end
+               end % try
             end % ivar2
          end % ivar1
       end % its
@@ -118,10 +151,10 @@ for ink = 1:length(nikkis)
             elseif contains(indvar_name{ivar},'cloud') && contains(mconfig,{'sedonly'})
                continue
             end
-            rsq = pfm.(indvar_name{ivar}).(bintype{its}).rsq;
-            idxNoData = rsq==0;
+            simscore = pfm.(indvar_name{ivar}).(bintype{its}).simscore;
+            idxNoData = simscore==0;
             pfm.(indvar_name{ivar}).(bintype{its}).mr(idxNoData) = nan;
-            pfm.(indvar_name{ivar}).(bintype{its}).rsq(idxNoData) = nan;
+            pfm.(indvar_name{ivar}).(bintype{its}).simscore(idxNoData) = nan;
             pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(idxNoData) = nan;
             pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(idxNoData) = nan;
             pfm.(indvar_name{ivar}).(bintype{its}).er(idxNoData) = nan;
@@ -132,6 +165,7 @@ for ink = 1:length(nikkis)
             pfm.(indvar_name{ivar}).(bintype{its}).msd_bin(idxNoData) = nan;
             pfm.(indvar_name{ivar}).(bintype{its}).sval_amp(idxNoData) = nan;
             pfm.(indvar_name{ivar}).(bintype{its}).sval_bin(idxNoData) = nan;
+            pfm.(indvar_name{ivar}).(bintype{its}).rsq(idxNoData) = nan;
          end
       end
 
@@ -178,12 +212,13 @@ for ink = 1:length(nikkis)
          for its = 1:length(bintype)
             nexttile(its*2+3,[3 2])
 
-            rsq = pfm.(indvar_name{ivar}).(bintype{its}).rsq;
-            idxNoData = rsq==0;
+            simscore = pfm.(indvar_name{ivar}).(bintype{its}).simscore;
+            idxNoData = simscore==0;
             mr = pfm.(indvar_name{ivar}).(bintype{its}).mr;
             mr(idxNoData) = nan;
 
-            nanimagesc(rsq)
+            nanimagesc(simscore)
+
             cb = colorbar;
             if its == length(bintype)
                cb.Label.String = 'Similarity score'; 
@@ -202,7 +237,12 @@ for ink = 1:length(nikkis)
 
             mpath = pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin;
             [XX,YY] = meshgrid(1:length(var2_str),1:length(var1_str));
-            mpath_bin_str = sprintfc('%0.3g',mpath);
+
+            if indvar_name{ivar} == "half_life_c"
+               mpath_bin_str = sprintfc('%0.3d',mpath);
+            else
+               mpath_bin_str = sprintfc('%0.3g',mpath);
+            end
 
             for ivar1 = 1:length(var1_str)
                for ivar2 = 1:length(var2_str)
@@ -246,17 +286,17 @@ for ink = 1:length(nikkis)
             end
 
 
-            nexttile(2,[1,2])
-   %          imagesc()
-            set(gca,'Color','none')
-            set(gca,'XColor','none')
-            set(gca,'YColor','none')
-   %          ax = gca;
-            colormap(gca,cmaps.coolwarm_r)
-            cb = colorbar('southoutside');
-            cb.Label.String = 'R^2';
-            cb.Label.Position = [0.5000 3.3 0];
-            set(gca,'FontSize',16)
+            % nexttile(2,[1,2])
+   % %          imagesc()
+            % set(gca,'Color','none')
+            % set(gca,'XColor','none')
+            % set(gca,'YColor','none')
+   % %          ax = gca;
+            % colormap(gca,cmaps.coolwarm_r)
+            % cb = colorbar('southoutside');
+            % cb.Label.String = 'R^2';
+            % cb.Label.Position = [0.5000 3.3 0];
+            % set(gca,'FontSize',16)
 
             xlab_key = extractBefore(var2_str,digitsPattern);
             ylab_key = extractBefore(var1_str,digitsPattern);

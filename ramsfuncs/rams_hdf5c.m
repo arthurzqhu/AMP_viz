@@ -38,8 +38,8 @@ global runs filepath z deltax deltaz
 
 for f = 1:length(folder)  
    %    folder{f}
-   files = dir([pref,folder{f},'/a-L*g1.h5']);
-   headfile = dir([pref,folder{f},'/a-L*head.txt']);
+   files = dir([pref,folder{f},'/a-A*g1.h5']);
+   headfile = dir([pref,folder{f},'/a-A*head.txt']);
    headfile = [headfile(1).folder '/' headfile(1).name];
 
    % get z-axis
@@ -61,6 +61,7 @@ for f = 1:length(folder)
    %         end
    %     end
    for v = 1:length(var)
+      % disp(var(v))
       %        try
       for t = 1:length(hr)
          filepath = [pref,folder{f},'/',files(hr(t)+1).name];

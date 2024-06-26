@@ -8,7 +8,7 @@ global mconfig ivar2 ivar1 its nikki output_dir vnum ...
    israin indvar_units_set indvar_units amp_only_var %#ok<*NUSED>
 
 vnum='0001'; % last four characters of the model output file.
-nikki='conftest_fullmic';
+nikki='2024-05-26';
 
 global_var
 
@@ -40,19 +40,19 @@ if ~l_visible
    set(fig_procdiff,'Visible','off')
 end
 
-for iconf = [6]
+for iconf = 3
    mconfig = mconfig_ls{iconf};
    disp(mconfig)
    case_dep_var
-   get_var_comp([18])
+   get_var_comp([1:5 10])
    if isempty(var1_str)
       var1_str = {''};
       var2_str = {''};
    end
 
    for its = 1:2
-      for ivar1 = 17%length(var1_str)
-         for ivar2 = 1%length(var2_str)
+      for ivar1 = 2%1:length(var1_str)
+         for ivar2 = 2%1:length(var2_str)
             if ~isempty(var1_str{1}) && ~contains(var2_str{ivar2}, var2_str_asFuncOfVar1{ivar1})
                continue
             end

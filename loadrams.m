@@ -4,12 +4,13 @@ global mconfig bintype its nikki output_dir runs var_int_idx var_name_set ...
    filedir nfile mp_str var_interest dist_num fn var1_str var2_str ivar1 ivar2
 
 mp_str = [structure_type '_' bintype{its}];
-filedir=[output_dir nikki '/' mconfig '/' var1_str '/' mp_str '/' ];
+filedir=[output_dir nikki '/' mconfig '/' mp_str '/' ];
+% filedir=[output_dir nikki '/' mconfig '/' var1_str '/' mp_str '/' ]
 % filedir=[output_dir nikki '/' mconfig '/' var1_str{ivar1} '/' var2_str{ivar2} '/' ...
 %    mp_str '/' ];
 
-nfile=length(dir([filedir 'a-L*g1.h5']));
-fn={dir([filedir 'a-L*g1.h5']).name}; % get a file name and load the data info
+nfile=length(dir([filedir 'a-A*g1.h5']));
+fn={dir([filedir 'a-A*g1.h5']).name}; % get a file name and load the data info
 dat_info=h5info([filedir fn{1}]).Datasets;
 
 

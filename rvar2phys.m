@@ -4,17 +4,18 @@ global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
 
    threshold = -inf;
    
-   ispath=0;
-   isprof=0;
-   isproc=0;
-   israin=0;
-   iscloud=0;
+   % ispath=0;
+   % isprof=0;
+   % isproc=0;
+   % israin=0;
+   % iscloud=0;
 
    istart=1; % analysis starts from ...
    
    % load all the required variables
    var_req_uniq = unique(horzcat(var_interest.prereq_vars));
    if isempty(snap)
+      % rams_hdf5c(var_req_uniq,istart-1:10:nfile-1,filedir)
       rams_hdf5c(var_req_uniq,istart-1:nfile-1,filedir)
    else
       rams_hdf5c(var_req_uniq,snap,filedir)
@@ -61,6 +62,9 @@ global nfile filedir runs mp_list deltaz density binmean bintype its mp_str
          mpdat.(var_interest(ivar).da_name) = ...
             squeeze(loaded_var.(var_interest(ivar).var_name)(x_pick, :, :, :));
             % squeeze(mean(loaded_var.(var_interest(ivar).var_name),1));
+      % elseif l_da == 4
+      %    mpdat.(var_interest(ivar).da_name) = ...
+      %       squeeze(nanmean(loaded_var.(var_interest(ivar).var_name)(:,:,:,2),[1,2,4]));
       else
          mpdat.(var_interest(ivar).var_name) = ...
             loaded_var.(var_interest(ivar).var_name);
@@ -78,6 +82,8 @@ global runs deltaz density binmean thhd
          var_to_read = {'CWP','RWP'};
       case "LWC"
          var_to_read = {'CWC','RWC'};
+      case "liqprof"
+         var_to_read = {'cloudprof','rainprof'};
       otherwise
          var_to_read = {varin_obj.var_name};
    end
@@ -110,6 +116,24 @@ global runs deltaz density binmean thhd
             loaded_var.(varname) = press(runs.PI);
          case 'temp'
             loaded_var.(varname) = temp(runs.THETA, runs.PI);
+         case 'SW_net'
+            loaded_var.(varname) = runs.SWDN-runs.SWUP;
+         case 'LW_net'
+            loaded_var.(varname) = runs.LWDN-runs.LWUP;
+         case 'Nccn'
+            loaded_var.(varname) = sum(runs.FNCN,5);
+         case 'BBT'
+            BBT = (runs.LWDN/5.67e-8).^(1/4);
+            BBT=real(BBT);
+            BBT(BBT<=200)=nan;
+            loaded_var.(varname) = BBT;
+         case 'emissivity'
+            BBT = (runs.LWDN/5.67e-8).^(1/4);
+            BBT=real(BBT);
+            BBT(BBT<=200)=nan;
+            loaded_var.(varname) = BBT./temp(runs.THETA, runs.PI);
+         case 'fthrd'
+            loaded_var.(varname) = runs.FTHRD*3600;
          case 'Dn_c'
             Dn_c = runs.GUESSC2;
             Dn_c(round(double(Dn_c),6)==1e-6) = nan;
@@ -130,6 +154,13 @@ global runs deltaz density binmean thhd
             meand = (runs.RRP./runs.CRP/1000/(pi/6)).^(1/3)*1e6;
             meand(isinf(meand)) = nan;
             loaded_var.(varname) = meand;
+         case 'meand'
+            lwc = runs.RCP+runs.RRP;
+            lwn = runs.CCP+runs.CRP;
+            lwc(lwc<thhd.cloud_mr_th(1)/1e3)=0;
+            meand = (lwc./lwn/1000/(pi/6)).^(1/3)*1e6;
+            meand(isinf(meand)) = nan;
+            loaded_var.(varname) = meand;
          case 'flagc'
             flagc = runs.GUESSC3;
             flagc(flagc<0) = nan;
@@ -139,7 +170,17 @@ global runs deltaz density binmean thhd
             flagr(flagr<0) = nan;
             loaded_var.(varname) = flagr;
          case 'SPR'
-            loaded_var.(varname) = squeeze(runs.PCPRR*3600);
+            loaded_var.(varname) = squeeze(runs.PCPRR*3600*24);
+         case 'cloudprof'
+            loaded_var.(varname) = squeeze(nanmean(runs.RCP,[1,2]))*1e3;
+         case 'rainprof'
+            loaded_var.(varname) = squeeze(nanmean(runs.RRP,[1,2]))*1e3;
+         case 'flux_s'
+            loaded_var.(varname) = runs.SFLUX_T*1004;
+         case 'flux_r'
+            loaded_var.(varname) = runs.SFLUX_R*2.5e6;
+         % case 'coal_rate'
+         %    loaded_var.(varname) = -runs.NCOALT;
          otherwise
             loaded_var.(varname) = runs.(varin_obj.prereq_vars{end});
       end
@@ -155,6 +196,8 @@ global runs deltaz density binmean thhd
          loaded_var.(varin_obj.var_name) = loaded_var.CNC + loaded_var.RNC;
       case "LNP"
          loaded_var.(varin_obj.var_name) = loaded_var.CNP + loaded_var.RNP;
+      case "liqprof"
+         loaded_var.(varin_obj.var_name) = loaded_var.cloudprof + loaded_var.rainprof;
    end
    
    % mark additional loaded var if it's a compound variable (calculated from multiple sources)

@@ -33,7 +33,7 @@ elseif strcmp(computer('arch'),'glnxa64')
       summ_dir='../summary_mat/';
       score_dir='../summary_mat/';
    else
-      output_dir='/group/aigelgrp2/arthurhu/KiD/';
+      output_dir='/home/arthurhu/KiD/';
       summ_dir='pfm_summary/';
       score_dir='score_summary/';
    end

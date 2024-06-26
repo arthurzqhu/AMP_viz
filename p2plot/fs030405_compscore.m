@@ -165,8 +165,8 @@ for ivar = vars2plot
    title(tl, ['Best configuration heatmap of ' indvar_ename{ivar}],...
       'fontsize',24,'fontweight','bold')
    ifig = ifig + 1;
-   exportgraphics(gcf,['plots/p2/fs',num2str(ifig),'_fullmic ' indvar_name{ivar}, ' score wbar.pdf'])
-   saveas(gcf,['plots/p2/fs',num2str(ifig),'_fullmic ' indvar_name{ivar}, ' score wbar.fig'])
+   exportgraphics(gcf,['plots/p2/fs',sprint('%.2d',ifig+2),'_fullmic ' indvar_name{ivar}, ' score wbar.pdf'])
+   saveas(gcf,['plots/p2/fs',sprint('%.2d',ifig+2),'_fullmic ' indvar_name{ivar}, ' score wbar.fig'])
    % exportgraphics(gcf,['plots/p2/individual_case/' indvar_name{ivar}, ' ', num2str(iconf), ' score.pdf'])
    % end
 end

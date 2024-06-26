@@ -168,6 +168,6 @@ for TAUorSBM = 1
    title(tl,sprintf('Snapshot of Na200w04 @ t = %d s', real_time),...
       'fontweight','bold','fontsize',24)
 
-   exportgraphics(gcf,['plots/p2/fs7_snapshot_fullmp ',bintype{TAUorSBM},'.pdf'])
-   saveas(gcf,['plots/p2/fs7_snapshot_fullmp ',bintype{TAUorSBM},'.fig'])
+   exportgraphics(gcf,['plots/p2/fs11_snapshot_fullmp ',bintype{TAUorSBM},'.pdf'])
+   saveas(gcf,['plots/p2/fs11_snapshot_fullmp ',bintype{TAUorSBM},'.fig'])
 end

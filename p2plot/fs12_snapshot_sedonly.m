@@ -165,7 +165,7 @@ set(gca,'fontsize',16)
 
 title(tl, ['Handling of multiple rain modes (sed. only @ t = ',num2str(itime),'s)'],...
    'FontWeight','bold','fontsize',24)
-exportgraphics(gcf,['plots/p2/fs8_snapshot_sedonly ', bintype{TAUorSBM},'.pdf'])
-saveas(gcf,['plots/p2/fs8_snapshot_sedonly ', bintype{TAUorSBM},'.fig'])
+exportgraphics(gcf,['plots/p2/fs12_snapshot_sedonly ', bintype{TAUorSBM},'.pdf'])
+saveas(gcf,['plots/p2/fs12_snapshot_sedonly ', bintype{TAUorSBM},'.fig'])
 
 end

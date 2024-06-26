@@ -197,8 +197,8 @@ end % iconf
    legend('show','location','best','fontsize',11)
    title(tl,['Mean scores and time series of ',indvar_ename{vars2plot(1)},...
       ' and ', indvar_ename{vars2plot(2)}],'fontsize',24,'fontweight','bold')
-   exportgraphics(gcf,['plots/p2/fs',num2str(ifig+4),'_', mconfig, ' ' bintype{its} ' rank sandwich.pdf'])
-   saveas(gcf,['plots/p2/fs',num2str(ifig+4),'_', mconfig, ' ' bintype{its} ' rank sandwich.fig'])
    ifig = ifig + 1;
+   exportgraphics(gcf,['plots/p2/fs',sprint('%.2d',ifig+5),'_', mconfig, ' ' bintype{its} ' rank sandwich.pdf'])
+   saveas(gcf,['plots/p2/fs',sprint('%.2d',ifig+5),'_', mconfig, ' ' bintype{its} ' rank sandwich.fig'])
 end % its
 end % ivarset

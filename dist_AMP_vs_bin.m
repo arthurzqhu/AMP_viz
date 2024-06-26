@@ -6,9 +6,9 @@ global mconfig ivar2 ivar1 its nikki output_dir case_list_str vnum ...
    bintype var1_str var2_str dt l_amp fn cloud_mr_th test cmaps
 
 % l_amp = 0 for bin, 1 for amp, 2 for both
-l_amp=0; 
+l_amp=1; 
 
-nikki='fullmic';
+nikki='2024-05-26';
 vnum='0001';
 global_var
 mconfig_ls = get_mconfig_list(output_dir, nikki);
@@ -23,12 +23,12 @@ elseif contains(pltflag, {'mass_diff','number_diff'})
 end
 
 %%
-for iconf = 1%1:length(mconfig_ls)
+for iconf = 2%1:length(mconfig_ls)
    mconfig = mconfig_ls{iconf};
    disp(mconfig)
    case_dep_var
    for its = 1:length(bintype)
-      for ivar1 = [1:4]%length(var1_str)
+      for ivar1 = [2]%length(var1_str)
          %% read files
          for ivar2 = [2]%:length(var2_str)
 

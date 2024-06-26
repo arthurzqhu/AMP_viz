@@ -17,6 +17,11 @@ mconfig_ls = get_mconfig_list(output_dir,nikki);
 nconf = length(mconfig_ls);
 aux_line_color = [.5 .5 .5];
 TAUorSBM = 2;
+metrics = {'rsq', 'mr'};
+met_title = {'R^2','Mean Ratio'};
+
+for imet = 2:length(metrics)
+metric = metrics{imet};
 
 figure(1)
 set(gcf,'position',[0 0 1000 700])
@@ -24,6 +29,27 @@ tiles = [];
 tl = tiledlayout(10,4);
 
 USconfs = [1 2];
+
+
+clear ranking cb
+
+nexttile(2,[1,2])
+set(gca,'color','none')
+set(gca,'XColor','none')
+set(gca,'YColor','none')
+cb = colorbar('southoutside');
+cb.Label.String = met_title{imet};
+cb.Label.Position = [imet/2 2.5 0]; % adhoc fix to the strange behavior of positioning...
+set(cb,'position',[0.3187 0.8921 0.3676 0.0171])
+if metric == "mr"
+   caxis([.5 2])
+   colormap(cmaps.coolwarm_s)
+   set(gca,'colorscale','log')
+else
+   caxis([0 1])
+   colormap(cmaps.magma_r)
+end
+set(gca,'fontsize',12)
 
 for iconf = 1:length(USconfs)
 idir = USconfs(iconf);
@@ -46,42 +72,35 @@ nvar2 = size(pfm.(indvar_name_set{1}).(bintype{1}).mr,2);
 
 mom_matrix = zeros(nvar1,nvar2);
 
-clear ranking
-
-nexttile(2,[1,2])
-set(gca,'color','none')
-set(gca,'XColor','none')
-set(gca,'YColor','none')
-cb = colorbar('southoutside');
-cb.Label.String = 'Similarity score';
-cb.Label.Position=[0.5000 2.5 0];
-set(cb,'position',[0.3187 0.8921 0.3676 0.0171])
-caxis([0 1])
-colormap(gca,cmaps.magma_r)
-set(gca,'fontsize',12)
-
 
 for ivar = 1:2
    ipvar = vars2plot(ivar);
    for its = TAUorSBM
-      simscore = pfm.(indvar_name_set{ipvar}).(bintype{its}).simscore; % larger = better
+      altscore = pfm.(indvar_name_set{ipvar}).(bintype{its}).(metric); % larger = better
       nexttile((iconf-1)*24+(ivar-1)*2+5, [3,2]) % make sure it's on the right grid
       % score_by_momcombo = score(iconf).(bintype{its}).(indvar_name_set{ipvar});
-      nanimagesc(simscore)
+      nanimagesc(altscore)
       rectangle('position', [selected_cases{1}(2)-.5, selected_cases{1}(1)-.5, 1, 1], ...
          'EdgeColor',aux_line_color,'LineWidth',2)
       rectangle('position', [selected_cases{2}(2)-.5, selected_cases{2}(1)-.5, 1, 1], ...
          'EdgeColor',aux_line_color,'LineWidth',2)
       % cb = colorbar;
       % cb.Label.String = 'Similarity score';
-      colormap(gca,cmaps.magma_r)
-      caxis([0 1])
 
-      mean_score = nanmean(simscore(:));
-      wmean_score = wmean(simscore(:),pfm.(indvar_name_set{ipvar}).(bintype{its}).mpath_bin(:));
-      ttl = sprintf('(%s) %s by %sAMP-%s, mean score = %.3f', ...
+      if metric == "mr"
+         caxis([.5 2])
+         colormap(cmaps.coolwarm_s)
+         set(gca,'colorscale','log')
+      else
+         caxis([0 1])
+         colormap(cmaps.magma_r)
+      end
+
+      mean_score = nanmean(altscore(:));
+      wmean_score = wmean(altscore(:),pfm.(indvar_name_set{ipvar}).(bintype{its}).mpath_bin(:));
+      ttl = sprintf('(%s) %s by %sAMP-%s, %s = %.3f', ...
          Alphabet((iconf-1)*6+ivar), indvar_ename_set{ipvar}, ...
-         UorS, upper(bintype{its}), wmean_score);
+         UorS, upper(bintype{its}), met_title{imet}, wmean_score);
       title(ttl,'FontWeight','normal')
       xticks(1:nvar2)
       yticks(1:nvar1)
@@ -180,6 +199,11 @@ for icase = 1:length(selected_cases)
 
 end % icase
 
+axes(tiles(6))
+legend('show','location','best','fontsize',11)
+title(tl,[met_title{imet} ' scores and time series of RWP and precipitation rate'],'fontsize',24,'fontweight','bold')
+
+% connecting the lines
 for icase = 1:length(selected_cases)
    for iscoreplot = 1:2
       axes(tiles(iscoreplot))
@@ -218,9 +242,10 @@ for icase = 1:length(selected_cases)
    end
 end
 
-axes(tiles(6))
-legend('show','location','best','fontsize',11)
-title(tl,'Mean scores and time series of RWP and precipitation rate','fontsize',24,'fontweight','bold')
+exportgraphics(gcf,['plots/p2/fs',sprintf('%.2d',8+imet),'_', mconfig,...
+   ' ' bintype{TAUorSBM} ' rwpspr rank sandwich.pdf'])
+saveas(gcf,['plots/p2/fs',sprintf('%.2d',8+imet),'_', mconfig, ' ' bintype{TAUorSBM} ' rwpspr rank sandwich.fig'])
 
-exportgraphics(gcf,['plots/p2/f07_', mconfig, ' ' bintype{TAUorSBM} ' rwpspr rank sandwich.pdf'])
-saveas(gcf,['plots/p2/f07_', mconfig, ' ' bintype{TAUorSBM} ' rwpspr rank sandwich.fig'])
+close
+
+end % imet

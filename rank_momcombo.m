@@ -7,8 +7,6 @@ global mconfig
 nikki = 'conftest_fullmic';
 global_var
 
-% as opposed to mean ratio. should be set between 0 and 1. 0.5 means rsq and mr are equally important
-
 % get the list of configs. cant put it into globar_var
 mconfig_ls = get_mconfig_list(output_dir,nikki);
 nconf = length(mconfig_ls);
@@ -20,10 +18,10 @@ disp(icase)
 
 mconfig = mconfig_ls{icase};
 load(['pfm_summary/',nikki,'_', mconfig, '_pfm.mat'])
-load(['flags_summary/',nikki,'_perinit_flags.mat'])
+% load(['flags_summary/',nikki,'_perinit_flags.mat'])
 
-flag_cat = fieldnames(flags(1));
-flag_var = fieldnames(flags(1).(flag_cat{1}).sbm);
+% flag_cat = fieldnames(flags(1));
+% flag_var = fieldnames(flags(1).(flag_cat{1}).sbm);
 
 case_dep_var
 
@@ -32,8 +30,8 @@ name_idx = contains(indvar_name_all,indvar_name);
 indvar_ename = indvar_ename_all(name_idx);
 indvar_units = indvar_units_all(name_idx);
 
-flag_cat = fieldnames(flags(1));
-flag_var = fieldnames(flags(1).(flag_cat{1}).sbm);
+% flag_cat = fieldnames(flags(1));
+% flag_var = fieldnames(flags(1).(flag_cat{1}).sbm);
 
 vars = 1;
 % vare = vars;
@@ -49,18 +47,20 @@ momcombo_sum = [];
 
 for its = 1:2
    for ivar = vars:vare
+      simscore = pfm.(indvar_name{ivar}).(bintype{its}).simscore; % larger = better
       rsq = pfm.(indvar_name{ivar}).(bintype{its}).rsq; % larger = better
-      [rsq_sorted,rsq_sortIdx] = sort(rsq(:),'ascend','MissingPlacement','first');
+      % [ss_sorted,ss_sortIdx] = sort(simscore(:),'ascend','MissingPlacement','first');
+      % [rsq_sorted,rsq_sortIdx] = sort(rsq(:),'ascend','MissingPlacement','first');
       mval.(indvar_name{ivar}).(bintype{its})(iconf) = pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(1);
 
       abslogmr = abs(log(pfm.(indvar_name{ivar}).(bintype{its}).mr)); 
       adj_abslogmr = 1-abslogmr; % larger = better
-      [abslogmr_sorted,abslogmr_sortIdx] = sort(adj_abslogmr(:),'ascend','MissingPlacement','first');
+      % [abslogmr_sorted,abslogmr_sortIdx] = sort(adj_abslogmr(:),'ascend','MissingPlacement','first');
 
       if contains(indvar_name{ivar},'half_life')
          overall_score = adj_abslogmr;
       else
-         overall_score = rsq;
+         overall_score = simscore;
       end
       [ovs_sorted, ovs_sortIdx] = sort(overall_score(:), 'descend', 'MissingPlacement','last');
 
@@ -112,21 +112,21 @@ for its = 1:2
       icombo_folded = icombo_folded + 1;
       ireverse = find(ismember(momcombo_cell,reverse(momcombo)));
 
-      for ivar2 = 1:nvar2
-         for icat = 1:length(flag_cat)
-            for ifvar = 1:length(flag_var)
-               flag1 = flags(iconf).(flag_cat{icat}).(bintype{its}).(flag_var{ifvar})(icombo,ivar2);
-               flag2 = flags(iconf).(flag_cat{icat}).(bintype{its}).(flag_var{ifvar})(ireverse,ivar2);
-               if contains(flag_var{ifvar}, 'failure')
-                  flag_best = min([flag1 flag2]);
-               elseif contains(flag_var{ifvar}, 'success')
-                  flag_best = max([flag1 flag2]);
-               end
+      % for ivar2 = 1:nvar2
+      %    for icat = 1:length(flag_cat)
+      %       for ifvar = 1:length(flag_var)
+      %          flag1 = flags(iconf).(flag_cat{icat}).(bintype{its}).(flag_var{ifvar})(icombo,ivar2);
+      %          flag2 = flags(iconf).(flag_cat{icat}).(bintype{its}).(flag_var{ifvar})(ireverse,ivar2);
+      %          if contains(flag_var{ifvar}, 'failure')
+      %             flag_best = min([flag1 flag2]);
+      %          elseif contains(flag_var{ifvar}, 'success')
+      %             flag_best = max([flag1 flag2]);
+      %          end
+      %          flags_trim(iconf).(bintype{its}).(flag_cat{icat}).(flag_var{ifvar})(icombo_folded, ivar2) = flag_best;
+      %       end
+      %    end
+      % end
 
-               flags_trim(iconf).(bintype{its}).(flag_cat{icat}).(flag_var{ifvar})(icombo_folded, ivar2) = flag_best;
-            end
-         end
-      end
    end
 end
 
@@ -135,5 +135,6 @@ end % iconf
 
 save('score_summary/fullmic_mval_conftest.mat','mval')
 save('score_summary/fullmic_scores_conftest.mat', 'score_trim')
-save('flags_summary/fullmic_flags_conftest.mat','flags_trim')
+% save('score_summary/fullmic_rsq_conftest.mat', 'score_rsq_trim')
+% save('flags_summary/fullmic_flags_conftest.mat','flags_trim')
 % save('score_summary/scores2m_conftest.mat', 'score')

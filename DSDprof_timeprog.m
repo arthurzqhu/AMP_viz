@@ -30,7 +30,7 @@ itf = int32(tf/dt);
 istep = int32(ts_plot/dt);
 time_series=iti:istep:itf;
 
-parfor iframe = 1:length(time_series)
+for iframe = 1:length(time_series)
    itime = time_series(iframe);
    if itime<=0
       itime = 1;

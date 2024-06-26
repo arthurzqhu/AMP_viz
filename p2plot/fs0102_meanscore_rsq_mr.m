@@ -19,14 +19,19 @@ indvar_name = fldnms(1:end-1);
 name_idx = contains(indvar_name_all,indvar_name);
 indvar_ename = indvar_ename_all(name_idx);
 indvar_units = indvar_units_all(name_idx);
+metrics = {'rsq', 'mr'};
+met_title = {'R^2','Mean Ratio'};
+
+for imet = 1:length(metrics)
+metric = metrics{imet};
 
 for ivar = 1:length(indvar_name)
    for its = 1:2
       mean_score.(bintype{its})(1,ivar) = ...
-         wmean(fullmic2m.pfm.(indvar_name{ivar}).(bintype{its}).simscore(:),...
+         wmean(fullmic2m.pfm.(indvar_name{ivar}).(bintype{its}).(metric)(:),...
          fullmic2m.pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(:));
       mean_score.(bintype{its})(2,ivar) = ...
-         wmean(fullmic4m.pfm.(indvar_name{ivar}).(bintype{its}).simscore(:),...
+         wmean(fullmic4m.pfm.(indvar_name{ivar}).(bintype{its}).(metric)(:),...
          fullmic4m.pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(:));
    end
 end
@@ -39,8 +44,17 @@ for its = 1:2
    nanimagesc(mean_score.(bintype{its}))
    colormap(cmaps.magma_r)
    cb = colorbar;
-   cb.Label.String = 'Mean Similarity Score';
-   caxis([0 1])
+   cb.Label.String = met_title{imet};
+   
+   if metric == "mr"
+      caxis([.5 2])
+      colormap(cmaps.coolwarm_11)
+      set(gca,'colorscale','log')
+   else
+      caxis([0 1])
+      colormap(cmaps.magma_r10)
+   end
+
    xticks([1:5])
    xticklabels(indvar_ename)
    yticks([1 2])
@@ -68,10 +82,10 @@ for its = 1:2
    %    mean_score.(bintype{its})(:),'filled',...
    %    'MarkerEdgeColor',[1 1 1],'LineWidth',1)
    % hold off
-   colormap(cmaps.magma_r10)
+   title(tl,[met_title{imet} ' Comparison between U-AMP and S-AMP'],...
+      'fontweight','bold','fontsize',24)
 end
 
-title(tl,'Mean Score Comparison between U-AMP and S-AMP',...
-   'fontweight','bold','fontsize',24)
-exportgraphics(gcf,'plots/p2/f03_wmean_score.pdf')
-saveas(gcf,'plots/p2/f03_wmean_score.fig')
+exportgraphics(gcf,['plots/p2/fs',sprint('%.2d',imet),'_wmean_',metric,'.pdf'])
+saveas(gcf,['plots/p2/fs',sprint('%.2d',imet),'_wmean_',metric,'.fig'])
+end

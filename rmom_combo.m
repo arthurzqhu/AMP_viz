@@ -6,7 +6,7 @@ global nfile runs mpdat mp_list imp deltaz z mconfig bintype its output_dir var_
 close all
 
 addpath('ramsfuncs/')
-doplot = 1
+doplot = 0
 doload = 1
 
 nikki='yesUV';

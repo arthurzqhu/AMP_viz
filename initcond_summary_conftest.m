@@ -19,7 +19,7 @@ for ink = 1:length(nikkis)
    mconfig_ls = get_mconfig_list(output_dir,nikki);
 
    %%
-   % creating structures for performance analysis based on Rsq and ratio
+   % creating structures for performance analysis based on simscore and ratio
    for iconf = 1:length(mconfig_ls)
       mconfig = mconfig_ls{iconf};
       disp(mconfig)
@@ -32,9 +32,10 @@ for ink = 1:length(nikkis)
 
          for ivar = 1:length(indvar_name_set)
             pfm.(indvar_name_set{ivar}).(bintype{its}).mr = zeros(nvar1,nvar2);
-            pfm.(indvar_name_set{ivar}).(bintype{its}).rsq = zeros(nvar1,nvar2);
+            pfm.(indvar_name_set{ivar}).(bintype{its}).simscore = zeros(nvar1,nvar2);
             pfm.(indvar_name_set{ivar}).(bintype{its}).mpath_bin = zeros(nvar1,nvar2);
             pfm.(indvar_name_set{ivar}).(bintype{its}).mpath_amp = zeros(nvar1,nvar2);
+            pfm.(indvar_name_set{ivar}).(bintype{its}).rsq = zeros(nvar1,nvar2);
          end
 
          for ivar1 = 1:nvar1
@@ -81,7 +82,8 @@ for ink = 1:length(nikkis)
                      weight = var_bin_flt(vidx)/sum(var_bin_flt(vidx));
                      weight_log = log(var_bin_flt(vidx))/sum(log(var_bin_flt(vidx)));
 
-                     [mr, rsq, mval_amp, mval_bin] = wrsq(var_amp_flt(vidx), var_bin_flt(vidx), weight);
+                     [mr, simscore, mval_amp, mval_bin, ~, ~, ~, ~, ~, ~, ~, ~, rsq] = ...
+                        wrsq(var_amp_flt(vidx), var_bin_flt(vidx), weight);
 
                      if indvar_name{ivar} == "mean_surface_ppt"
                         mval_bin(mval_bin < sppt_th(1)) = 0;
@@ -99,9 +101,10 @@ for ink = 1:length(nikkis)
                      % end
 
                      pfm.(indvar_name{ivar}).(bintype{its}).mr(ivar1, ivar2) = mr;
-                     pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2) = rsq;
+                     pfm.(indvar_name{ivar}).(bintype{its}).simscore(ivar1, ivar2) = simscore;
                      pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(ivar1, ivar2) = mval_bin;
                      pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(ivar1, ivar2) = mval_amp;
+                     pfm.(indvar_name{ivar}).(bintype{its}).rsq(ivar1, ivar2) = rsq;
                      % pfm.(indvar_name{ivar}).(bintype{its}).er(ivar1, ivar2) = er;
                      % pfm.(indvar_name{ivar}).(bintype{its}).maxr(ivar1, ivar2) = maxr;
                      % pfm.(indvar_name{ivar}).(bintype{its}).md(ivar1, ivar2) = md;
@@ -141,12 +144,13 @@ for ink = 1:length(nikkis)
             end
 
             if ~contains(indvar_name{ivar}, amp_only_var)
-               rsq = pfm.(indvar_name{ivar}).(bintype{its}).rsq;
-               idxNoData = rsq==0;
+               simscore = pfm.(indvar_name{ivar}).(bintype{its}).simscore;
+               idxNoData = simscore==0;
                pfm.(indvar_name{ivar}).(bintype{its}).mr(idxNoData) = nan;
-               pfm.(indvar_name{ivar}).(bintype{its}).rsq(idxNoData) = nan;
+               pfm.(indvar_name{ivar}).(bintype{its}).simscore(idxNoData) = nan;
                pfm.(indvar_name{ivar}).(bintype{its}).mpath_bin(idxNoData) = nan;
                pfm.(indvar_name{ivar}).(bintype{its}).mpath_amp(idxNoData) = nan;
+               pfm.(indvar_name{ivar}).(bintype{its}).rsq(idxNoData) = nan;
                % pfm.(indvar_name{ivar}).(bintype{its}).er(idxNoData) = nan;
                % pfm.(indvar_name{ivar}).(bintype{its}).maxr(idxNoData) = nan;
                % pfm.(indvar_name{ivar}).(bintype{its}).md(idxNoData) = nan;
