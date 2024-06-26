@@ -26,7 +26,7 @@ islink = ~unix(['test -L ',script_name,'.m']);
 
 %% dir of the model output
 if strcmp(computer('arch'),'maci64')
-   output_dir='/Volumes/ESSD/AMP output/';
+   output_dir='/Users/arthurhu/research outputs/';
 elseif strcmp(computer('arch'),'glnxa64')
    if islink % if the script running is a symlink, then it's probably in a shared folder
       output_dir='../UvsS_KiD/';
@@ -37,6 +37,18 @@ elseif strcmp(computer('arch'),'glnxa64')
       summ_dir='pfm_summary/';
       score_dir='score_summary/';
    end
+   sp_combo=readmatrix('~/github/KiD_repo/KiD_1mode_gam/sp_combo.csv');
+
+   % Convert the matrix to a cell of sp_combo_str
+   sp_combo_str = cellstr(num2str(sp_combo, '%g '));
+   % Remove leading spaces and replace spaces with a dash
+   for i = 1:length(sp_combo_str)
+      % Remove leading and trailing spaces
+      sp_combo_str{i} = strtrim(sp_combo_str{i});
+      % Replace one or more spaces with a dash
+      sp_combo_str{i} = regexprep(sp_combo_str{i}, '\s+', '-');
+   end
+
 end
 
 
@@ -49,6 +61,7 @@ case_list_str = arrayfun(@(x) num2str(case_list_num(x)), 1:length(case_list_num)
 %% thresholds to be considered as clouds 
 cloud_mr_th = [1e-7 1e-2]; % kg/kg, threshold for mixing ratio (kg/kg)
 rain_mr_th = [1e-7 1e-2];
+lwc_mr_th = [1e-7 1e-2];
 cloud_n_th = [1e-1 inf]; % #/cc, threshold for droplet number concentration
 rain_n_th = [1e2 inf]; % #/m2
 cwp_th = [1e-5 inf]; % kg/m2 cloud water path threshold
@@ -284,26 +297,6 @@ for imomx = 1:length(momx)
       momcombo_trimmed{imc} = [num2str(momx(imomx)), '-', num2str(momy(imomy))];
    end
 end
-
-sp_combo=readmatrix('~/github/KiD_repo/KiD_1mode_gam/sp_combo.csv');
-
-% Convert the matrix to a cell of sp_combo_str
-sp_combo_str = cellstr(num2str(sp_combo, '%g '));
-% Remove leading spaces and replace spaces with a dash
-for i = 1:length(sp_combo_str)
-   % Remove leading and trailing spaces
-    sp_combo_str{i} = strtrim(sp_combo_str{i});
-
-    % Replace one or more spaces with a dash
-    sp_combo_str{i} = regexprep(sp_combo_str{i}, '\s+', '-');
-end
-
-% for i = 1:size(sp_combo,1)
-%     for j = 1:size(sp_combo,2)
-%         sp_combo_str{i,j} = num2str(sp_combo(i,j));
-%     end
-% end
-
 
 Alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
